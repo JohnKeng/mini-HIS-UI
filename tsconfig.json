@@ -2,7 +2,7 @@
   "compilerOptions": {
     // --- 核心設定 (Core Options) ---
     "target": "ES2020",
-    "module": "ESNext",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
@@ -20,10 +20,11 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
-  },
-  "ts-node": {
-    "esm": true
+    "noFallthroughCasesInSwitch": true,
+    
+    // --- Allow .ts imports ---
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
   "include": [
     "src/**/*",

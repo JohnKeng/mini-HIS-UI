@@ -377,6 +377,19 @@
         <!-- 動態生成訊息 -->
     </div>
 
+    <!-- 詳細信息彈窗 -->
+    <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center p-6 border-b">
+                <h3 id="modalTitle" class="text-lg font-semibold text-gray-800">詳細信息</h3>
+                <button id="closeModal" class="text-gray-400 hover:text-gray-600 text-2xl">×</button>
+            </div>
+            <div id="modalContent" class="p-6">
+                <!-- 動態生成內容 -->
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>

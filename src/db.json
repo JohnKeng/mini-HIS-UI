@@ -103,6 +103,77 @@
       "startedAt": "2025-09-08T13:04:08.702Z"
     }
   ],
-  "prescriptions": [],
-  "services": []
+  "prescriptions": [
+    {
+      "tag": "Prepared",
+      "info": {
+        "id": "rx-1757336658523",
+        "patientId": "pt-1757336324561",
+        "doctorId": "doc-001",
+        "items": [
+          {
+            "medicationId": "med-001",
+            "medication": {
+              "id": "med-001",
+              "name": "阿斯匹靈",
+              "code": "ASPIRIN",
+              "dosageForm": "錠劑",
+              "strength": "100mg"
+            },
+            "dosage": "1 錠",
+            "frequency": "每日三次",
+            "route": "口服",
+            "duration": "7 天",
+            "instructions": "飯後服用"
+          }
+        ],
+        "notes": "緩解疼痛和發炎"
+      },
+      "createdAt": "2025-09-08T13:04:18.522Z",
+      "submittedAt": "2025-09-08T13:04:21.613Z",
+      "preparationStartedAt": "2025-09-08T13:04:25.481Z",
+      "preparedAt": "2025-09-08T13:04:29.892Z",
+      "pharmacistId": "pharm-001",
+      "verificationNotes": "已確認藥物劑量和交互作用"
+    }
+  ],
+  "services": [
+    {
+      "tag": "InPreparation",
+      "info": {
+        "id": "svc-1757336684203",
+        "patientId": "pt-json-001",
+        "serviceType": "Consultation",
+        "description": "X光檢查",
+        "priority": "Normal",
+        "estimatedDuration": 45,
+        "requiredResources": [
+          "X光機",
+          "技術人員"
+        ],
+        "notes": "檢查胸部"
+      },
+      "requestedAt": "2025-09-08T13:04:44.203Z",
+      "requestedBy": "doc-001",
+      "scheduledAt": "2025-09-08T13:04:51.653Z",
+      "scheduledBy": "staff-001",
+      "scheduledTime": "2025-09-10T13:04:48.414Z",
+      "preparationStartedAt": "2025-09-08T13:04:55.928Z",
+      "assignedStaff": [
+        {
+          "id": "staff-003",
+          "name": "李技師",
+          "birthDate": "1988-02-02",
+          "gender": "Female",
+          "contactNumber": "0900000001",
+          "staffType": "LabTechnician",
+          "department": "Radiology",
+          "specialization": "Imaging",
+          "licenseNumber": "LIC-TECH-003"
+        }
+      ],
+      "location": "Room 305",
+      "preparationNotes": "準備 X 光設備"
+    }
+  ]
 }

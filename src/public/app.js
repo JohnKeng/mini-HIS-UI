@@ -76,6 +76,25 @@ async function apiRequest(url, options = {}) {
     }
 }
 
+// ========== 彈窗控制 ==========
+function showModal(title, content) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalContent').innerHTML = content;
+    document.getElementById('detailModal').classList.remove('hidden');
+}
+
+function hideModal() {
+    document.getElementById('detailModal').classList.add('hidden');
+}
+
+// 關閉彈窗事件
+document.getElementById('closeModal').addEventListener('click', hideModal);
+document.getElementById('detailModal').addEventListener('click', (e) => {
+    if (e.target.id === 'detailModal') {
+        hideModal();
+    }
+});
+
 // ========== 通用函數 ==========
 async function loadPatientOptions(selectElementId) {
     const result = await apiRequest(`${API_BASE}/patients`);
@@ -117,8 +136,8 @@ function displayPatients(patients) {
         }[patient.tag] || 'bg-gray-100 text-gray-800';
         
         row.innerHTML = `
-            <td class="px-4 py-2 font-mono text-sm">${patient.info.id}</td>
-            <td class="px-4 py-2">${patient.info.name}</td>
+            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showPatientDetail('${patient.info.id}')">${patient.info.id}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600" onclick="showPatientDetail('${patient.info.id}')">${patient.info.name}</td>
             <td class="px-4 py-2">
                 <span class="px-2 py-1 rounded-full text-xs ${statusColor}">
                     ${patient.tag}

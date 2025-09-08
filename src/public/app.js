@@ -234,13 +234,14 @@ async function showPrescriptionDetail(prescriptionId) {
             <div class="bg-yellow-50 p-4 rounded-lg">
                 <h4 class="font-semibold text-gray-800 mb-3">藥物信息</h4>
                 <div class="space-y-3">
-                    ${prescription.info.medications.map(med => `
+                    ${prescription.info.items.map(item => `
                         <div class="border-l-4 border-yellow-400 pl-3">
-                            <div class="font-medium">${med.name}</div>
-                            <div class="text-sm text-gray-600">劑量: ${med.dosage} | 頻率: ${med.frequency} | 療程: ${med.duration}</div>
-                            ${med.notes ? `<div class="text-sm text-gray-500">備註: ${med.notes}</div>` : ''}
+                            <div class="font-medium">${item.medication.name}</div>
+                            <div class="text-sm text-gray-600">劑量: ${item.dosage} | 頻率: ${item.frequency} | 療程: ${item.duration}</div>
+                            <div class="text-sm text-gray-600">用法: ${item.route} | 指示: ${item.instructions}</div>
                         </div>
                     `).join('')}
+                    ${prescription.info.notes ? `<div class="text-sm text-gray-500 mt-2">備註: ${prescription.info.notes}</div>` : ''}
                 </div>
             </div>
             

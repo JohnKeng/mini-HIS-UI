@@ -1,0 +1,26 @@
+{
+  "patients": [
+    {
+      "tag": "Registered",
+      "patientId": "pt-1757336260417",
+      "registeredAt": "2025-09-08T12:57:40.417Z",
+      "info": {
+        "id": "pt-json-001",
+        "name": "JSON測試患者",
+        "birthDate": "1990-01-01",
+        "gender": "Male",
+        "contactNumber": "0912345678",
+        "address": {
+          "street": "JSON街123號",
+          "city": "台北市",
+          "state": "信義區",
+          "postalCode": "110",
+          "country": "台灣"
+        }
+      }
+    }
+  ],
+  "appointments": [],
+  "prescriptions": [],
+  "services": []
+}

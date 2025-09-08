@@ -8,7 +8,6 @@ const prescriptionBtn = document.getElementById('prescriptionBtn');
 const serviceBtn = document.getElementById('serviceBtn');
 
 const panels = {
-    welcome: document.getElementById('welcomePanel'),
     patient: document.getElementById('patientPanel'),
     appointment: document.getElementById('appointmentPanel'),
     prescription: document.getElementById('prescriptionPanel'),
@@ -27,25 +26,42 @@ function showPanel(panelName) {
         panels[panelName].classList.remove('hidden');
     }
     
-    // 更新按鈕狀態
-    document.querySelectorAll('nav button, .grid button').forEach(btn => {
-        btn.classList.remove('ring-2', 'ring-offset-2');
+    // 更新按鈕狀態 - 移除所有按鈕的啟用狀態
+    document.querySelectorAll('.grid button').forEach(btn => {
+        btn.classList.remove('bg-black', 'border-black', 'text-white');
+        btn.classList.add('bg-white', 'border-gray-200', 'text-gray-900');
     });
+    
+    // 為當前面板的按鈕添加啟用狀態
+    const buttonMap = {
+        'patient': 'patientBtn',
+        'appointment': 'appointmentBtn', 
+        'prescription': 'prescriptionBtn',
+        'service': 'serviceBtn'
+    };
+    
+    if (buttonMap[panelName]) {
+        const activeBtn = document.getElementById(buttonMap[panelName]);
+        if (activeBtn) {
+            activeBtn.classList.remove('bg-white', 'border-gray-200', 'text-gray-900');
+            activeBtn.classList.add('bg-black', 'border-black', 'text-white');
+        }
+    }
 }
 
-// 顯示訊息
+// 顯示訊息 - 使用單色設計
 function showMessage(message, type = 'info') {
     const messageContainer = document.getElementById('messageContainer');
     const messageDiv = document.createElement('div');
     
     const bgColor = {
-        success: 'bg-green-500',
-        error: 'bg-red-500',
-        info: 'bg-blue-500',
-        warning: 'bg-yellow-500'
-    }[type] || 'bg-blue-500';
+        success: 'bg-gray-800',
+        error: 'bg-black',
+        info: 'bg-gray-700',
+        warning: 'bg-gray-600'
+    }[type] || 'bg-gray-700';
     
-    messageDiv.className = `${bgColor} text-white px-6 py-3 rounded-lg shadow-lg mb-2 transition-all duration-300`;
+    messageDiv.className = `${bgColor} text-white px-6 py-4 rounded-lg shadow-lg mb-3 transition-all duration-300 border border-gray-300`;
     messageDiv.textContent = message;
     
     messageContainer.appendChild(messageDiv);
@@ -1145,7 +1161,16 @@ document.getElementById('serviceForm').addEventListener('submit', async (e) => {
     }
 });
 
-// 頁面載入時顯示歡迎面板
+// 頁面載入時顯示預約面板
 document.addEventListener('DOMContentLoaded', () => {
-    showPanel('welcome');
+    showPanel('appointment');
+    loadPatients();
+    loadAppointments();
+    loadPrescriptions();
+    loadServices();
+    
+    // 載入病患選項到所有下拉選單
+    loadPatientOptions('appointmentPatientId');
+    loadPatientOptions('prescriptionPatientId');
+    loadPatientOptions('servicePatientId');
 });

@@ -376,10 +376,10 @@ function displayPatients(patients) {
         row.className = 'border-b hover:bg-gray-50';
         
         const statusColor = {
-            'Registered': 'bg-blue-100 text-blue-800',
-            'Admitted': 'bg-green-100 text-green-800',
-            'Discharged': 'bg-gray-100 text-gray-800'
-        }[patient.tag] || 'bg-gray-100 text-gray-800';
+            'Registered': 'bg-gray-100 text-gray-800 border border-gray-300',
+            'Admitted': 'bg-gray-800 text-white border border-gray-800',
+            'Discharged': 'bg-gray-300 text-gray-700 border border-gray-400'
+        }[patient.tag] || 'bg-gray-100 text-gray-800 border border-gray-300';
         
         row.innerHTML = `
             <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showPatientDetail('${patient.info.id}')">${patient.info.id}</td>
@@ -478,12 +478,12 @@ function displayAppointments(appointments) {
         row.className = 'border-b hover:bg-gray-50';
         
         const statusColor = {
-            'Requested': 'bg-yellow-100 text-yellow-800',
-            'Confirmed': 'bg-blue-100 text-blue-800',
-            'CheckedIn': 'bg-green-100 text-green-800',
-            'InProgress': 'bg-purple-100 text-purple-800',
-            'Completed': 'bg-gray-100 text-gray-800'
-        }[appointment.tag] || 'bg-gray-100 text-gray-800';
+            'Requested': 'bg-gray-100 text-gray-700 border border-gray-300',
+            'Confirmed': 'bg-gray-200 text-gray-800 border border-gray-400',
+            'CheckedIn': 'bg-gray-600 text-white border border-gray-600',
+            'InProgress': 'bg-gray-800 text-white border border-gray-800',
+            'Completed': 'bg-black text-white border border-black'
+        }[appointment.tag] || 'bg-gray-100 text-gray-800 border border-gray-300';
         
         const patientName = getPatientName(appointment.info.patientId);
         const appointmentTime = appointment.info.timeSlot ? 
@@ -610,12 +610,12 @@ function displayPrescriptions(prescriptions) {
         row.className = 'border-b hover:bg-gray-50';
         
         const statusColor = {
-            'Created': 'bg-yellow-100 text-yellow-800',
-            'Submitted': 'bg-blue-100 text-blue-800',
-            'InPreparation': 'bg-purple-100 text-purple-800',
-            'Prepared': 'bg-green-100 text-green-800',
-            'Dispensed': 'bg-gray-100 text-gray-800'
-        }[prescription.tag] || 'bg-gray-100 text-gray-800';
+            'Created': 'bg-gray-100 text-gray-700 border border-gray-300',
+            'Submitted': 'bg-gray-200 text-gray-800 border border-gray-400',
+            'InPreparation': 'bg-gray-500 text-white border border-gray-500',
+            'Prepared': 'bg-gray-700 text-white border border-gray-700',
+            'Dispensed': 'bg-black text-white border border-black'
+        }[prescription.tag] || 'bg-gray-100 text-gray-800 border border-gray-300';
         
         const patientName = getPatientName(prescription.info.patientId);
         const mainMedication = prescription.info.items && prescription.info.items.length > 0 ? 
@@ -821,12 +821,12 @@ function displayServices(services) {
         row.className = 'border-b hover:bg-gray-50';
         
         const statusColor = {
-            'Requested': 'bg-yellow-100 text-yellow-800',
-            'Scheduled': 'bg-blue-100 text-blue-800',
-            'InPreparation': 'bg-purple-100 text-purple-800',
-            'InProgress': 'bg-green-100 text-green-800',
-            'Completed': 'bg-gray-100 text-gray-800'
-        }[service.tag] || 'bg-gray-100 text-gray-800';
+            'Requested': 'bg-gray-100 text-gray-700 border border-gray-300',
+            'Scheduled': 'bg-gray-200 text-gray-800 border border-gray-400',
+            'InPreparation': 'bg-gray-500 text-white border border-gray-500',
+            'InProgress': 'bg-gray-700 text-white border border-gray-700',
+            'Completed': 'bg-black text-white border border-black'
+        }[service.tag] || 'bg-gray-100 text-gray-800 border border-gray-300';
         
         const patientName = getPatientName(service.info.patientId);
         const serviceName = service.info.description || '未設定';

@@ -96,6 +96,12 @@ document.getElementById('detailModal').addEventListener('click', (e) => {
 });
 
 // ========== 通用函數 ==========
+// 根據患者ID獲取患者姓名
+function getPatientName(patientId) {
+    const patient = allPatients.find(p => p.info.id === patientId);
+    return patient ? patient.info.name : '未知患者';
+}
+
 async function loadPatientOptions(selectElementId) {
     const result = await apiRequest(`${API_BASE}/patients`);
     if (result.success) {
@@ -293,7 +299,7 @@ async function showServiceDetail(serviceId) {
                 <div class="grid grid-cols-2 gap-4 text-sm">
                     <div><span class="font-medium">服務 ID:</span> ${service.info.id}</div>
                     <div><span class="font-medium">患者:</span> ${patientName} (${service.info.patientId})</div>
-                    <div><span class="font-medium">服務名稱:</span> ${service.info.serviceName}</div>
+                    <div><span class="font-medium">服務名稱:</span> ${service.info.description}</div>
                     <div><span class="font-medium">服務類型:</span> ${service.info.serviceType}</div>
                     <div><span class="font-medium">優先度:</span> ${service.info.priority}</div>
                     <div><span class="font-medium">預估時間:</span> ${service.info.estimatedDuration} 分鐘</div>
@@ -333,7 +339,7 @@ async function showServiceDetail(serviceId) {
         </div>
     `;
 
-    showModal(`醫療服務詳細信息 - ${service.info.serviceName}`, content);
+    showModal(`醫療服務詳細信息 - ${service.info.description}`, content);
 }
 
 // ========== 病患管理 ==========
@@ -360,8 +366,9 @@ function displayPatients(patients) {
         }[patient.tag] || 'bg-gray-100 text-gray-800';
         
         row.innerHTML = `
-            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showPatientDetail('${patient.info.id}')">${patient.info.id}</td>
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600" onclick="showPatientDetail('${patient.info.id}')">${patient.info.name}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium" onclick="showPatientDetail('${patient.info.id}')">${patient.info.name}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showPatientDetail('${patient.info.id}')">${patient.info.birthDate}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showPatientDetail('${patient.info.id}')">${patient.info.gender === 'Male' ? '男' : '女'}</td>
             <td class="px-4 py-2">
                 <span class="px-2 py-1 rounded-full text-xs ${statusColor}">
                     ${patient.tag}
@@ -461,9 +468,14 @@ function displayAppointments(appointments) {
             'Completed': 'bg-gray-100 text-gray-800'
         }[appointment.tag] || 'bg-gray-100 text-gray-800';
         
+        const patientName = getPatientName(appointment.info.patientId);
+        const appointmentTime = appointment.info.timeSlot ? 
+            new Date(appointment.info.timeSlot.start).toLocaleString('zh-TW') : '未設定';
+        
         row.innerHTML = `
-            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showAppointmentDetail('${appointment.info.id}')">${appointment.info.id}</td>
-            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showAppointmentDetail('${appointment.info.id}')">${appointment.info.patientId}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium" onclick="showAppointmentDetail('${appointment.info.id}')">${patientName}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showAppointmentDetail('${appointment.info.id}')">${appointment.info.department || '未設定'}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showAppointmentDetail('${appointment.info.id}')">${appointmentTime}</td>
             <td class="px-4 py-2">
                 <span class="px-2 py-1 rounded-full text-xs ${statusColor}">
                     ${appointment.tag}
@@ -587,9 +599,15 @@ function displayPrescriptions(prescriptions) {
             'Dispensed': 'bg-gray-100 text-gray-800'
         }[prescription.tag] || 'bg-gray-100 text-gray-800';
         
+        const patientName = getPatientName(prescription.info.patientId);
+        const mainMedication = prescription.info.items && prescription.info.items.length > 0 ? 
+            prescription.info.items[0].medication.name : '未設定';
+        const createdTime = new Date(prescription.createdAt).toLocaleString('zh-TW');
+        
         row.innerHTML = `
-            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showPrescriptionDetail('${prescription.info.id}')">${prescription.info.id}</td>
-            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showPrescriptionDetail('${prescription.info.id}')">${prescription.info.patientId}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium" onclick="showPrescriptionDetail('${prescription.info.id}')">${patientName}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showPrescriptionDetail('${prescription.info.id}')">${mainMedication}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showPrescriptionDetail('${prescription.info.id}')">${createdTime}</td>
             <td class="px-4 py-2">
                 <span class="px-2 py-1 rounded-full text-xs ${statusColor}">
                     ${prescription.tag}
@@ -791,10 +809,16 @@ function displayServices(services) {
             'Completed': 'bg-gray-100 text-gray-800'
         }[service.tag] || 'bg-gray-100 text-gray-800';
         
+        const patientName = getPatientName(service.info.patientId);
+        const serviceName = service.info.description || '未設定';
+        const serviceType = service.info.serviceType || '未設定';
+        const priority = service.info.priority || '未設定';
+        
         row.innerHTML = `
-            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showServiceDetail('${service.info.id}')">${service.info.id}</td>
-            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showServiceDetail('${service.info.id}')">${service.info.patientId}</td>
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600" onclick="showServiceDetail('${service.info.id}')">${service.info.serviceName}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium" onclick="showServiceDetail('${service.info.id}')">${patientName}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showServiceDetail('${service.info.id}')">${serviceName}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showServiceDetail('${service.info.id}')">${serviceType}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showServiceDetail('${service.info.id}')">${priority}</td>
             <td class="px-4 py-2">
                 <span class="px-2 py-1 rounded-full text-xs ${statusColor}">
                     ${service.tag}
@@ -1092,7 +1116,7 @@ document.getElementById('serviceForm').addEventListener('submit', async (e) => {
     const serviceData = {
         patientId: document.getElementById('servicePatientId').value,
         serviceType: document.getElementById('serviceType').value,
-        serviceName: document.getElementById('serviceName').value,
+        description: document.getElementById('serviceName').value,
         priority: document.getElementById('servicePriority').value,
         estimatedDuration: parseInt(document.getElementById('serviceDuration').value),
         requestedBy: document.getElementById('serviceRequestedBy').value,

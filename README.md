@@ -68,8 +68,6 @@ mini-HIS/
 
 ```bash
 node --experimental-strip-types src/index.ts
-node --experimental-strip-types examples/patient-workflow.ts
-node --experimental-strip-types examples/prescription-workflow.ts
 ```
 
 ## 核心模組說明

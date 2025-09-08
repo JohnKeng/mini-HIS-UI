@@ -9,24 +9,24 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        'medical-blue': '#2563eb',
-                        'medical-green': '#059669',
-                        'medical-red': '#dc2626',
-                        'medical-gray': '#6b7280'
+                    fontFamily: {
+                        'sans': ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     }
                 }
             }
         }
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-white min-h-screen font-sans">
     <!-- 導航列 -->
-    <nav class="bg-medical-blue text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-between items-center py-4">
-                <h1 class="text-2xl font-bold">mini-HIS 醫院資訊系統</h1>
-                <div class="text-sm">
+    <nav class="bg-black text-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex justify-between items-center py-6">
+                <h1 class="text-2xl font-semibold tracking-tight">mini-HIS 醫院資訊系統</h1>
+                <div class="text-sm font-medium text-gray-300">
                     TypeScript + ADT 示範專案
                 </div>
             </div>
@@ -34,29 +34,25 @@
     </nav>
 
     <!-- 主要內容 -->
-    <div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="max-w-7xl mx-auto px-6 py-12">
         <!-- 功能選單 -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <button id="patientBtn" class="bg-medical-blue text-white px-6 py-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2">
-                <span class="text-2xl">👤</span>
-                <span class="font-semibold">病患管理</span>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+            <button id="patientBtn" class="bg-white border-2 border-gray-200 text-gray-900 px-8 py-6 rounded-lg hover:border-black hover:shadow-lg transition-all duration-200 flex items-center justify-center">
+                <span class="font-medium text-lg">病患管理</span>
             </button>
-            <button id="appointmentBtn" class="bg-medical-green text-white px-6 py-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2">
-                <span class="text-2xl">📅</span>
-                <span class="font-semibold">預約系統</span>
+            <button id="appointmentBtn" class="bg-black border-2 border-black text-white px-8 py-6 rounded-lg hover:bg-gray-900 transition-all duration-200 flex items-center justify-center">
+                <span class="font-medium text-lg">預約系統</span>
             </button>
-            <button id="prescriptionBtn" class="bg-yellow-500 text-white px-6 py-4 rounded-lg hover:bg-yellow-600 transition-colors flex items-center justify-center space-x-2">
-                <span class="text-2xl">💊</span>
-                <span class="font-semibold">處方管理</span>
+            <button id="prescriptionBtn" class="bg-white border-2 border-gray-200 text-gray-900 px-8 py-6 rounded-lg hover:border-black hover:shadow-lg transition-all duration-200 flex items-center justify-center">
+                <span class="font-medium text-lg">處方管理</span>
             </button>
-            <button id="serviceBtn" class="bg-purple-500 text-white px-6 py-4 rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center space-x-2">
-                <span class="text-2xl">🏥</span>
-                <span class="font-semibold">醫療服務</span>
+            <button id="serviceBtn" class="bg-white border-2 border-gray-200 text-gray-900 px-8 py-6 rounded-lg hover:border-black hover:shadow-lg transition-all duration-200 flex items-center justify-center">
+                <span class="font-medium text-lg">醫療服務</span>
             </button>
         </div>
 
         <!-- 內容區域 -->
-        <div id="content" class="bg-white rounded-lg shadow-md p-6">
+        <div id="content" class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
             <!-- 病患管理面板 -->
             <div id="patientPanel" class="panel">
                 <h2 class="text-2xl font-bold mb-6 text-gray-800">病患管理</h2>

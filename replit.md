@@ -51,11 +51,13 @@ mini-HIS/
 - **Modularity**: Separate modules for each domain with clear interfaces
 
 ## Recent Changes (Major Update)
-- **Added Web Interface**: Complete frontend with TailwindCSS and vanilla JavaScript
+- **UI Improvements**: Gender selection as radio buttons, patient selection as dropdowns, main navigation as buttons  
+- **Modal Popups**: Added detailed information modals for all four main sections (Patient, Appointment, Prescription, Medical Service)
+- **Enhanced UX**: Automatic patient loading for dropdowns, clickable list items with hover effects
+- **JSON Database Migration**: Switched from CSV to JSON database for better reliability and error handling
 - **Database Abstraction**: Implemented CQRS pattern for database operations
 - **Backend API**: Express server with RESTful endpoints
 - **Project Restructure**: Moved public to src/public, added database layer
-- **CSV Database**: Simulation layer that can be easily replaced with real databases
 
 ## User Preferences
 - Focus on CSV database implementation (no multi-database code complexity)

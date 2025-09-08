@@ -44,9 +44,13 @@
       }
     },
     {
-      "tag": "Registered",
+      "tag": "Admitted",
       "patientId": "pt-1757336325133",
       "registeredAt": "2025-09-08T12:58:45.133Z",
+      "admittedAt": "2025-09-08T13:08:36.365Z",
+      "wardNumber": "ward-101",
+      "bedNumber": "bed-05",
+      "attendingDoctorId": "doc-001",
       "info": {
         "id": "pt-1757336324561",
         "name": "John",
@@ -60,7 +64,8 @@
           "postalCode": "110",
           "country": "台灣"
         }
-      }
+      },
+      "diagnoses": []
     },
     {
       "tag": "Registered",
@@ -101,6 +106,31 @@
       "confirmationNumber": "CONF-1757336643560",
       "checkedInAt": "2025-09-08T13:04:06.522Z",
       "startedAt": "2025-09-08T13:04:08.702Z"
+    },
+    {
+      "tag": "Requested",
+      "info": {
+        "id": "appt-1757336908284"
+      },
+      "requestedAt": "2025-09-08T13:08:28.284Z"
+    },
+    {
+      "tag": "CheckedIn",
+      "info": {
+        "id": "appt-1757336943722",
+        "patientId": "pt-web-001",
+        "doctorId": "doc-001",
+        "department": "Cardiology",
+        "timeSlot": {
+          "start": "2025-09-08T13:08:00.000Z",
+          "end": "2025-09-08T13:38:00.000Z"
+        },
+        "purpose": "睡覺"
+      },
+      "requestedAt": "2025-09-08T13:09:03.722Z",
+      "confirmedAt": "2025-09-08T13:09:08.934Z",
+      "confirmationNumber": "CONF-1757336948385",
+      "checkedInAt": "2025-09-08T13:09:10.343Z"
     }
   ],
   "prescriptions": [
@@ -135,11 +165,38 @@
       "preparedAt": "2025-09-08T13:04:29.892Z",
       "pharmacistId": "pharm-001",
       "verificationNotes": "已確認藥物劑量和交互作用"
+    },
+    {
+      "tag": "Created",
+      "info": {
+        "id": "rx-1757336960975",
+        "patientId": "pt-ui-test",
+        "doctorId": "doc-001",
+        "items": [
+          {
+            "medicationId": "med-001",
+            "medication": {
+              "id": "med-001",
+              "name": "阿斯匹靈",
+              "code": "ASPIRIN",
+              "dosageForm": "錠劑",
+              "strength": "100mg"
+            },
+            "dosage": "1 錠",
+            "frequency": "每日三次",
+            "route": "口服",
+            "duration": "7 天",
+            "instructions": "飯後服用"
+          }
+        ],
+        "notes": "緩解疼痛和發炎"
+      },
+      "createdAt": "2025-09-08T13:09:20.975Z"
     }
   ],
   "services": [
     {
-      "tag": "InPreparation",
+      "tag": "InProgress",
       "info": {
         "id": "svc-1757336684203",
         "patientId": "pt-json-001",
@@ -159,6 +216,7 @@
       "scheduledBy": "staff-001",
       "scheduledTime": "2025-09-10T13:04:48.414Z",
       "preparationStartedAt": "2025-09-08T13:04:55.928Z",
+      "startedAt": "2025-09-08T13:09:35.392Z",
       "assignedStaff": [
         {
           "id": "staff-003",
@@ -173,7 +231,47 @@
         }
       ],
       "location": "Room 305",
-      "preparationNotes": "準備 X 光設備"
+      "actualStaff": [
+        {
+          "id": "staff-002",
+          "name": "張醫師",
+          "birthDate": "1980-01-01",
+          "gender": "Male",
+          "contactNumber": "0900000000",
+          "staffType": "Doctor",
+          "department": "Radiology",
+          "specialization": "Radiology",
+          "licenseNumber": "LIC-DOCTOR-002"
+        }
+      ],
+      "progressNotes": [
+        "病患已就位",
+        "開始檢查"
+      ]
+    },
+    {
+      "tag": "Scheduled",
+      "info": {
+        "id": "svc-1757336911962"
+      },
+      "requestedAt": "2025-09-08T13:08:31.962Z",
+      "scheduledAt": "2025-09-08T13:09:39.143Z",
+      "scheduledBy": "staff-001",
+      "scheduledTime": "2025-09-10T13:09:36.220Z",
+      "assignedStaff": [
+        {
+          "id": "staff-002",
+          "name": "張醫師",
+          "birthDate": "1980-01-01",
+          "gender": "Male",
+          "contactNumber": "0900000000",
+          "staffType": "Doctor",
+          "department": "Radiology",
+          "specialization": "Radiology",
+          "licenseNumber": "LIC-DOCTOR-002"
+        }
+      ],
+      "location": "Room 305"
     }
   ]
 }

@@ -136,75 +136,20 @@
   ],
   "services": [
     {
-      "tag": "InProgress",
-      "info": {
-        "id": "svc-1757336684203",
-        "patientId": "pt-json-001",
-        "serviceType": "Consultation",
-        "description": "X光檢查",
-        "priority": "Normal",
-        "estimatedDuration": 45,
-        "requiredResources": [
-          "X光機",
-          "技術人員"
-        ],
-        "notes": "檢查胸部"
-      },
-      "requestedAt": "2025-09-08T13:04:44.203Z",
-      "requestedBy": "doc-001",
-      "scheduledAt": "2025-09-08T13:04:51.653Z",
-      "scheduledBy": "staff-001",
-      "scheduledTime": "2025-09-10T13:04:48.414Z",
-      "preparationStartedAt": "2025-09-08T13:04:55.928Z",
-      "startedAt": "2025-09-08T13:09:35.392Z",
-      "assignedStaff": [
-        {
-          "id": "staff-003",
-          "name": "李技師",
-          "birthDate": "1988-02-02",
-          "gender": "Female",
-          "contactNumber": "0900000001",
-          "staffType": "LabTechnician",
-          "department": "Radiology",
-          "specialization": "Imaging",
-          "licenseNumber": "LIC-TECH-003"
-        }
-      ],
-      "location": "Room 305",
-      "actualStaff": [
-        {
-          "id": "staff-002",
-          "name": "張醫師",
-          "birthDate": "1980-01-01",
-          "gender": "Male",
-          "contactNumber": "0900000000",
-          "staffType": "Doctor",
-          "department": "Radiology",
-          "specialization": "Radiology",
-          "licenseNumber": "LIC-DOCTOR-002"
-        }
-      ],
-      "progressNotes": [
-        "病患已就位",
-        "開始檢查"
-      ]
-    },
-    {
       "tag": "Requested",
       "info": {
-        "id": "svc-1757339919975",
+        "id": "svc-1757340385702",
         "patientId": "pt-1757339824164",
-        "serviceType": "Laboratory",
-        "description": "X光檢查",
+        "serviceType": "Surgery",
         "priority": "Emergency",
         "estimatedDuration": 45,
         "requiredResources": [
           "X光機",
           "技術人員"
         ],
-        "notes": "檢查胸部"
+        "notes": "大力切"
       },
-      "requestedAt": "2025-09-08T13:58:39.975Z",
+      "requestedAt": "2025-09-08T14:06:25.702Z",
       "requestedBy": "doc-001"
     }
   ]

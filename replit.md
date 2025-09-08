@@ -10,10 +10,6 @@ mini-HIS/
 │   ├── types/        # Type definitions
 │   ├── models/       # Model definitions (Patient, Appointment, Prescription, MedicalService)
 │   └── index.ts      # Main entry point - full hospital workflow demo
-├── examples/         # Example workflows
-│   ├── patient-workflow.ts      # Patient state management example
-│   └── prescription-workflow.ts # Prescription workflow example
-└── learn/           # Documentation and learning materials
 ```
 
 ## Current Status
@@ -28,8 +24,6 @@ mini-HIS/
 ## Available Scripts
 - `npm run start` - Run main hospital system demo
 - `npm run dev` - Development mode (same as start)
-- `npm run example:patient` - Run patient workflow example
-- `npm run example:prescription` - Run prescription workflow example
 
 ## Key Features
 - Type-safe state machines using TypeScript union types

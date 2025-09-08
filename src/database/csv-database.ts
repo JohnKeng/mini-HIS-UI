@@ -80,7 +80,7 @@ export class CSVDatabase implements Database {
     return [
       table.trim(),
       id.trim(),
-      data.startsWith('"') && data.endsWith('"') ? data.slice(1, -1) : data.trim()
+      data.startsWith('"') && data.endsWith('"') ? data.slice(1, -1).replace(/""/g, '"') : data.trim()
     ];
   }
 

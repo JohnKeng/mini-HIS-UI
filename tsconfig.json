@@ -2,27 +2,19 @@
   "compilerOptions": {
     // --- 核心設定 (Core Options) ---
     "target": "ES2020",
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     
-    // --- 只檢查，不產出任何檔案 ---
-    "noEmit": true,
-    "allowImportingTsExtensions": true, // 在 noEmit 模式下，此選項可以安全使用
+    // --- 輸出設定 ---
+    "outDir": "./dist",
+    "rootDir": "./",
 
     // --- 程式碼品質與輔助 ---
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-
-    // --- 以下是 "strict": true 已包含的選項，為簡潔起見可省略 ---
-    // "noImplicitAny": true,
-    // "strictNullChecks": true,
-    // "strictFunctionTypes": true,
-    // "strictBindCallApply": true,
-    // "strictPropertyInitialization": true,
-    // "noImplicitThis": true,
-    // "alwaysStrict": true,
 
     // --- 推薦保留的額外檢查 ---
     "noUnusedLocals": true,
@@ -30,11 +22,15 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
+  "ts-node": {
+    "esm": true
+  },
   "include": [
     "src/**/*",
     "examples/**/*"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }

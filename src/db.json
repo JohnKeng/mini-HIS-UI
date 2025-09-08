@@ -90,25 +90,6 @@
         }
       },
       "diagnoses": []
-    },
-    {
-      "tag": "Registered",
-      "patientId": "pt-1757337839227",
-      "registeredAt": "2025-09-08T13:23:59.227Z",
-      "info": {
-        "id": "pt-node22-test",
-        "name": "Node22測試患者",
-        "birthDate": "1995-06-15",
-        "gender": "Male",
-        "contactNumber": "0988776655",
-        "address": {
-          "street": "Node22街",
-          "city": "台北市",
-          "state": "中正區",
-          "postalCode": "100",
-          "country": "台灣"
-        }
-      }
     }
   ],
   "appointments": [
@@ -130,13 +111,6 @@
       "confirmationNumber": "CONF-1757336643560",
       "checkedInAt": "2025-09-08T13:04:06.522Z",
       "startedAt": "2025-09-08T13:04:08.702Z"
-    },
-    {
-      "tag": "Requested",
-      "info": {
-        "id": "appt-1757336908284"
-      },
-      "requestedAt": "2025-09-08T13:08:28.284Z"
     },
     {
       "tag": "CheckedIn",
@@ -191,33 +165,6 @@
       "pharmacistId": "pharm-001",
       "dispensedBy": "pharm-001",
       "patientInstructions": "請按照指示服用藥物，如有不適請立即聯繫醫生"
-    },
-    {
-      "tag": "Created",
-      "info": {
-        "id": "rx-1757336960975",
-        "patientId": "pt-ui-test",
-        "doctorId": "doc-001",
-        "items": [
-          {
-            "medicationId": "med-001",
-            "medication": {
-              "id": "med-001",
-              "name": "阿斯匹靈",
-              "code": "ASPIRIN",
-              "dosageForm": "錠劑",
-              "strength": "100mg"
-            },
-            "dosage": "1 錠",
-            "frequency": "每日三次",
-            "route": "口服",
-            "duration": "7 天",
-            "instructions": "飯後服用"
-          }
-        ],
-        "notes": "緩解疼痛和發炎"
-      },
-      "createdAt": "2025-09-08T13:09:20.975Z"
     }
   ],
   "services": [
@@ -274,30 +221,6 @@
         "病患已就位",
         "開始檢查"
       ]
-    },
-    {
-      "tag": "Scheduled",
-      "info": {
-        "id": "svc-1757336911962"
-      },
-      "requestedAt": "2025-09-08T13:08:31.962Z",
-      "scheduledAt": "2025-09-08T13:09:39.143Z",
-      "scheduledBy": "staff-001",
-      "scheduledTime": "2025-09-10T13:09:36.220Z",
-      "assignedStaff": [
-        {
-          "id": "staff-002",
-          "name": "張醫師",
-          "birthDate": "1980-01-01",
-          "gender": "Male",
-          "contactNumber": "0900000000",
-          "staffType": "Doctor",
-          "department": "Radiology",
-          "specialization": "Radiology",
-          "licenseNumber": "LIC-DOCTOR-002"
-        }
-      ],
-      "location": "Room 305"
     }
   ]
 }

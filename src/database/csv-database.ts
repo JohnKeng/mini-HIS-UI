@@ -66,23 +66,27 @@ export class CSVDatabase implements Database {
   }
 
   private parseCSVLine(line: string): [string, string, string] {
-    // 使用正規表達式來正確解析 CSV，處理引號內的逗號
-    const match = line.match(/^([^,]*),([^,]*),(.*)$/);
-    if (!match) {
+    // 正確解析 CSV：找到前兩個逗號，其餘都是 JSON 資料
+    const firstComma = line.indexOf(',');
+    const secondComma = line.indexOf(',', firstComma + 1);
+    
+    if (firstComma === -1 || secondComma === -1) {
       return ['', '', ''];
     }
     
-    const [, table, id, data] = match;
+    const table = line.substring(0, firstComma).trim();
+    const id = line.substring(firstComma + 1, secondComma).trim();
+    const dataField = line.substring(secondComma + 1);
     
     // 處理 CSV 中被雙引號包圍的 JSON 字串
-    let cleanData = data.trim();
+    let cleanData = dataField.trim();
     if (cleanData.startsWith('"') && cleanData.endsWith('"')) {
       cleanData = cleanData.slice(1, -1);
       // 將 CSV 轉義的雙引號 ("") 轉換回正常的雙引號 (")
       cleanData = cleanData.replace(/""/g, '"');
     }
     
-    return [table.trim(), id.trim(), cleanData];
+    return [table, id, cleanData];
   }
 
   private getEntityId(entity: EntityState): string {

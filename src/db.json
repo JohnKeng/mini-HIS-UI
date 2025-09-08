@@ -100,10 +100,10 @@
   ],
   "prescriptions": [
     {
-      "tag": "Dispensed",
+      "tag": "Created",
       "info": {
-        "id": "rx-1757336658523",
-        "patientId": "pt-1757336324561",
+        "id": "rx-1757340631888",
+        "patientId": "pt-1757339824164",
         "doctorId": "doc-001",
         "items": [
           {
@@ -124,14 +124,7 @@
         ],
         "notes": "緩解疼痛和發炎"
       },
-      "createdAt": "2025-09-08T13:04:18.522Z",
-      "submittedAt": "2025-09-08T13:04:21.613Z",
-      "preparationStartedAt": "2025-09-08T13:04:25.481Z",
-      "preparedAt": "2025-09-08T13:04:29.892Z",
-      "dispensedAt": "2025-09-08T13:30:06.000Z",
-      "pharmacistId": "pharm-001",
-      "dispensedBy": "pharm-001",
-      "patientInstructions": "請按照指示服用藥物，如有不適請立即聯繫醫生"
+      "createdAt": "2025-09-08T14:10:31.888Z"
     }
   ],
   "services": [

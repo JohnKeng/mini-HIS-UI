@@ -3,9 +3,7 @@ import type { AppointmentState } from '../models/Appointment.ts';
 import type { PrescriptionState } from '../models/Prescription.ts';
 import type { ServiceState } from '../models/MedicalService.ts';
 
-export type EntityState = PatientState | AppointmentState | PrescriptionState | ServiceState;
-
-export interface DatabaseInterface {
+export interface Database {
   // 病患操作
   createPatient(id: string, data: PatientState): Promise<boolean>;
   readPatient(id: string): Promise<PatientState | null>;
@@ -33,16 +31,4 @@ export interface DatabaseInterface {
   updateService(id: string, data: ServiceState): Promise<boolean>;
   deleteService(id: string): Promise<boolean>;
   findAllServices(): Promise<ServiceState[]>;
-}
-
-export interface DatabaseConfig {
-  type: 'csv' | 'json' | 'sqlite' | 'postgresql';
-  connection?: {
-    host?: string;
-    port?: number;
-    database?: string;
-    username?: string;
-    password?: string;
-  };
-  file?: string;
 }

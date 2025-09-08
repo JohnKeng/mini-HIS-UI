@@ -1,11 +1,13 @@
 import fs from 'fs/promises';
-import type { DatabaseInterface, EntityState } from './interface.ts';
+import type { Database } from './interface.ts';
 import type { PatientState } from '../models/Patient.ts';
 import type { AppointmentState } from '../models/Appointment.ts';
 import type { PrescriptionState } from '../models/Prescription.ts';
 import type { ServiceState } from '../models/MedicalService.ts';
 
-export class CSVDatabase implements DatabaseInterface {
+type EntityState = PatientState | AppointmentState | PrescriptionState | ServiceState;
+
+export class CSVDatabase implements Database {
   private csvPath: string;
   private cache: Map<string, EntityState[]> = new Map();
   
@@ -64,7 +66,6 @@ export class CSVDatabase implements DatabaseInterface {
   }
 
   private parseCSVLine(line: string): [string, string, string] {
-    // 簡單的 CSV 解析，處理包含逗號的 JSON
     const firstComma = line.indexOf(',');
     const secondComma = line.indexOf(',', firstComma + 1);
     
@@ -76,7 +77,6 @@ export class CSVDatabase implements DatabaseInterface {
     const id = line.substring(firstComma + 1, secondComma);
     const data = line.substring(secondComma + 1);
     
-    // 移除引號
     return [
       table.trim(),
       id.trim(),
@@ -107,83 +107,199 @@ export class CSVDatabase implements DatabaseInterface {
     await fs.writeFile(this.csvPath, lines.join('\n') + '\n', 'utf-8');
   }
 
-  async create(table: EntityType, id: string, data: EntityState): Promise<boolean> {
+  // 病患操作
+  async createPatient(id: string, data: PatientState): Promise<boolean> {
     await this.loadData();
-    
-    if (!this.cache.has(table)) {
-      this.cache.set(table, []);
+    if (!this.cache.has('patients')) {
+      this.cache.set('patients', []);
     }
-    
-    const tableData = this.cache.get(table)!;
+    const tableData = this.cache.get('patients')!;
     const exists = tableData.some(item => this.getEntityId(item) === id);
-    
-    if (exists) {
-      return false; // 已存在
-    }
-    
+    if (exists) return false;
     tableData.push(data);
     await this.saveData();
     return true;
   }
 
-  async read(table: EntityType, id: string): Promise<EntityState | null> {
+  async readPatient(id: string): Promise<PatientState | null> {
     await this.loadData();
-    
-    const tableData = this.cache.get(table);
-    if (!tableData) {
-      return null;
-    }
-    
-    return tableData.find(item => this.getEntityId(item) === id) || null;
+    const tableData = this.cache.get('patients');
+    if (!tableData) return null;
+    return (tableData.find(item => this.getEntityId(item) === id) as PatientState) || null;
   }
 
-  async update(table: EntityType, id: string, data: EntityState): Promise<boolean> {
+  async updatePatient(id: string, data: PatientState): Promise<boolean> {
     await this.loadData();
-    
-    const tableData = this.cache.get(table);
-    if (!tableData) {
-      return false;
-    }
-    
+    const tableData = this.cache.get('patients');
+    if (!tableData) return false;
     const index = tableData.findIndex(item => this.getEntityId(item) === id);
-    if (index === -1) {
-      return false;
-    }
-    
+    if (index === -1) return false;
     tableData[index] = data;
     await this.saveData();
     return true;
   }
 
-  async delete(table: EntityType, id: string): Promise<boolean> {
+  async deletePatient(id: string): Promise<boolean> {
     await this.loadData();
-    
-    const tableData = this.cache.get(table);
-    if (!tableData) {
-      return false;
-    }
-    
+    const tableData = this.cache.get('patients');
+    if (!tableData) return false;
     const index = tableData.findIndex(item => this.getEntityId(item) === id);
-    if (index === -1) {
-      return false;
-    }
-    
+    if (index === -1) return false;
     tableData.splice(index, 1);
     await this.saveData();
     return true;
   }
 
-  async findAll(table: EntityType): Promise<EntityState[]> {
+  async findAllPatients(): Promise<PatientState[]> {
     await this.loadData();
-    
-    const tableData = this.cache.get(table);
-    return tableData ? [...tableData] : [];
+    const tableData = this.cache.get('patients');
+    return tableData ? [...tableData] as PatientState[] : [];
   }
 
-  async findWhere(table: EntityType, condition: (item: EntityState) => boolean): Promise<EntityState[]> {
+  // 預約操作
+  async createAppointment(id: string, data: AppointmentState): Promise<boolean> {
     await this.loadData();
-    
-    const tableData = this.cache.get(table);
-    return tableData ? tableData.filter(condition) : [];
+    if (!this.cache.has('appointments')) {
+      this.cache.set('appointments', []);
+    }
+    const tableData = this.cache.get('appointments')!;
+    const exists = tableData.some(item => this.getEntityId(item) === id);
+    if (exists) return false;
+    tableData.push(data);
+    await this.saveData();
+    return true;
+  }
+
+  async readAppointment(id: string): Promise<AppointmentState | null> {
+    await this.loadData();
+    const tableData = this.cache.get('appointments');
+    if (!tableData) return null;
+    return (tableData.find(item => this.getEntityId(item) === id) as AppointmentState) || null;
+  }
+
+  async updateAppointment(id: string, data: AppointmentState): Promise<boolean> {
+    await this.loadData();
+    const tableData = this.cache.get('appointments');
+    if (!tableData) return false;
+    const index = tableData.findIndex(item => this.getEntityId(item) === id);
+    if (index === -1) return false;
+    tableData[index] = data;
+    await this.saveData();
+    return true;
+  }
+
+  async deleteAppointment(id: string): Promise<boolean> {
+    await this.loadData();
+    const tableData = this.cache.get('appointments');
+    if (!tableData) return false;
+    const index = tableData.findIndex(item => this.getEntityId(item) === id);
+    if (index === -1) return false;
+    tableData.splice(index, 1);
+    await this.saveData();
+    return true;
+  }
+
+  async findAllAppointments(): Promise<AppointmentState[]> {
+    await this.loadData();
+    const tableData = this.cache.get('appointments');
+    return tableData ? [...tableData] as AppointmentState[] : [];
+  }
+
+  // 處方操作
+  async createPrescription(id: string, data: PrescriptionState): Promise<boolean> {
+    await this.loadData();
+    if (!this.cache.has('prescriptions')) {
+      this.cache.set('prescriptions', []);
+    }
+    const tableData = this.cache.get('prescriptions')!;
+    const exists = tableData.some(item => this.getEntityId(item) === id);
+    if (exists) return false;
+    tableData.push(data);
+    await this.saveData();
+    return true;
+  }
+
+  async readPrescription(id: string): Promise<PrescriptionState | null> {
+    await this.loadData();
+    const tableData = this.cache.get('prescriptions');
+    if (!tableData) return null;
+    return (tableData.find(item => this.getEntityId(item) === id) as PrescriptionState) || null;
+  }
+
+  async updatePrescription(id: string, data: PrescriptionState): Promise<boolean> {
+    await this.loadData();
+    const tableData = this.cache.get('prescriptions');
+    if (!tableData) return false;
+    const index = tableData.findIndex(item => this.getEntityId(item) === id);
+    if (index === -1) return false;
+    tableData[index] = data;
+    await this.saveData();
+    return true;
+  }
+
+  async deletePrescription(id: string): Promise<boolean> {
+    await this.loadData();
+    const tableData = this.cache.get('prescriptions');
+    if (!tableData) return false;
+    const index = tableData.findIndex(item => this.getEntityId(item) === id);
+    if (index === -1) return false;
+    tableData.splice(index, 1);
+    await this.saveData();
+    return true;
+  }
+
+  async findAllPrescriptions(): Promise<PrescriptionState[]> {
+    await this.loadData();
+    const tableData = this.cache.get('prescriptions');
+    return tableData ? [...tableData] as PrescriptionState[] : [];
+  }
+
+  // 醫療服務操作
+  async createService(id: string, data: ServiceState): Promise<boolean> {
+    await this.loadData();
+    if (!this.cache.has('services')) {
+      this.cache.set('services', []);
+    }
+    const tableData = this.cache.get('services')!;
+    const exists = tableData.some(item => this.getEntityId(item) === id);
+    if (exists) return false;
+    tableData.push(data);
+    await this.saveData();
+    return true;
+  }
+
+  async readService(id: string): Promise<ServiceState | null> {
+    await this.loadData();
+    const tableData = this.cache.get('services');
+    if (!tableData) return null;
+    return (tableData.find(item => this.getEntityId(item) === id) as ServiceState) || null;
+  }
+
+  async updateService(id: string, data: ServiceState): Promise<boolean> {
+    await this.loadData();
+    const tableData = this.cache.get('services');
+    if (!tableData) return false;
+    const index = tableData.findIndex(item => this.getEntityId(item) === id);
+    if (index === -1) return false;
+    tableData[index] = data;
+    await this.saveData();
+    return true;
+  }
+
+  async deleteService(id: string): Promise<boolean> {
+    await this.loadData();
+    const tableData = this.cache.get('services');
+    if (!tableData) return false;
+    const index = tableData.findIndex(item => this.getEntityId(item) === id);
+    if (index === -1) return false;
+    tableData.splice(index, 1);
+    await this.saveData();
+    return true;
+  }
+
+  async findAllServices(): Promise<ServiceState[]> {
+    await this.loadData();
+    const tableData = this.cache.get('services');
+    return tableData ? [...tableData] as ServiceState[] : [];
   }
 }

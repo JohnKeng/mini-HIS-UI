@@ -39,7 +39,7 @@ import {
 import type { ServiceState } from './models/MedicalService.ts';
 
 import { isSuccess } from './types/results.ts';
-import { database } from './database/factory.ts';
+import { database } from './database/index.ts';
 
 const app = express();
 const port = 5000;
@@ -69,7 +69,7 @@ app.post('/api/patients', async (req, res) => {
   
   const result = registerPatient(patientInfo, patientId);
   if (isSuccess(result)) {
-    const saved = await database.create('patients', patientId, result.data);
+    const saved = await database.createPatient(patientId, result.data);
     if (saved) {
       return res.json({ success: true, data: result.data });
     } else {
@@ -82,7 +82,7 @@ app.post('/api/patients', async (req, res) => {
 
 app.get('/api/patients/:id', async (req, res) => {
   try {
-    const patient = await database.read('patients', req.params.id);
+    const patient = await database.readPatient(req.params.id);
     if (patient) {
       res.json({ success: true, data: patient });
     } else {
@@ -95,7 +95,7 @@ app.get('/api/patients/:id', async (req, res) => {
 
 app.get('/api/patients', async (_req, res) => {
   try {
-    const allPatients = await database.findAll('patients');
+    const allPatients = await database.findAllPatients();
     res.json({ success: true, data: allPatients });
   } catch (error) {
     res.status(500).json({ success: false, error: { message: 'Failed to fetch patients' } });
@@ -104,7 +104,7 @@ app.get('/api/patients', async (_req, res) => {
 
 app.post('/api/patients/:id/admit', async (req, res) => {
   try {
-    const patient = await database.read('patients', req.params.id);
+    const patient = await database.readPatient(req.params.id);
     if (!patient) {
       return res.status(404).json({ success: false, error: { message: 'Patient not found' } });
     }
@@ -117,7 +117,7 @@ app.post('/api/patients/:id/admit', async (req, res) => {
     const result = admitPatient(patient, wardNumber, bedNumber, attendingDoctorId);
     
     if (isSuccess(result)) {
-      const saved = await database.update('patients', req.params.id, result.data);
+      const saved = await database.updatePatient(req.params.id, result.data);
       if (saved) {
         return res.json({ success: true, data: result.data });
       } else {
@@ -127,13 +127,13 @@ app.post('/api/patients/:id/admit', async (req, res) => {
       return res.status(400).json({ success: false, error: result.error });
     }
   } catch (error) {
-    res.status(500).json({ success: false, error: { message: 'Failed to admit patient' } });
+    return res.status(500).json({ success: false, error: { message: 'Failed to admit patient' } });
   }
 });
 
 app.post('/api/patients/:id/discharge', async (req, res) => {
   try {
-    const patient = await database.read('patients', req.params.id);
+    const patient = await database.readPatient(req.params.id);
     if (!patient) {
       return res.status(404).json({ success: false, error: { message: 'Patient not found' } });
     }
@@ -146,7 +146,7 @@ app.post('/api/patients/:id/discharge', async (req, res) => {
     const result = dischargePatient(patient, summary, followUpDate);
     
     if (isSuccess(result)) {
-      const saved = await database.update('patients', req.params.id, result.data);
+      const saved = await database.updatePatient(req.params.id, result.data);
       if (saved) {
         return res.json({ success: true, data: result.data });
       } else {
@@ -156,7 +156,7 @@ app.post('/api/patients/:id/discharge', async (req, res) => {
       return res.status(400).json({ success: false, error: result.error });
     }
   } catch (error) {
-    res.status(500).json({ success: false, error: { message: 'Failed to discharge patient' } });
+    return res.status(500).json({ success: false, error: { message: 'Failed to discharge patient' } });
   }
 });
 
@@ -167,7 +167,7 @@ app.post('/api/appointments', async (req, res) => {
   
   if (isSuccess(result)) {
     const appointmentId = getEntityId(result.data);
-    const saved = await database.create('appointments', appointmentId, result.data);
+    const saved = await database.createAppointment(appointmentId, result.data);
     if (saved) {
       return res.json({ success: true, data: result.data });
     } else {
@@ -180,7 +180,7 @@ app.post('/api/appointments', async (req, res) => {
 
 app.get('/api/appointments', async (_req, res) => {
   try {
-    const allAppointments = await database.findAll('appointments');
+    const allAppointments = await database.findAllAppointments();
     res.json({ success: true, data: allAppointments });
   } catch (error) {
     res.status(500).json({ success: false, error: { message: 'Failed to fetch appointments' } });
@@ -188,7 +188,7 @@ app.get('/api/appointments', async (_req, res) => {
 });
 
 app.post('/api/appointments/:id/confirm', async (req, res) => {
-  const appointment = await database.read('appointments', req.params.id);
+  const appointment = await database.readAppointment(req.params.id);
   if (!appointment) {
     return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
   }
@@ -201,7 +201,7 @@ app.post('/api/appointments/:id/confirm', async (req, res) => {
   const result = confirmAppointment(appointment, confirmationNumber);
   
   if (isSuccess(result)) {
-    await database.update('appointments', req.params.id, result.data);
+    await database.updateAppointment(req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
@@ -209,7 +209,7 @@ app.post('/api/appointments/:id/confirm', async (req, res) => {
 });
 
 app.post('/api/appointments/:id/checkin', async (req, res) => {
-  const appointment = await database.read('appointments', req.params.id);
+  const appointment = await database.readAppointment(req.params.id);
   if (!appointment) {
     return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
   }
@@ -221,7 +221,7 @@ app.post('/api/appointments/:id/checkin', async (req, res) => {
   const result = checkInAppointment(appointment);
   
   if (isSuccess(result)) {
-    await database.update('appointments', req.params.id, result.data);
+    await database.updateAppointment(req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
@@ -229,7 +229,7 @@ app.post('/api/appointments/:id/checkin', async (req, res) => {
 });
 
 app.post('/api/appointments/:id/start', async (req, res) => {
-  const appointment = await database.read('appointments', req.params.id);
+  const appointment = await database.readAppointment(req.params.id);
   if (!appointment) {
     return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
   }
@@ -241,7 +241,7 @@ app.post('/api/appointments/:id/start', async (req, res) => {
   const result = startAppointment(appointment);
   
   if (isSuccess(result)) {
-    await database.update('appointments', req.params.id, result.data);
+    await database.updateAppointment(req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
@@ -249,7 +249,7 @@ app.post('/api/appointments/:id/start', async (req, res) => {
 });
 
 app.post('/api/appointments/:id/complete', async (req, res) => {
-  const appointment = await database.read('appointments', req.params.id);
+  const appointment = await database.readAppointment(req.params.id);
   if (!appointment) {
     return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
   }
@@ -262,7 +262,7 @@ app.post('/api/appointments/:id/complete', async (req, res) => {
   const result = completeAppointment(appointment, followUpNeeded, notes);
   
   if (isSuccess(result)) {
-    await database.update('appointments', req.params.id, result.data);
+    await database.updateAppointment(req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
@@ -275,7 +275,7 @@ app.post('/api/prescriptions', async (req, res) => {
   const result = createPrescription(patientId, doctorId, items, notes);
   
   if (isSuccess(result)) {
-    await database.create('prescriptions', getEntityId(result.data), result.data);
+    await database.createPrescription(getEntityId(result.data), result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
@@ -284,7 +284,7 @@ app.post('/api/prescriptions', async (req, res) => {
 
 app.get('/api/prescriptions', async (_req, res) => {
   try {
-    const allPrescriptions = await database.findAll('prescriptions');
+    const allPrescriptions = await database.findAllPrescriptions();
     res.json({ success: true, data: allPrescriptions });
   } catch (error) {
     res.status(500).json({ success: false, error: { message: 'Failed to fetch prescriptions' } });
@@ -292,7 +292,7 @@ app.get('/api/prescriptions', async (_req, res) => {
 });
 
 app.post('/api/prescriptions/:id/submit', async (req, res) => {
-  const prescription = await database.read('prescriptions', req.params.id);
+  const prescription = await database.readPrescription(req.params.id);
   if (!prescription) {
     return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
   }
@@ -304,7 +304,7 @@ app.post('/api/prescriptions/:id/submit', async (req, res) => {
   const result = submitPrescription(prescription);
   
   if (isSuccess(result)) {
-    await database.update('prescriptions', req.params.id, result.data);
+    await database.updatePrescription(req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
@@ -312,7 +312,7 @@ app.post('/api/prescriptions/:id/submit', async (req, res) => {
 });
 
 app.post('/api/prescriptions/:id/start-preparation', async (req, res) => {
-  const prescription = await database.read('prescriptions', req.params.id);
+  const prescription = await database.readPrescription(req.params.id);
   if (!prescription) {
     return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
   }
@@ -325,7 +325,7 @@ app.post('/api/prescriptions/:id/start-preparation', async (req, res) => {
   const result = startPrescriptionPreparation(prescription, pharmacistId);
   
   if (isSuccess(result)) {
-    await database.update('prescriptions', req.params.id, result.data);
+    await database.updatePrescription(req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
@@ -333,7 +333,7 @@ app.post('/api/prescriptions/:id/start-preparation', async (req, res) => {
 });
 
 app.post('/api/prescriptions/:id/complete-preparing', async (req, res) => {
-  const prescription = await database.read('prescriptions', req.params.id);
+  const prescription = await database.readPrescription(req.params.id);
   if (!prescription) {
     return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
   }
@@ -346,7 +346,7 @@ app.post('/api/prescriptions/:id/complete-preparing', async (req, res) => {
   const result = completePreparing(prescription, preparationNotes);
   
   if (isSuccess(result)) {
-    await database.update('prescriptions', req.params.id, result.data);
+    await database.updatePrescription(req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
@@ -354,7 +354,7 @@ app.post('/api/prescriptions/:id/complete-preparing', async (req, res) => {
 });
 
 app.post('/api/prescriptions/:id/dispense', async (req, res) => {
-  const prescription = await database.read('prescriptions', req.params.id);
+  const prescription = await database.readPrescription(req.params.id);
   if (!prescription) {
     return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
   }
@@ -367,7 +367,7 @@ app.post('/api/prescriptions/:id/dispense', async (req, res) => {
   const result = dispensePrescription(prescription, dispensedBy, instructions);
   
   if (isSuccess(result)) {
-    await database.update('prescriptions', req.params.id, result.data);
+    await database.updatePrescription(req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
@@ -380,7 +380,7 @@ app.post('/api/services', async (req, res) => {
   const result = requestService(patientId, serviceType, serviceName, priority, estimatedDuration, requestedBy, requiredResources, notes);
   
   if (isSuccess(result)) {
-    await database.create('services', getEntityId(result.data), result.data);
+    await database.createService(getEntityId(result.data), result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
@@ -389,7 +389,7 @@ app.post('/api/services', async (req, res) => {
 
 app.get('/api/services', async (_req, res) => {
   try {
-    const allServices = await database.findAll('services');
+    const allServices = await database.findAllServices();
     res.json({ success: true, data: allServices });
   } catch (error) {
     res.status(500).json({ success: false, error: { message: 'Failed to fetch services' } });
@@ -397,7 +397,7 @@ app.get('/api/services', async (_req, res) => {
 });
 
 app.post('/api/services/:id/schedule', async (req, res) => {
-  const service = await database.read('services', req.params.id);
+  const service = await database.readService(req.params.id);
   if (!service) {
     return res.status(404).json({ success: false, error: { message: 'Service not found' } });
   }
@@ -410,7 +410,7 @@ app.post('/api/services/:id/schedule', async (req, res) => {
   const result = scheduleService(service, scheduledTime, scheduledBy, staff, location);
   
   if (isSuccess(result)) {
-    await database.update('services', req.params.id, result.data);
+    await database.updateService(req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
@@ -418,7 +418,7 @@ app.post('/api/services/:id/schedule', async (req, res) => {
 });
 
 app.post('/api/services/:id/start-preparation', async (req, res) => {
-  const service = await database.read('services', req.params.id);
+  const service = await database.readService(req.params.id);
   if (!service) {
     return res.status(404).json({ success: false, error: { message: 'Service not found' } });
   }
@@ -431,7 +431,7 @@ app.post('/api/services/:id/start-preparation', async (req, res) => {
   const result = startServicePreparation(service, staff, location, preparationNotes);
   
   if (isSuccess(result)) {
-    await database.update('services', req.params.id, result.data);
+    await database.updateService(req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
@@ -439,7 +439,7 @@ app.post('/api/services/:id/start-preparation', async (req, res) => {
 });
 
 app.post('/api/services/:id/start', async (req, res) => {
-  const service = await database.read('services', req.params.id);
+  const service = await database.readService(req.params.id);
   if (!service) {
     return res.status(404).json({ success: false, error: { message: 'Service not found' } });
   }
@@ -452,7 +452,7 @@ app.post('/api/services/:id/start', async (req, res) => {
   const result = startService(service, performingStaff, serviceNotes);
   
   if (isSuccess(result)) {
-    await database.update('services', req.params.id, result.data);
+    await database.updateService(req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
@@ -460,7 +460,7 @@ app.post('/api/services/:id/start', async (req, res) => {
 });
 
 app.post('/api/services/:id/complete', async (req, res) => {
-  const service = await database.read('services', req.params.id);
+  const service = await database.readService(req.params.id);
   if (!service) {
     return res.status(404).json({ success: false, error: { message: 'Service not found' } });
   }
@@ -473,7 +473,7 @@ app.post('/api/services/:id/complete', async (req, res) => {
   const result = completeService(service, results, actualDuration, followUpInstructions);
   
   if (isSuccess(result)) {
-    await database.update('services', req.params.id, result.data);
+    await database.updateService(req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });

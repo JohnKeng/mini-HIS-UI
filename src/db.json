@@ -1,9 +1,11 @@
 {
   "patients": [
     {
-      "tag": "Registered",
+      "tag": "Discharged",
       "patientId": "pt-1757336260417",
       "registeredAt": "2025-09-08T12:57:40.417Z",
+      "admittedAt": "2025-09-08T12:58:24.939Z",
+      "dischargedAt": "2025-09-08T12:58:29.632Z",
       "info": {
         "id": "pt-json-001",
         "name": "JSON測試患者",
@@ -15,6 +17,28 @@
           "city": "台北市",
           "state": "信義區",
           "postalCode": "110",
+          "country": "台灣"
+        }
+      },
+      "diagnoses": [],
+      "dischargeSummary": "病情穩定，可以出院",
+      "followUpDate": "2025-09-15T12:58:29.066Z"
+    },
+    {
+      "tag": "Registered",
+      "patientId": "pt-1757336309297",
+      "registeredAt": "2025-09-08T12:58:29.297Z",
+      "info": {
+        "id": "pt-web-001",
+        "name": "網頁測試患者",
+        "birthDate": "1985-05-15",
+        "gender": "Female",
+        "contactNumber": "0987654321",
+        "address": {
+          "street": "網頁街456號",
+          "city": "台北市",
+          "state": "大安區",
+          "postalCode": "106",
           "country": "台灣"
         }
       }

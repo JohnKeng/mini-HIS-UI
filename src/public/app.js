@@ -366,7 +366,8 @@ function displayPatients(patients) {
         }[patient.tag] || 'bg-gray-100 text-gray-800';
         
         row.innerHTML = `
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium" onclick="showPatientDetail('${patient.info.id}')">${patient.info.name} <span class="text-gray-500 text-xs">(${patient.info.id})</span></td>
+            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showPatientDetail('${patient.info.id}')">${patient.info.id}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium" onclick="showPatientDetail('${patient.info.id}')">${patient.info.name}</td>
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showPatientDetail('${patient.info.id}')">${patient.info.birthDate}</td>
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showPatientDetail('${patient.info.id}')">${patient.info.gender === 'Male' ? '男' : '女'}</td>
             <td class="px-4 py-2">
@@ -473,7 +474,8 @@ function displayAppointments(appointments) {
             new Date(appointment.info.timeSlot.start).toLocaleString('zh-TW') : '未設定';
         
         row.innerHTML = `
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium" onclick="showAppointmentDetail('${appointment.info.id}')">${patientName} <span class="text-gray-500 text-xs">(${appointment.info.patientId})</span></td>
+            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showAppointmentDetail('${appointment.info.id}')">${appointment.info.patientId}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium" onclick="showAppointmentDetail('${appointment.info.id}')">${patientName}</td>
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showAppointmentDetail('${appointment.info.id}')">${appointment.info.department || '未設定'}</td>
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showAppointmentDetail('${appointment.info.id}')">${appointmentTime}</td>
             <td class="px-4 py-2">
@@ -605,7 +607,8 @@ function displayPrescriptions(prescriptions) {
         const createdTime = new Date(prescription.createdAt).toLocaleString('zh-TW');
         
         row.innerHTML = `
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium" onclick="showPrescriptionDetail('${prescription.info.id}')">${patientName} <span class="text-gray-500 text-xs">(${prescription.info.patientId})</span></td>
+            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showPrescriptionDetail('${prescription.info.id}')">${prescription.info.patientId}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium" onclick="showPrescriptionDetail('${prescription.info.id}')">${patientName}</td>
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showPrescriptionDetail('${prescription.info.id}')">${mainMedication}</td>
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showPrescriptionDetail('${prescription.info.id}')">${createdTime}</td>
             <td class="px-4 py-2">
@@ -815,7 +818,8 @@ function displayServices(services) {
         const priority = service.info.priority || '未設定';
         
         row.innerHTML = `
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium" onclick="showServiceDetail('${service.info.id}')">${patientName} <span class="text-gray-500 text-xs">(${service.info.patientId})</span></td>
+            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showServiceDetail('${service.info.id}')">${service.info.patientId}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium" onclick="showServiceDetail('${service.info.id}')">${patientName}</td>
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showServiceDetail('${service.info.id}')">${serviceName}</td>
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showServiceDetail('${service.info.id}')">${serviceType}</td>
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="showServiceDetail('${service.info.id}')">${priority}</td>

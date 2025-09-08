@@ -113,10 +113,209 @@ async function loadPatientOptions(selectElementId) {
     }
 }
 
+// ========== 詳細信息顯示 ==========
+let allPatients = [];
+let allAppointments = [];
+let allPrescriptions = [];
+let allServices = [];
+
+async function showPatientDetail(patientId) {
+    const patient = allPatients.find(p => p.info.id === patientId);
+    if (!patient) return;
+
+    const admissionInfo = patient.tag === 'Admitted' ? `
+        <div class="mt-4">
+            <h4 class="font-semibold text-gray-800 mb-2">住院信息</h4>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div><span class="font-medium">病房號碼:</span> ${patient.wardNumber || 'N/A'}</div>
+                <div><span class="font-medium">床位號碼:</span> ${patient.bedNumber || 'N/A'}</div>
+                <div><span class="font-medium">主治醫師:</span> ${patient.attendingDoctorId || 'N/A'}</div>
+                <div><span class="font-medium">入院時間:</span> ${patient.admittedAt ? new Date(patient.admittedAt).toLocaleString() : 'N/A'}</div>
+            </div>
+        </div>
+    ` : '';
+
+    const dischargeInfo = patient.tag === 'Discharged' ? `
+        <div class="mt-4">
+            <h4 class="font-semibold text-gray-800 mb-2">出院信息</h4>
+            <div class="text-sm">
+                <div class="mb-2"><span class="font-medium">出院時間:</span> ${patient.dischargedAt ? new Date(patient.dischargedAt).toLocaleString() : 'N/A'}</div>
+                <div class="mb-2"><span class="font-medium">出院摘要:</span> ${patient.dischargeSummary || 'N/A'}</div>
+                <div><span class="font-medium">後續追蹤:</span> ${patient.followUpDate ? new Date(patient.followUpDate).toLocaleString() : 'N/A'}</div>
+            </div>
+        </div>
+    ` : '';
+
+    const content = `
+        <div class="space-y-4">
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="font-semibold text-gray-800 mb-3">基本信息</h4>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div><span class="font-medium">患者 ID:</span> ${patient.info.id}</div>
+                    <div><span class="font-medium">姓名:</span> ${patient.info.name}</div>
+                    <div><span class="font-medium">生日:</span> ${patient.info.birthDate}</div>
+                    <div><span class="font-medium">性別:</span> ${patient.info.gender === 'Male' ? '男性' : '女性'}</div>
+                    <div><span class="font-medium">聯絡電話:</span> ${patient.info.contactNumber}</div>
+                    <div><span class="font-medium">地址:</span> ${patient.info.address.street}, ${patient.info.address.city}</div>
+                </div>
+            </div>
+            
+            <div class="bg-blue-50 p-4 rounded-lg">
+                <h4 class="font-semibold text-gray-800 mb-3">狀態信息</h4>
+                <div class="text-sm">
+                    <div class="mb-2"><span class="font-medium">當前狀態:</span> <span class="px-2 py-1 rounded text-xs bg-blue-200">${patient.tag}</span></div>
+                    <div><span class="font-medium">註冊時間:</span> ${new Date(patient.registeredAt).toLocaleString()}</div>
+                </div>
+            </div>
+            
+            ${admissionInfo}
+            ${dischargeInfo}
+        </div>
+    `;
+
+    showModal(`患者詳細信息 - ${patient.info.name}`, content);
+}
+
+async function showAppointmentDetail(appointmentId) {
+    const appointment = allAppointments.find(a => a.info.id === appointmentId);
+    if (!appointment) return;
+
+    const patient = allPatients.find(p => p.info.id === appointment.info.patientId);
+    const patientName = patient ? patient.info.name : '未知';
+
+    const content = `
+        <div class="space-y-4">
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="font-semibold text-gray-800 mb-3">預約信息</h4>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div><span class="font-medium">預約 ID:</span> ${appointment.info.id}</div>
+                    <div><span class="font-medium">患者:</span> ${patientName} (${appointment.info.patientId})</div>
+                    <div><span class="font-medium">醫師 ID:</span> ${appointment.info.doctorId}</div>
+                    <div><span class="font-medium">科別:</span> ${appointment.info.department}</div>
+                    <div><span class="font-medium">預約時間:</span> ${new Date(appointment.info.appointmentTime).toLocaleString()}</div>
+                    <div><span class="font-medium">目的:</span> ${appointment.info.purpose}</div>
+                </div>
+            </div>
+            
+            <div class="bg-green-50 p-4 rounded-lg">
+                <h4 class="font-semibold text-gray-800 mb-3">狀態信息</h4>
+                <div class="text-sm">
+                    <div class="mb-2"><span class="font-medium">當前狀態:</span> <span class="px-2 py-1 rounded text-xs bg-green-200">${appointment.tag}</span></div>
+                    <div><span class="font-medium">建立時間:</span> ${new Date(appointment.requestedAt).toLocaleString()}</div>
+                    ${appointment.confirmedAt ? `<div><span class="font-medium">確認時間:</span> ${new Date(appointment.confirmedAt).toLocaleString()}</div>` : ''}
+                    ${appointment.checkedInAt ? `<div><span class="font-medium">報到時間:</span> ${new Date(appointment.checkedInAt).toLocaleString()}</div>` : ''}
+                </div>
+            </div>
+        </div>
+    `;
+
+    showModal(`預約詳細信息 - ${appointmentId}`, content);
+}
+
+async function showPrescriptionDetail(prescriptionId) {
+    const prescription = allPrescriptions.find(p => p.info.id === prescriptionId);
+    if (!prescription) return;
+
+    const patient = allPatients.find(p => p.info.id === prescription.info.patientId);
+    const patientName = patient ? patient.info.name : '未知';
+
+    const content = `
+        <div class="space-y-4">
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="font-semibold text-gray-800 mb-3">處方信息</h4>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div><span class="font-medium">處方 ID:</span> ${prescription.info.id}</div>
+                    <div><span class="font-medium">患者:</span> ${patientName} (${prescription.info.patientId})</div>
+                    <div><span class="font-medium">醫師 ID:</span> ${prescription.info.doctorId}</div>
+                    <div><span class="font-medium">開立時間:</span> ${new Date(prescription.createdAt).toLocaleString()}</div>
+                </div>
+            </div>
+            
+            <div class="bg-yellow-50 p-4 rounded-lg">
+                <h4 class="font-semibold text-gray-800 mb-3">藥物信息</h4>
+                <div class="space-y-3">
+                    ${prescription.info.medications.map(med => `
+                        <div class="border-l-4 border-yellow-400 pl-3">
+                            <div class="font-medium">${med.name}</div>
+                            <div class="text-sm text-gray-600">劑量: ${med.dosage} | 頻率: ${med.frequency} | 療程: ${med.duration}</div>
+                            ${med.notes ? `<div class="text-sm text-gray-500">備註: ${med.notes}</div>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <div class="bg-blue-50 p-4 rounded-lg">
+                <h4 class="font-semibold text-gray-800 mb-3">狀態信息</h4>
+                <div class="text-sm">
+                    <div class="mb-2"><span class="font-medium">當前狀態:</span> <span class="px-2 py-1 rounded text-xs bg-blue-200">${prescription.tag}</span></div>
+                    ${prescription.submittedAt ? `<div><span class="font-medium">送出時間:</span> ${new Date(prescription.submittedAt).toLocaleString()}</div>` : ''}
+                    ${prescription.preparationStartedAt ? `<div><span class="font-medium">調劑開始:</span> ${new Date(prescription.preparationStartedAt).toLocaleString()}</div>` : ''}
+                    ${prescription.preparedAt ? `<div><span class="font-medium">調劑完成:</span> ${new Date(prescription.preparedAt).toLocaleString()}</div>` : ''}
+                    ${prescription.dispensedAt ? `<div><span class="font-medium">發藥時間:</span> ${new Date(prescription.dispensedAt).toLocaleString()}</div>` : ''}
+                </div>
+            </div>
+        </div>
+    `;
+
+    showModal(`處方詳細信息 - ${prescriptionId}`, content);
+}
+
+async function showServiceDetail(serviceId) {
+    const service = allServices.find(s => s.info.id === serviceId);
+    if (!service) return;
+
+    const patient = allPatients.find(p => p.info.id === service.info.patientId);
+    const patientName = patient ? patient.info.name : '未知';
+
+    const content = `
+        <div class="space-y-4">
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="font-semibold text-gray-800 mb-3">服務信息</h4>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div><span class="font-medium">服務 ID:</span> ${service.info.id}</div>
+                    <div><span class="font-medium">患者:</span> ${patientName} (${service.info.patientId})</div>
+                    <div><span class="font-medium">服務名稱:</span> ${service.info.serviceName}</div>
+                    <div><span class="font-medium">服務類型:</span> ${service.info.serviceType}</div>
+                    <div><span class="font-medium">優先度:</span> ${service.info.priority}</div>
+                    <div><span class="font-medium">預估時間:</span> ${service.info.estimatedDuration} 分鐘</div>
+                    <div><span class="font-medium">請求者:</span> ${service.info.requestedBy}</div>
+                    <div><span class="font-medium">備註:</span> ${service.info.notes}</div>
+                </div>
+            </div>
+            
+            <div class="bg-purple-50 p-4 rounded-lg">
+                <h4 class="font-semibold text-gray-800 mb-3">狀態信息</h4>
+                <div class="text-sm">
+                    <div class="mb-2"><span class="font-medium">當前狀態:</span> <span class="px-2 py-1 rounded text-xs bg-purple-200">${service.tag}</span></div>
+                    <div><span class="font-medium">請求時間:</span> ${new Date(service.requestedAt).toLocaleString()}</div>
+                    ${service.scheduledAt ? `<div><span class="font-medium">排程時間:</span> ${new Date(service.scheduledAt).toLocaleString()}</div>` : ''}
+                    ${service.preparationStartedAt ? `<div><span class="font-medium">準備開始:</span> ${new Date(service.preparationStartedAt).toLocaleString()}</div>` : ''}
+                    ${service.startedAt ? `<div><span class="font-medium">服務開始:</span> ${new Date(service.startedAt).toLocaleString()}</div>` : ''}
+                    ${service.completedAt ? `<div><span class="font-medium">服務完成:</span> ${new Date(service.completedAt).toLocaleString()}</div>` : ''}
+                </div>
+            </div>
+            
+            ${service.results ? `
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-gray-800 mb-3">服務結果</h4>
+                    <div class="text-sm">
+                        <div class="mb-2"><span class="font-medium">檢查結果:</span> ${service.results}</div>
+                        ${service.actualDuration ? `<div class="mb-2"><span class="font-medium">實際用時:</span> ${service.actualDuration} 分鐘</div>` : ''}
+                        ${service.followUpInstructions ? `<div><span class="font-medium">後續指示:</span> ${service.followUpInstructions}</div>` : ''}
+                    </div>
+                </div>
+            ` : ''}
+        </div>
+    `;
+
+    showModal(`醫療服務詳細信息 - ${service.info.serviceName}`, content);
+}
+
 // ========== 病患管理 ==========
 async function loadPatients() {
     const result = await apiRequest(`${API_BASE}/patients`);
     if (result.success) {
+        allPatients = result.data;
         displayPatients(result.data);
     }
 }
@@ -216,6 +415,7 @@ async function dischargePatient(patientId) {
 async function loadAppointments() {
     const result = await apiRequest(`${API_BASE}/appointments`);
     if (result.success) {
+        allAppointments = result.data;
         displayAppointments(result.data);
     }
 }
@@ -237,8 +437,8 @@ function displayAppointments(appointments) {
         }[appointment.tag] || 'bg-gray-100 text-gray-800';
         
         row.innerHTML = `
-            <td class="px-4 py-2 font-mono text-sm">${appointment.info.id}</td>
-            <td class="px-4 py-2 font-mono text-sm">${appointment.info.patientId}</td>
+            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showAppointmentDetail('${appointment.info.id}')">${appointment.info.id}</td>
+            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showAppointmentDetail('${appointment.info.id}')">${appointment.info.patientId}</td>
             <td class="px-4 py-2">
                 <span class="px-2 py-1 rounded-full text-xs ${statusColor}">
                     ${appointment.tag}
@@ -341,6 +541,7 @@ async function completeAppointment(appointmentId) {
 async function loadPrescriptions() {
     const result = await apiRequest(`${API_BASE}/prescriptions`);
     if (result.success) {
+        allPrescriptions = result.data;
         displayPrescriptions(result.data);
     }
 }
@@ -362,8 +563,8 @@ function displayPrescriptions(prescriptions) {
         }[prescription.tag] || 'bg-gray-100 text-gray-800';
         
         row.innerHTML = `
-            <td class="px-4 py-2 font-mono text-sm">${prescription.info.id}</td>
-            <td class="px-4 py-2 font-mono text-sm">${prescription.info.patientId}</td>
+            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showPrescriptionDetail('${prescription.info.id}')">${prescription.info.id}</td>
+            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showPrescriptionDetail('${prescription.info.id}')">${prescription.info.patientId}</td>
             <td class="px-4 py-2">
                 <span class="px-2 py-1 rounded-full text-xs ${statusColor}">
                     ${prescription.tag}
@@ -475,6 +676,7 @@ async function dispensePrescription(prescriptionId) {
 async function loadServices() {
     const result = await apiRequest(`${API_BASE}/services`);
     if (result.success) {
+        allServices = result.data;
         displayServices(result.data);
     }
 }
@@ -496,9 +698,9 @@ function displayServices(services) {
         }[service.tag] || 'bg-gray-100 text-gray-800';
         
         row.innerHTML = `
-            <td class="px-4 py-2 font-mono text-sm">${service.info.id}</td>
-            <td class="px-4 py-2 font-mono text-sm">${service.info.patientId}</td>
-            <td class="px-4 py-2">${service.info.serviceName}</td>
+            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showServiceDetail('${service.info.id}')">${service.info.id}</td>
+            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showServiceDetail('${service.info.id}')">${service.info.patientId}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600" onclick="showServiceDetail('${service.info.id}')">${service.info.serviceName}</td>
             <td class="px-4 py-2">
                 <span class="px-2 py-1 rounded-full text-xs ${statusColor}">
                     ${service.tag}

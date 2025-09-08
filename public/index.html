@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mini-HIS 醫院資訊系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'medical-blue': '#2563eb',
+                        'medical-green': '#059669',
+                        'medical-red': '#dc2626',
+                        'medical-gray': '#6b7280'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 導航列 -->
+    <nav class="bg-medical-blue text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <h1 class="text-2xl font-bold">mini-HIS 醫院資訊系統</h1>
+                <div class="text-sm">
+                    TypeScript + ADT 示範專案
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要內容 -->
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- 功能選單 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <button id="patientBtn" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border-l-4 border-blue-500">
+                <div class="text-2xl mb-2">👤</div>
+                <h3 class="text-lg font-semibold text-gray-800">病患管理</h3>
+                <p class="text-gray-600 text-sm">註冊、入院、出院</p>
+            </button>
+            <button id="appointmentBtn" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border-l-4 border-green-500">
+                <div class="text-2xl mb-2">📅</div>
+                <h3 class="text-lg font-semibold text-gray-800">預約系統</h3>
+                <p class="text-gray-600 text-sm">預約、確認、報到</p>
+            </button>
+            <button id="prescriptionBtn" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border-l-4 border-yellow-500">
+                <div class="text-2xl mb-2">💊</div>
+                <h3 class="text-lg font-semibold text-gray-800">處方管理</h3>
+                <p class="text-gray-600 text-sm">開立、調劑、發藥</p>
+            </button>
+            <button id="serviceBtn" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border-l-4 border-purple-500">
+                <div class="text-2xl mb-2">🏥</div>
+                <h3 class="text-lg font-semibold text-gray-800">醫療服務</h3>
+                <p class="text-gray-600 text-sm">檢查、排程、執行</p>
+            </button>
+        </div>
+
+        <!-- 內容區域 -->
+        <div id="content" class="bg-white rounded-lg shadow-md p-6">
+            <!-- 病患管理面板 -->
+            <div id="patientPanel" class="panel">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">病患管理</h2>
+                
+                <!-- 新增病患表單 -->
+                <div class="mb-8 p-4 bg-gray-50 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-4">註冊新病患</h3>
+                    <form id="patientForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">姓名</label>
+                            <input type="text" id="patientName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">生日</label>
+                            <input type="date" id="patientBirthDate" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">性別</label>
+                            <select id="patientGender" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                                <option value="">請選擇</option>
+                                <option value="Male">男性</option>
+                                <option value="Female">女性</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">聯絡電話</label>
+                            <input type="tel" id="patientPhone" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">地址</label>
+                            <input type="text" id="patientAddress" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <button type="submit" class="bg-medical-blue text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors">
+                                註冊病患
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 病患列表 -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">病患列表</h3>
+                    <div id="patientList" class="overflow-x-auto">
+                        <table class="min-w-full table-auto">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-2 text-left">ID</th>
+                                    <th class="px-4 py-2 text-left">姓名</th>
+                                    <th class="px-4 py-2 text-left">狀態</th>
+                                    <th class="px-4 py-2 text-left">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="patientTableBody">
+                                <!-- 動態生成內容 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 預約系統面板 -->
+            <div id="appointmentPanel" class="panel hidden">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">預約系統</h2>
+                
+                <!-- 新增預約表單 -->
+                <div class="mb-8 p-4 bg-gray-50 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-4">建立新預約</h3>
+                    <form id="appointmentForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">病患 ID</label>
+                            <input type="text" id="appointmentPatientId" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">醫生 ID</label>
+                            <input type="text" id="appointmentDoctorId" value="doc-001" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">科別</label>
+                            <select id="appointmentDepartment" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                                <option value="">請選擇</option>
+                                <option value="General">一般科</option>
+                                <option value="Cardiology">心臟科</option>
+                                <option value="Neurology">神經科</option>
+                                <option value="Orthopedics">骨科</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">預約時間</label>
+                            <input type="datetime-local" id="appointmentTime" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">目的</label>
+                            <input type="text" id="appointmentPurpose" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <button type="submit" class="bg-medical-green text-white px-6 py-2 rounded-md hover:bg-green-700 transition-colors">
+                                建立預約
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 預約列表 -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">預約列表</h3>
+                    <div id="appointmentList" class="overflow-x-auto">
+                        <table class="min-w-full table-auto">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-2 text-left">ID</th>
+                                    <th class="px-4 py-2 text-left">病患 ID</th>
+                                    <th class="px-4 py-2 text-left">狀態</th>
+                                    <th class="px-4 py-2 text-left">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="appointmentTableBody">
+                                <!-- 動態生成內容 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 處方管理面板 -->
+            <div id="prescriptionPanel" class="panel hidden">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">處方管理</h2>
+                
+                <!-- 新增處方表單 -->
+                <div class="mb-8 p-4 bg-gray-50 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-4">開立新處方</h3>
+                    <form id="prescriptionForm" class="grid grid-cols-1 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">病患 ID</label>
+                                <input type="text" id="prescriptionPatientId" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">醫生 ID</label>
+                                <input type="text" id="prescriptionDoctorId" value="doc-001" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">藥物名稱</label>
+                            <input type="text" id="medicationName" value="阿斯匹靈" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">劑量</label>
+                                <input type="text" id="medicationDosage" value="1 錠" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">頻率</label>
+                                <input type="text" id="medicationFrequency" value="每日三次" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">療程</label>
+                                <input type="text" id="medicationDuration" value="7 天" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">備註</label>
+                            <textarea id="prescriptionNotes" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" rows="3">緩解疼痛和發炎</textarea>
+                        </div>
+                        <div>
+                            <button type="submit" class="bg-yellow-500 text-white px-6 py-2 rounded-md hover:bg-yellow-600 transition-colors">
+                                開立處方
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 處方列表 -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">處方列表</h3>
+                    <div id="prescriptionList" class="overflow-x-auto">
+                        <table class="min-w-full table-auto">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-2 text-left">ID</th>
+                                    <th class="px-4 py-2 text-left">病患 ID</th>
+                                    <th class="px-4 py-2 text-left">狀態</th>
+                                    <th class="px-4 py-2 text-left">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="prescriptionTableBody">
+                                <!-- 動態生成內容 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 醫療服務面板 -->
+            <div id="servicePanel" class="panel hidden">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">醫療服務</h2>
+                
+                <!-- 新增服務表單 -->
+                <div class="mb-8 p-4 bg-gray-50 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-4">請求新服務</h3>
+                    <form id="serviceForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">病患 ID</label>
+                            <input type="text" id="servicePatientId" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">服務類型</label>
+                            <select id="serviceType" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                                <option value="">請選擇</option>
+                                <option value="Consultation">門診</option>
+                                <option value="Examination">檢查</option>
+                                <option value="Laboratory">檢驗</option>
+                                <option value="Surgery">手術</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">服務名稱</label>
+                            <input type="text" id="serviceName" value="X光檢查" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">優先度</label>
+                            <select id="servicePriority" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                                <option value="">請選擇</option>
+                                <option value="Low">低</option>
+                                <option value="Normal">一般</option>
+                                <option value="High">高</option>
+                                <option value="Emergency">緊急</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">預估時間 (分鐘)</label>
+                            <input type="number" id="serviceDuration" value="45" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">請求者 ID</label>
+                            <input type="text" id="serviceRequestedBy" value="doc-001" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">備註</label>
+                            <textarea id="serviceNotes" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-blue" rows="3">檢查胸部</textarea>
+                        </div>
+                        <div class="md:col-span-2">
+                            <button type="submit" class="bg-purple-500 text-white px-6 py-2 rounded-md hover:bg-purple-600 transition-colors">
+                                請求服務
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 服務列表 -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">服務列表</h3>
+                    <div id="serviceList" class="overflow-x-auto">
+                        <table class="min-w-full table-auto">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-4 py-2 text-left">ID</th>
+                                    <th class="px-4 py-2 text-left">病患 ID</th>
+                                    <th class="px-4 py-2 text-left">服務名稱</th>
+                                    <th class="px-4 py-2 text-left">狀態</th>
+                                    <th class="px-4 py-2 text-left">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="serviceTableBody">
+                                <!-- 動態生成內容 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 歡迎訊息 -->
+            <div id="welcomePanel">
+                <div class="text-center py-16">
+                    <div class="text-6xl mb-6">🏥</div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">歡迎使用 mini-HIS 醫院資訊系統</h2>
+                    <p class="text-gray-600 text-lg mb-8">這是一個使用 TypeScript 和代數資料類型 (ADT) 開發的示範專案</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                        <div class="bg-blue-50 p-6 rounded-lg">
+                            <h3 class="text-lg font-semibold text-blue-800 mb-2">類型安全</h3>
+                            <p class="text-blue-600">使用 TypeScript 的強型別系統確保編譯時期的錯誤檢查</p>
+                        </div>
+                        <div class="bg-green-50 p-6 rounded-lg">
+                            <h3 class="text-lg font-semibold text-green-800 mb-2">狀態管理</h3>
+                            <p class="text-green-600">透過 ADT 實現清晰的狀態轉換和業務邏輯</p>
+                        </div>
+                        <div class="bg-yellow-50 p-6 rounded-lg">
+                            <h3 class="text-lg font-semibold text-yellow-800 mb-2">錯誤處理</h3>
+                            <p class="text-yellow-600">統一的 Result 類型處理成功和失敗情況</p>
+                        </div>
+                        <div class="bg-purple-50 p-6 rounded-lg">
+                            <h3 class="text-lg font-semibold text-purple-800 mb-2">模組化設計</h3>
+                            <p class="text-purple-600">清晰的模組分工和職責分離</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-500 mt-8">請選擇上方的功能按鈕開始使用系統</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 訊息提示 -->
+    <div id="messageContainer" class="fixed top-4 right-4 z-50">
+        <!-- 動態生成訊息 -->
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -22,8 +22,9 @@ mini-HIS/
 - **Workflow**: Runs main demo showing complete hospital workflow
 
 ## Available Scripts
-- `npm run start` - Run main hospital system demo
+- `npm run start` - Start Express web server (port 5000)
 - `npm run dev` - Development mode (same as start)
+- `npm run demo` - Run console demo of hospital workflow
 
 ## Key Features
 - Type-safe state machines using TypeScript union types

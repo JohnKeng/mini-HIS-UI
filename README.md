@@ -63,53 +63,123 @@ mini-HIS/
 
 ## 如何運行
 
-**環境要求：** 請確保你的 Node.js 版本為 22 或更高版本。
+環境：Node.js 22+
 
-這個專案不需要任何安裝或編譯步驟，就可以直接執行。
-
-### 運行主程式
+本專案零依賴，可直接以 strip-only 模式執行 .ts：
 
 ```bash
-node src/index.ts
-```
-
-### 運行示例
-
-```bash
-node examples/patient-workflow.ts
-node examples/prescription-workflow.ts
+node --experimental-strip-types src/index.ts
+node --experimental-strip-types examples/patient-workflow.ts
+node --experimental-strip-types examples/prescription-workflow.ts
 ```
 
 ## 核心模組說明
 
 ### 1. 病患管理 (Patient.ts)
 
-這個模組展示了如何使用 ADT 來表示病患的不同狀態（已掛號、已入院、已出院、已轉院），以及如何通過類型來引導病患狀態轉換的邏輯實現。
+這個模組以帶 tag 的聯合型別建模狀態，並以轉換函式限制可執行操作。
+
+範例片段：
+
+```ts
+// 狀態定義（節錄）
+export interface Registered { tag: 'Registered'; patientId: ID; registeredAt: DateTime; info: PatientInfo; }
+export interface Admitted   { tag: 'Admitted';   patientId: ID; admittedAt: DateTime; wardNumber: string; bedNumber: string; attendingDoctorId: ID; info: PatientInfo; diagnoses: Diagnosis[]; }
+export type PatientState = Registered | Admitted | Discharged | Referred | Deceased;
+
+// 狀態轉換（僅允許 Registered → Admitted）
+export function admitPatient(patient: Registered, ward: string, bed: string, doctorId: ID): Result<Admitted> { /* 驗證 → success/failure */ }
+
+// 類型守衛
+export function isAdmitted(p: PatientState): p is Admitted { return p.tag === 'Admitted'; }
+```
 
 ### 2. 預約系統 (Appointment.ts)
 
-這個模組展示了如何使用 ADT 來表示預約的不同狀態（已創建、已確認、已完成、已取消、已重排），以及如何通過類型來引導預約流程的邏輯實現。
+以最小合法單位建模每一步，函式參數即為前置狀態，避免非法轉換。
+
+範例片段：
+
+```ts
+// 請求 → 確認 → 報到 → 開始 → 完成
+export function requestAppointment(patientId: ID, doctorId: ID, dept: string, time: TimeSlot, purpose: string): Result<Requested>;
+export function confirmAppointment(appt: Requested, confirmationNumber: string): Result<Confirmed>;
+export function checkInAppointment(appt: Confirmed): Result<CheckedIn>;
+export function startAppointment(appt: CheckedIn): Result<InProgress>;
+export function completeAppointment(appt: InProgress, followUpNeeded: boolean, notes?: string): Result<Completed>;
+
+// 時間窗驗證（30 分鐘）失敗時回傳 failure
+if (minutesDiff > 30) return failure(ErrorCode.ValidationFailed, 'Check-in time is outside the allowed window ...');
+```
 
 ### 3. 藥物處方 (Prescription.ts)
 
-這個模組展示了如何使用 ADT 來表示處方的不同狀態（已開立、已送出、調劑中、已調劑、已發放、已取消、已拒絕），以及如何通過類型來引導處方流程的邏輯實現。
+展示 Created → Submitted → InPreparation → Prepared → Dispensed 的線性流程，並以 `Result` 回報驗證錯誤。
+
+範例片段：
+
+```ts
+// 開立處方（至少 1 個藥品項目）
+export function createPrescription(patientId: ID, doctorId: ID, items: PrescriptionItem[], notes?: string): Result<Created> {
+  if (items.length === 0) return failure(ErrorCode.ValidationFailed, 'Prescription must contain at least one medication item.');
+  return success({ tag: 'Created', /* ... */ });
+}
+
+// 僅 Submitted 才能開始調劑
+export function startPreparation(rx: Submitted, pharmacistId: ID): Result<InPreparation>;
+```
 
 ### 4. 醫療服務 (MedicalService.ts)
 
-這個模組展示了如何使用 ADT 來表示醫療服務的不同狀態（已請求、已排程、準備中、進行中、已完成、已取消、已延期），以及如何通過類型來引導服務流程的邏輯實現。
+使用常數物件 + 字面量聯合取代 enum，支援 Node 直跑；每步驟皆檢核必要條件。
 
-## 示例說明
+範例片段：
 
-### 1. 病患工作流 (patient-workflow.ts)
+```ts
+// 類別與優先權（取代 enum）
+export const ServiceType = { Consultation: 'Consultation', Examination: 'Examination', /* ... */ } as const;
+export type ServiceType = typeof ServiceType[keyof typeof ServiceType];
 
-這個示例展示了如何使用 ADT 來處理病患從掛號到出院的完整流程。通過這個例子，我們可以看到「先寫類型再寫邏輯」的開發方法如何幫助我們確保系統的狀態轉換是類型安全的。
+// 排程（僅 Requested 可排程，時間需在未來）
+export function scheduleService(svc: Requested, scheduledTime: DateTime, scheduledBy: ID, staff?: MedicalStaff[], location?: string): Result<Scheduled> {
+  if (new Date(scheduledTime) <= new Date()) return failure(ErrorCode.ValidationFailed, 'Scheduled time must be in the future.');
+  return success({ tag: 'Scheduled', /* ... */ });
+}
+```
 
-### 2. 處方工作流 (prescription-workflow.ts)
+---
 
-這個示例展示了如何使用 ADT 來處理處方從開立到發放的完整流程。通過這個例子，我們可以看到 ADT 如何幫助我們避免不合法的狀態轉換，以及如何通過類型來引導程式邏輯的實現。
+補充：Result ADT（統一成功/失敗回傳）
 
-## 結論
+```ts
+export type Result<T> = Success<T> | Failure;
+export function success<T>(data: T): Success<T> { return { success: true, data }; }
+export function failure(code: ErrorCode, message: string, details?: Record<string, unknown>): Failure { return { success: false, error: { code, message, details } }; }
+export function isSuccess<T>(r: Result<T>): r is Success<T> { return r.success === true; }
+```
 
-通過這個專案，我們展示了「先寫類型再寫邏輯」的開發方法和 ADT 的應用如何幫助我們設計和實現更加可靠、可維護的系統。這種方法特別適合於具有複雜狀態轉換的系統，如醫院信息系統。
+## 示例說明（精簡）
 
-通過先定義清晰的類型結構，我們可以在編譯時就發現許多潛在的錯誤，並且使得程式碼更加自文檔化和易於理解。這種方法也促進了模組化設計，使得系統更加靈活和可擴展。
+### 1. 病患工作流（`examples/patient-workflow.ts`）
+
+- 狀態：Registered → Admitted → Discharged
+- 重點：以型別守衛（`isRegistered`、`isAdmitted`）約束可用操作。
+- 錯誤處理：以 `Result` ADT 統一處理。
+
+### 2. 處方工作流（`examples/prescription-workflow.ts`）
+
+- 狀態：Created → Submitted → InPreparation → Prepared → Dispensed
+- 重點：每個轉換僅接受合法前置狀態（例如只有 `Submitted` 才能 `startPreparation`）。
+- 類型守衛：`isCreated`、`isSubmitted`、`isInPreparation`…
+
+### 3. 主流程（`src/index.ts`）
+
+- 串接 Patient／Appointment／Prescription／MedicalService。
+- 預約：request → confirm → check-in → start → complete（時間設為「5 分鐘後」方便示範）。
+
+## 設計重點（程式面）
+
+- `Result<T>`：成功/失敗以 ADT 表示（`success`/`failure`），統一錯誤碼 `ErrorCode`。
+- 狀態機：以帶 `tag` 的聯合型別描述狀態與轉換，避免非法轉換。
+- 類型守衛：`isXxx` 讓分支內自動縮小型別，避免斷言。
+- 零依賴直跑：用 const 物件 + 字面量聯合取代 enum，相容 `--experimental-strip-types`。

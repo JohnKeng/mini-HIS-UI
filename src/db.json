@@ -44,50 +44,26 @@
       }
     },
     {
-      "tag": "Admitted",
-      "patientId": "pt-1757336552185",
-      "registeredAt": "2025-09-08T13:02:32.185Z",
-      "admittedAt": "2025-09-08T13:32:31.011Z",
-      "wardNumber": "ward-101",
-      "bedNumber": "bed-05",
-      "attendingDoctorId": "doc-001",
+      "tag": "Registered",
+      "patientId": "pt-1757339824964",
+      "registeredAt": "2025-09-08T13:57:04.964Z",
       "info": {
-        "id": "pt-ui-test",
-        "name": "UI測試患者",
-        "birthDate": "1992-03-20",
-        "gender": "Female",
-        "contactNumber": "0923456789",
+        "id": "pt-1757339824164",
+        "name": "阿明",
+        "birthDate": "1974-09-08",
+        "gender": "Male",
+        "contactNumber": "888888888",
         "address": {
-          "street": "UI測試街",
+          "street": "貓窩",
           "city": "台北市",
-          "state": "中山區",
-          "postalCode": "104",
+          "state": "信義區",
+          "postalCode": "110",
           "country": "台灣"
         }
-      },
-      "diagnoses": []
+      }
     }
   ],
   "appointments": [
-    {
-      "tag": "InProgress",
-      "info": {
-        "id": "appt-1757336637650",
-        "patientId": "pt-1757336324561",
-        "doctorId": "doc-001",
-        "department": "Cardiology",
-        "timeSlot": {
-          "start": "2025-09-08T13:03:00.000Z",
-          "end": "2025-09-08T13:33:00.000Z"
-        },
-        "purpose": "看護士"
-      },
-      "requestedAt": "2025-09-08T13:03:57.650Z",
-      "confirmedAt": "2025-09-08T13:04:04.132Z",
-      "confirmationNumber": "CONF-1757336643560",
-      "checkedInAt": "2025-09-08T13:04:06.522Z",
-      "startedAt": "2025-09-08T13:04:08.702Z"
-    },
     {
       "tag": "CheckedIn",
       "info": {
@@ -105,6 +81,21 @@
       "confirmedAt": "2025-09-08T13:09:08.934Z",
       "confirmationNumber": "CONF-1757336948385",
       "checkedInAt": "2025-09-08T13:09:10.343Z"
+    },
+    {
+      "tag": "Requested",
+      "info": {
+        "id": "appt-1757339865903",
+        "patientId": "pt-1757339824164",
+        "doctorId": "陳信宏",
+        "department": "Orthopedics",
+        "timeSlot": {
+          "start": "2025-09-08T13:57:00.000Z",
+          "end": "2025-09-08T14:27:00.000Z"
+        },
+        "purpose": "來看護士"
+      },
+      "requestedAt": "2025-09-08T13:57:45.903Z"
     }
   ],
   "prescriptions": [
@@ -197,6 +188,24 @@
         "病患已就位",
         "開始檢查"
       ]
+    },
+    {
+      "tag": "Requested",
+      "info": {
+        "id": "svc-1757339919975",
+        "patientId": "pt-1757339824164",
+        "serviceType": "Laboratory",
+        "description": "X光檢查",
+        "priority": "Emergency",
+        "estimatedDuration": 45,
+        "requiredResources": [
+          "X光機",
+          "技術人員"
+        ],
+        "notes": "檢查胸部"
+      },
+      "requestedAt": "2025-09-08T13:58:39.975Z",
+      "requestedBy": "doc-001"
     }
   ]
 }

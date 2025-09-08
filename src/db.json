@@ -61,6 +61,25 @@
           "country": "台灣"
         }
       }
+    },
+    {
+      "tag": "Registered",
+      "patientId": "pt-1757336552185",
+      "registeredAt": "2025-09-08T13:02:32.185Z",
+      "info": {
+        "id": "pt-ui-test",
+        "name": "UI測試患者",
+        "birthDate": "1992-03-20",
+        "gender": "Female",
+        "contactNumber": "0923456789",
+        "address": {
+          "street": "UI測試街",
+          "city": "台北市",
+          "state": "中山區",
+          "postalCode": "104",
+          "country": "台灣"
+        }
+      }
     }
   ],
   "appointments": [],

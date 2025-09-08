@@ -489,17 +489,14 @@ app.delete('/api/test', (_req, res) => {
 
 // 刪除患者
 app.delete('/api/patients/:id', async (req, res) => {
-  console.log('DELETE request for patient:', req.params.id);
   try {
     const success = await database.deletePatient(req.params.id);
-    console.log('Delete result:', success);
     if (success) {
       res.json({ success: true });
     } else {
       res.status(404).json({ success: false, error: { message: 'Patient not found' } });
     }
   } catch (error) {
-    console.error('Delete error:', error);
     res.status(500).json({ success: false, error: { message: 'Failed to delete patient' } });
   }
 });

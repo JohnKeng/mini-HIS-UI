@@ -225,14 +225,8 @@ async function showAppointmentDetail(appointmentId) {
 }
 
 async function showPrescriptionDetail(prescriptionId) {
-    console.log('點擊處方詳情:', prescriptionId);
-    console.log('當前處方數據:', allPrescriptions);
     const prescription = allPrescriptions.find(p => p.info.id === prescriptionId);
-    if (!prescription) {
-        console.log('找不到處方:', prescriptionId);
-        alert('找不到處方數據！');
-        return;
-    }
+    if (!prescription) return;
 
     const patient = allPatients.find(p => p.info.id === prescription.info.patientId);
     const patientName = patient ? patient.info.name : '未知';
@@ -570,29 +564,18 @@ async function completeAppointment(appointmentId) {
 
 // ========== 處方管理 ==========
 async function loadPrescriptions() {
-    console.log('正在載入處方數據...');
     const result = await apiRequest(`${API_BASE}/prescriptions`);
-    console.log('處方API結果:', result);
     if (result.success) {
         allPrescriptions = result.data;
-        console.log('處方數據已載入:', allPrescriptions.length, '筆');
         displayPrescriptions(result.data);
-    } else {
-        console.error('載入處方失敗:', result);
     }
 }
 
 function displayPrescriptions(prescriptions) {
-    console.log('正在顯示處方列表, 數量:', prescriptions.length);
     const tbody = document.getElementById('prescriptionTableBody');
-    if (!tbody) {
-        console.error('找不到處方表格 tbody 元素!');
-        return;
-    }
     tbody.innerHTML = '';
     
     prescriptions.forEach(prescription => {
-        console.log('正在添加處方行:', prescription.info.id);
         const row = document.createElement('tr');
         row.className = 'border-b hover:bg-gray-50';
         

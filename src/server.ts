@@ -480,23 +480,26 @@ app.post('/api/services/:id/complete', async (req, res) => {
   }
 });
 
-// 首頁路由
-app.get('/', (_req, res) => {
-  res.sendFile(path.join(process.cwd(), 'src', 'public', 'index.html'));
-});
-
 // ========== 刪除端點 ==========
+
+// 測試刪除端點
+app.delete('/api/test', (_req, res) => {
+  res.json({ success: true, message: 'DELETE method is working' });
+});
 
 // 刪除患者
 app.delete('/api/patients/:id', async (req, res) => {
+  console.log('DELETE request for patient:', req.params.id);
   try {
     const success = await database.deletePatient(req.params.id);
+    console.log('Delete result:', success);
     if (success) {
       res.json({ success: true });
     } else {
       res.status(404).json({ success: false, error: { message: 'Patient not found' } });
     }
   } catch (error) {
+    console.error('Delete error:', error);
     res.status(500).json({ success: false, error: { message: 'Failed to delete patient' } });
   }
 });
@@ -541,6 +544,11 @@ app.delete('/api/services/:id', async (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, error: { message: 'Failed to delete service' } });
   }
+});
+
+// 首頁路由
+app.get('/', (_req, res) => {
+  res.sendFile(path.join(process.cwd(), 'src', 'public', 'index.html'));
 });
 
 app.listen(port, '0.0.0.0', () => {

@@ -44,13 +44,11 @@
       }
     },
     {
-      "tag": "Admitted",
+      "tag": "Discharged",
       "patientId": "pt-1757336325133",
       "registeredAt": "2025-09-08T12:58:45.133Z",
       "admittedAt": "2025-09-08T13:08:36.365Z",
-      "wardNumber": "ward-101",
-      "bedNumber": "bed-05",
-      "attendingDoctorId": "doc-001",
+      "dischargedAt": "2025-09-08T13:32:24.112Z",
       "info": {
         "id": "pt-1757336324561",
         "name": "John",
@@ -65,12 +63,18 @@
           "country": "台灣"
         }
       },
-      "diagnoses": []
+      "diagnoses": [],
+      "dischargeSummary": "病情穩定，可以出院",
+      "followUpDate": "2025-09-15T13:32:23.532Z"
     },
     {
-      "tag": "Registered",
+      "tag": "Admitted",
       "patientId": "pt-1757336552185",
       "registeredAt": "2025-09-08T13:02:32.185Z",
+      "admittedAt": "2025-09-08T13:32:31.011Z",
+      "wardNumber": "ward-101",
+      "bedNumber": "bed-05",
+      "attendingDoctorId": "doc-001",
       "info": {
         "id": "pt-ui-test",
         "name": "UI測試患者",
@@ -84,7 +88,8 @@
           "postalCode": "104",
           "country": "台灣"
         }
-      }
+      },
+      "diagnoses": []
     },
     {
       "tag": "Registered",

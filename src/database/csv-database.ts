@@ -31,9 +31,7 @@ export class CSVDatabase implements Database {
           
           if (table && id && dataJson) {
             try {
-              // 修復雙引號轉義問題
-              const cleanJsonData = dataJson.replace(/\"\"/g, '"');
-              const data = JSON.parse(cleanJsonData) as EntityState;
+              const data = JSON.parse(dataJson) as EntityState;
               
               if (!this.cache.has(table)) {
                 this.cache.set(table, []);

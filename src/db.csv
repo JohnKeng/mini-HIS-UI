@@ -1,2 +1,2 @@
 table,id,data
-patients,pt-test-001,"{""tag"":""Registered"",""patientId"":""pt-1757335576036"",""registeredAt"":""2025-09-08T12:46:16.036Z"",""info"":{""id"":""pt-test-001"",""name"":""測試患者"",""birthDate"":""1990-01-01"",""gender"":""Male"",""contactNumber"":""0912345678"",""address"":{""street"":""測試街道123號"",""city"":""台北市"",""state"":""信義區"",""postalCode"":""110"",""country"":""台灣""}}}"
+patients,pt-test-002,"{""tag"":""Registered"",""patientId"":""pt-1757335702435"",""registeredAt"":""2025-09-08T12:48:22.435Z"",""info"":{""id"":""pt-test-002"",""name"":""新測試患者"",""birthDate"":""1995-03-15"",""gender"":""Female"",""contactNumber"":""0987654321"",""address"":{""street"":""新測試街789號"",""city"":""台北市"",""state"":""大安區"",""postalCode"":""106"",""country"":""台灣""}}}"

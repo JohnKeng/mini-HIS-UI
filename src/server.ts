@@ -1,6 +1,5 @@
 import express from 'express';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
 // Import hospital system modules
 import {
@@ -10,7 +9,7 @@ import {
   isRegistered,
   isAdmitted
 } from './models/Patient.ts';
-import type { PatientState, PatientInfo } from './models/Patient.ts';
+import type { PatientState } from './models/Patient.ts';
 
 import {
   requestAppointment,
@@ -19,7 +18,7 @@ import {
   startAppointment,
   completeAppointment
 } from './models/Appointment.ts';
-import type { AppointmentState, TimeSlot } from './models/Appointment.ts';
+import type { AppointmentState } from './models/Appointment.ts';
 
 import {
   createPrescription,
@@ -28,21 +27,18 @@ import {
   completePreparing,
   dispensePrescription
 } from './models/Prescription.ts';
-import type { PrescriptionState, PrescriptionItem } from './models/Prescription.ts';
+import type { PrescriptionState } from './models/Prescription.ts';
 
 import {
-  ServiceType,
-  Priority,
   requestService,
   scheduleService,
   startPreparation as startServicePreparation,
   startService,
   completeService
 } from './models/MedicalService.ts';
-import type { ServiceState, MedicalStaff } from './models/MedicalService.ts';
+import type { ServiceState } from './models/MedicalService.ts';
 
-import { isSuccess, isFailure } from './types/results.ts';
-import { Gender, MedicalStaffType } from './types/common.ts';
+import { isSuccess } from './types/results.ts';
 
 const app = express();
 const port = 5000;
@@ -65,9 +61,9 @@ app.post('/api/patients', (req, res) => {
   const result = registerPatient(patientInfo, patientId);
   if (isSuccess(result)) {
     patients.set(patientId, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
@@ -80,7 +76,7 @@ app.get('/api/patients/:id', (req, res) => {
   }
 });
 
-app.get('/api/patients', (req, res) => {
+app.get('/api/patients', (_req, res) => {
   const allPatients = Array.from(patients.values());
   res.json({ success: true, data: allPatients });
 });
@@ -100,9 +96,9 @@ app.post('/api/patients/:id/admit', (req, res) => {
   
   if (isSuccess(result)) {
     patients.set(req.params.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
@@ -121,9 +117,9 @@ app.post('/api/patients/:id/discharge', (req, res) => {
   
   if (isSuccess(result)) {
     patients.set(req.params.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
@@ -134,13 +130,13 @@ app.post('/api/appointments', (req, res) => {
   
   if (isSuccess(result)) {
     appointments.set(result.data.info.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.get('/api/appointments', (req, res) => {
+app.get('/api/appointments', (_req, res) => {
   const allAppointments = Array.from(appointments.values());
   res.json({ success: true, data: allAppointments });
 });
@@ -151,14 +147,18 @@ app.post('/api/appointments/:id/confirm', (req, res) => {
     return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
   }
   
+  if (appointment.tag !== 'Requested') {
+    return res.status(400).json({ success: false, error: { message: 'Appointment must be in Requested state' } });
+  }
+  
   const { confirmationNumber } = req.body;
   const result = confirmAppointment(appointment, confirmationNumber);
   
   if (isSuccess(result)) {
     appointments.set(req.params.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
@@ -168,13 +168,17 @@ app.post('/api/appointments/:id/checkin', (req, res) => {
     return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
   }
   
+  if (appointment.tag !== 'Confirmed') {
+    return res.status(400).json({ success: false, error: { message: 'Appointment must be in Confirmed state' } });
+  }
+  
   const result = checkInAppointment(appointment);
   
   if (isSuccess(result)) {
     appointments.set(req.params.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
@@ -184,13 +188,17 @@ app.post('/api/appointments/:id/start', (req, res) => {
     return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
   }
   
+  if (appointment.tag !== 'CheckedIn') {
+    return res.status(400).json({ success: false, error: { message: 'Appointment must be in CheckedIn state' } });
+  }
+  
   const result = startAppointment(appointment);
   
   if (isSuccess(result)) {
     appointments.set(req.params.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
@@ -200,14 +208,18 @@ app.post('/api/appointments/:id/complete', (req, res) => {
     return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
   }
   
+  if (appointment.tag !== 'InProgress') {
+    return res.status(400).json({ success: false, error: { message: 'Appointment must be in InProgress state' } });
+  }
+  
   const { followUpNeeded, notes } = req.body;
   const result = completeAppointment(appointment, followUpNeeded, notes);
   
   if (isSuccess(result)) {
     appointments.set(req.params.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
@@ -218,13 +230,13 @@ app.post('/api/prescriptions', (req, res) => {
   
   if (isSuccess(result)) {
     prescriptions.set(result.data.info.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.get('/api/prescriptions', (req, res) => {
+app.get('/api/prescriptions', (_req, res) => {
   const allPrescriptions = Array.from(prescriptions.values());
   res.json({ success: true, data: allPrescriptions });
 });
@@ -235,13 +247,17 @@ app.post('/api/prescriptions/:id/submit', (req, res) => {
     return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
   }
   
+  if (prescription.tag !== 'Created') {
+    return res.status(400).json({ success: false, error: { message: 'Prescription must be in Created state' } });
+  }
+  
   const result = submitPrescription(prescription);
   
   if (isSuccess(result)) {
     prescriptions.set(req.params.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
@@ -251,14 +267,18 @@ app.post('/api/prescriptions/:id/start-preparation', (req, res) => {
     return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
   }
   
+  if (prescription.tag !== 'Submitted') {
+    return res.status(400).json({ success: false, error: { message: 'Prescription must be in Submitted state' } });
+  }
+  
   const { pharmacistId } = req.body;
   const result = startPrescriptionPreparation(prescription, pharmacistId);
   
   if (isSuccess(result)) {
     prescriptions.set(req.params.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
@@ -268,14 +288,18 @@ app.post('/api/prescriptions/:id/complete-preparing', (req, res) => {
     return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
   }
   
+  if (prescription.tag !== 'InPreparation') {
+    return res.status(400).json({ success: false, error: { message: 'Prescription must be in InPreparation state' } });
+  }
+  
   const { preparationNotes } = req.body;
   const result = completePreparing(prescription, preparationNotes);
   
   if (isSuccess(result)) {
     prescriptions.set(req.params.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
@@ -285,14 +309,18 @@ app.post('/api/prescriptions/:id/dispense', (req, res) => {
     return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
   }
   
+  if (prescription.tag !== 'Prepared') {
+    return res.status(400).json({ success: false, error: { message: 'Prescription must be in Prepared state' } });
+  }
+  
   const { dispensedBy, instructions } = req.body;
   const result = dispensePrescription(prescription, dispensedBy, instructions);
   
   if (isSuccess(result)) {
     prescriptions.set(req.params.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
@@ -303,13 +331,13 @@ app.post('/api/services', (req, res) => {
   
   if (isSuccess(result)) {
     services.set(result.data.info.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.get('/api/services', (req, res) => {
+app.get('/api/services', (_req, res) => {
   const allServices = Array.from(services.values());
   res.json({ success: true, data: allServices });
 });
@@ -320,14 +348,18 @@ app.post('/api/services/:id/schedule', (req, res) => {
     return res.status(404).json({ success: false, error: { message: 'Service not found' } });
   }
   
+  if (service.tag !== 'Requested') {
+    return res.status(400).json({ success: false, error: { message: 'Service must be in Requested state' } });
+  }
+  
   const { scheduledTime, scheduledBy, staff, location } = req.body;
   const result = scheduleService(service, scheduledTime, scheduledBy, staff, location);
   
   if (isSuccess(result)) {
     services.set(req.params.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
@@ -337,14 +369,18 @@ app.post('/api/services/:id/start-preparation', (req, res) => {
     return res.status(404).json({ success: false, error: { message: 'Service not found' } });
   }
   
+  if (service.tag !== 'Scheduled') {
+    return res.status(400).json({ success: false, error: { message: 'Service must be in Scheduled state' } });
+  }
+  
   const { staff, location, preparationNotes } = req.body;
   const result = startServicePreparation(service, staff, location, preparationNotes);
   
   if (isSuccess(result)) {
     services.set(req.params.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
@@ -354,14 +390,18 @@ app.post('/api/services/:id/start', (req, res) => {
     return res.status(404).json({ success: false, error: { message: 'Service not found' } });
   }
   
+  if (service.tag !== 'InPreparation') {
+    return res.status(400).json({ success: false, error: { message: 'Service must be in InPreparation state' } });
+  }
+  
   const { performingStaff, serviceNotes } = req.body;
   const result = startService(service, performingStaff, serviceNotes);
   
   if (isSuccess(result)) {
     services.set(req.params.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
@@ -371,19 +411,23 @@ app.post('/api/services/:id/complete', (req, res) => {
     return res.status(404).json({ success: false, error: { message: 'Service not found' } });
   }
   
+  if (service.tag !== 'InProgress') {
+    return res.status(400).json({ success: false, error: { message: 'Service must be in InProgress state' } });
+  }
+  
   const { results, actualDuration, followUpInstructions } = req.body;
   const result = completeService(service, results, actualDuration, followUpInstructions);
   
   if (isSuccess(result)) {
     services.set(req.params.id, result.data);
-    res.json({ success: true, data: result.data });
+    return res.json({ success: true, data: result.data });
   } else {
-    res.status(400).json({ success: false, error: result.error });
+    return res.status(400).json({ success: false, error: result.error });
   }
 });
 
 // 首頁路由
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
 });
 

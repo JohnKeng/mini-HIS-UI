@@ -482,11 +482,6 @@ app.post('/api/services/:id/complete', async (req, res) => {
 
 // ========== 刪除端點 ==========
 
-// 測試刪除端點
-app.delete('/api/test', (_req, res) => {
-  res.json({ success: true, message: 'DELETE method is working' });
-});
-
 // 刪除患者
 app.delete('/api/patients/:id', async (req, res) => {
   try {

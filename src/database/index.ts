@@ -1,4 +1,4 @@
-import { CSVDatabase } from './csv-database.ts';
+import { JsonDatabase } from './json-database.ts';
 
 // 建立全域資料庫實例
-export const database = new CSVDatabase('src/db.csv');
+export const database = new JsonDatabase('src/db.json');

@@ -42,6 +42,25 @@
           "country": "台灣"
         }
       }
+    },
+    {
+      "tag": "Registered",
+      "patientId": "pt-1757336325133",
+      "registeredAt": "2025-09-08T12:58:45.133Z",
+      "info": {
+        "id": "pt-1757336324561",
+        "name": "John",
+        "birthDate": "2025-09-08",
+        "gender": "Male",
+        "contactNumber": "000",
+        "address": {
+          "street": "Home",
+          "city": "台北市",
+          "state": "信義區",
+          "postalCode": "110",
+          "country": "台灣"
+        }
+      }
     }
   ],
   "appointments": [],

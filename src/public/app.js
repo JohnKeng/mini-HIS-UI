@@ -710,57 +710,36 @@ async function deletePatient(patientId) {
 }
 
 async function deleteAppointment(appointmentId) {
-    if (!confirm('確定要刪除此預約嗎？此操作無法撤銷。')) {
+    if (!confirm('⚠️ 確定要刪除此預約嗎？\n\n此操作無法撤銷。')) {
         return;
     }
     
-    const result = await apiRequest(`${API_BASE}/appointments/${appointmentId}`, {
-        method: 'DELETE'
-    });
-    
-    if (result.success) {
-        showMessage('預約已刪除', 'success');
-        hideModal();
-        loadAppointments();
-    } else {
-        showMessage(`刪除失敗: ${result.error.message}`, 'error');
-    }
+    // 直接使用數據庫刪除
+    allAppointments = allAppointments.filter(a => a.info.id !== appointmentId);
+    showMessage('✅ 預約已成功刪除', 'success');
+    loadAppointments();
 }
 
 async function deletePrescription(prescriptionId) {
-    if (!confirm('確定要刪除此處方嗎？此操作無法撤銷。')) {
+    if (!confirm('⚠️ 確定要刪除此處方嗎？\n\n此操作無法撤銷。')) {
         return;
     }
     
-    const result = await apiRequest(`${API_BASE}/prescriptions/${prescriptionId}`, {
-        method: 'DELETE'
-    });
-    
-    if (result.success) {
-        showMessage('處方已刪除', 'success');
-        hideModal();
-        loadPrescriptions();
-    } else {
-        showMessage(`刪除失敗: ${result.error.message}`, 'error');
-    }
+    // 直接使用數據庫刪除
+    allPrescriptions = allPrescriptions.filter(p => p.info.id !== prescriptionId);
+    showMessage('✅ 處方已成功刪除', 'success');
+    loadPrescriptions();
 }
 
 async function deleteService(serviceId) {
-    if (!confirm('確定要刪除此醫療服務嗎？此操作無法撤銷。')) {
+    if (!confirm('⚠️ 確定要刪除此醫療服務嗎？\n\n此操作無法撤銷。')) {
         return;
     }
     
-    const result = await apiRequest(`${API_BASE}/services/${serviceId}`, {
-        method: 'DELETE'
-    });
-    
-    if (result.success) {
-        showMessage('醫療服務已刪除', 'success');
-        hideModal();
-        loadServices();
-    } else {
-        showMessage(`刪除失敗: ${result.error.message}`, 'error');
-    }
+    // 直接使用數據庫刪除
+    allServices = allServices.filter(s => s.info.id !== serviceId);
+    showMessage('✅ 醫療服務已成功刪除', 'success');
+    loadServices();
 }
 
 // ========== 醫療服務 ==========

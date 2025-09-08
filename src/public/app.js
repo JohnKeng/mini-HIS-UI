@@ -76,6 +76,24 @@ async function apiRequest(url, options = {}) {
     }
 }
 
+// ========== 通用函數 ==========
+async function loadPatientOptions(selectElementId) {
+    const result = await apiRequest(`${API_BASE}/patients`);
+    if (result.success) {
+        const selectElement = document.getElementById(selectElementId);
+        // 清空現有選項（保留第一個預設選項）
+        selectElement.innerHTML = '<option value="">請選擇病患</option>';
+        
+        // 添加病患選項
+        result.data.forEach(patient => {
+            const option = document.createElement('option');
+            option.value = patient.info.id;
+            option.textContent = `${patient.info.name} (${patient.info.id})`;
+            selectElement.appendChild(option);
+        });
+    }
+}
+
 // ========== 病患管理 ==========
 async function loadPatients() {
     const result = await apiRequest(`${API_BASE}/patients`);
@@ -634,16 +652,19 @@ patientBtn.addEventListener('click', () => {
 appointmentBtn.addEventListener('click', () => {
     showPanel('appointment');
     loadAppointments();
+    loadPatientOptions('appointmentPatientId');
 });
 
 prescriptionBtn.addEventListener('click', () => {
     showPanel('prescription');
     loadPrescriptions();
+    loadPatientOptions('prescriptionPatientId');
 });
 
 serviceBtn.addEventListener('click', () => {
     showPanel('service');
     loadServices();
+    loadPatientOptions('servicePatientId');
 });
 
 // 表單提交處理
@@ -654,7 +675,7 @@ document.getElementById('patientForm').addEventListener('submit', async (e) => {
         id: `pt-${Date.now()}`,
         name: document.getElementById('patientName').value,
         birthDate: document.getElementById('patientBirthDate').value,
-        gender: document.getElementById('patientGender').value,
+        gender: document.querySelector('input[name="gender"]:checked').value,
         contactNumber: document.getElementById('patientPhone').value,
         address: {
             street: document.getElementById('patientAddress').value,

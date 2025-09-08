@@ -225,8 +225,14 @@ async function showAppointmentDetail(appointmentId) {
 }
 
 async function showPrescriptionDetail(prescriptionId) {
+    console.log('點擊處方詳情:', prescriptionId);
+    console.log('當前處方數據:', allPrescriptions);
     const prescription = allPrescriptions.find(p => p.info.id === prescriptionId);
-    if (!prescription) return;
+    if (!prescription) {
+        console.log('找不到處方:', prescriptionId);
+        alert('找不到處方數據！');
+        return;
+    }
 
     const patient = allPatients.find(p => p.info.id === prescription.info.patientId);
     const patientName = patient ? patient.info.name : '未知';

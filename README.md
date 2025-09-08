@@ -2,7 +2,7 @@
 
 這是一個使用 TypeScript 開發的醫院資訊系統 (Hospital Information System) 示範專案，旨在展示「先寫類型再寫邏輯」的開發方法，以及如何使用代數資料類型 (Algebraic Data Types, ADT) 來規範和簡化程式碼邏輯。
 
-專案包含完整的 **前後端實現**，前端使用 **TailwindCSS** 和原生 JavaScript，後端使用 **Express.js** 提供 RESTful API。
+專案包含完整的 **前後端實現**，具備資料庫抽象層設計，前端使用 **TailwindCSS** 和原生 JavaScript，後端使用 **Express.js** 提供 RESTful API。
 
 ## 功能特色
 
@@ -15,8 +15,8 @@
 🔧 **技術架構**
 - **前端**：HTML + TailwindCSS + 原生 JavaScript
 - **後端**：Node.js + Express.js + TypeScript
+- **資料庫抽象層**：CQRS 模式，目前使用 CSV 模擬，可無縫切換其他資料庫
 - **類型系統**：完全使用 TypeScript ADT 實現狀態管理
-- **架構模式**：RESTful API + 狀態機設計
 
 ## 開發理念
 
@@ -27,13 +27,6 @@
 1. **先定義完整的類型系統**：包括實體類型、狀態類型、操作結果類型等。
 2. **利用類型來引導邏輯實現**：讓編譯器幫助我們檢查是否處理了所有可能的情況。
 3. **使用類型來表達業務規則**：將業務規則編碼到類型系統中，而不是散落在各處的條件判斷。
-
-這種方法有以下優點：
-
-- **提早發現錯誤**：在編譯時就能發現許多潛在的錯誤。
-- **自文檔化**：類型定義本身就是一種文檔，清晰地表達了數據的結構和約束。
-- **引導實現**：類型定義為實現提供了明確的指導，使得實現更加直觀和可靠。
-- **促進模組化**：清晰的類型邊界有助於設計更加模組化的系統。
 
 ### 代數資料類型 (ADT) 的應用
 
@@ -54,17 +47,39 @@ export type PatientState =
   | Transferred; // 已轉院
 ```
 
-通過這種方式，我們可以確保病患只能處於這些預定義的狀態之一，並且每種狀態都有其特定的屬性和行為。
+### 資料庫抽象層設計
+
+專案採用 CQRS (Command Query Responsibility Segregation) 模式設計資料庫抽象層：
+
+```typescript
+export interface Database {
+  // 病患操作
+  createPatient(id: string, data: PatientState): Promise<boolean>;
+  readPatient(id: string): Promise<PatientState | null>;
+  updatePatient(id: string, data: PatientState): Promise<boolean>;
+  // ... 其他實體的 CQRS 操作
+}
+```
+
+**設計優勢**：
+- 🔄 **無縫切換**：可輕鬆從 CSV 切換到 PostgreSQL、MongoDB 等資料庫
+- 🎯 **明確職責**：讀寫操作分離，職責清晰
+- 🛡️ **類型安全**：每個操作都有明確的輸入輸出類型
+- 🧪 **易於測試**：可輕鬆模擬資料庫操作進行單元測試
 
 ## 專案結構
 
 ```txt
 mini-HIS/
 ├── README.md         # 專案說明文件
-├── public/           # 前端靜態檔案
-│   ├── index.html    # 主頁面 (使用 TailwindCSS CDN)
-│   └── app.js        # 前端 JavaScript 邏輯
 ├── src/
+│   ├── public/       # 前端靜態檔案
+│   │   ├── index.html # 主頁面 (使用 TailwindCSS CDN)
+│   │   └── app.js     # 前端 JavaScript 邏輯
+│   ├── database/     # 資料庫抽象層
+│   │   ├── interface.ts    # 資料庫介面定義 (CQRS)
+│   │   ├── csv-database.ts # CSV 資料庫實作
+│   │   └── index.ts        # 資料庫實例匯出
 │   ├── types/        # 類型定義
 │   │   ├── common.ts # 通用類型
 │   │   └── results.ts # 結果類型 (ADT)
@@ -73,6 +88,7 @@ mini-HIS/
 │   │   ├── Appointment.ts   # 預約系統模組
 │   │   ├── Prescription.ts  # 藥物處方模組
 │   │   └── MedicalService.ts # 醫療服務模組
+│   ├── db.csv        # CSV 資料庫檔案
 │   ├── server.ts     # Express 後端服務器
 │   └── index.ts      # 控制台示範程式
 ├── package.json      # Node.js 專案配置
@@ -146,102 +162,135 @@ npm run demo
 
 ### 1. 病患管理 (Patient.ts)
 
-這個模組以帶 tag 的聯合型別建模狀態，並以轉換函式限制可執行操作。
+使用帶 tag 的聯合型別建模狀態，並以轉換函式限制可執行操作：
 
-範例片段：
+```typescript
+// 狀態定義
+export interface Registered { 
+  tag: 'Registered'; 
+  patientId: ID; 
+  registeredAt: DateTime; 
+  info: PatientInfo; 
+}
 
-```ts
-// 狀態定義（節錄）
-export interface Registered { tag: 'Registered'; patientId: ID; registeredAt: DateTime; info: PatientInfo; }
-export interface Admitted   { tag: 'Admitted';   patientId: ID; admittedAt: DateTime; wardNumber: string; bedNumber: string; attendingDoctorId: ID; info: PatientInfo; diagnoses: Diagnosis[]; }
+export interface Admitted { 
+  tag: 'Admitted'; 
+  patientId: ID; 
+  admittedAt: DateTime; 
+  wardNumber: string; 
+  bedNumber: string; 
+  attendingDoctorId: ID; 
+  info: PatientInfo; 
+  diagnoses: Diagnosis[]; 
+}
+
 export type PatientState = Registered | Admitted | Discharged | Referred | Deceased;
 
 // 狀態轉換（僅允許 Registered → Admitted）
-export function admitPatient(patient: Registered, ward: string, bed: string, doctorId: ID): Result<Admitted> { /* 驗證 → success/failure */ }
-
-// 類型守衛
-export function isAdmitted(p: PatientState): p is Admitted { return p.tag === 'Admitted'; }
+export function admitPatient(
+  patient: Registered, 
+  ward: string, 
+  bed: string, 
+  doctorId: ID
+): Result<Admitted> { 
+  /* 驗證 → success/failure */ 
+}
 ```
 
 ### 2. 預約系統 (Appointment.ts)
 
-以最小合法單位建模每一步，函式參數即為前置狀態，避免非法轉換。
+以最小合法單位建模每一步，函式參數即為前置狀態，避免非法轉換：
 
-範例片段：
-
-```ts
+```typescript
 // 請求 → 確認 → 報到 → 開始 → 完成
-export function requestAppointment(patientId: ID, doctorId: ID, dept: string, time: TimeSlot, purpose: string): Result<Requested>;
-export function confirmAppointment(appt: Requested, confirmationNumber: string): Result<Confirmed>;
+export function requestAppointment(
+  patientId: ID, 
+  doctorId: ID, 
+  dept: string, 
+  time: TimeSlot, 
+  purpose: string
+): Result<Requested>;
+
+export function confirmAppointment(
+  appt: Requested, 
+  confirmationNumber: string
+): Result<Confirmed>;
+
 export function checkInAppointment(appt: Confirmed): Result<CheckedIn>;
 export function startAppointment(appt: CheckedIn): Result<InProgress>;
-export function completeAppointment(appt: InProgress, followUpNeeded: boolean, notes?: string): Result<Completed>;
-
-// 時間窗驗證（30 分鐘）失敗時回傳 failure
-if (minutesDiff > 30) return failure(ErrorCode.ValidationFailed, 'Check-in time is outside the allowed window ...');
+export function completeAppointment(
+  appt: InProgress, 
+  followUpNeeded: boolean, 
+  notes?: string
+): Result<Completed>;
 ```
 
-### 3. 藥物處方 (Prescription.ts)
+### 3. 資料庫抽象層 (database/)
 
-展示 Created → Submitted → InPreparation → Prepared → Dispensed 的線性流程，並以 `Result` 回報驗證錯誤。
+CQRS 模式設計，目前使用 CSV 模擬，未來可無縫切換至其他資料庫：
 
-範例片段：
-
-```ts
-// 開立處方（至少 1 個藥品項目）
-export function createPrescription(patientId: ID, doctorId: ID, items: PrescriptionItem[], notes?: string): Result<Created> {
-  if (items.length === 0) return failure(ErrorCode.ValidationFailed, 'Prescription must contain at least one medication item.');
-  return success({ tag: 'Created', /* ... */ });
-}
-
-// 僅 Submitted 才能開始調劑
-export function startPreparation(rx: Submitted, pharmacistId: ID): Result<InPreparation>;
-```
-
-### 4. 醫療服務 (MedicalService.ts)
-
-使用常數物件 + 字面量聯合取代 enum，支援 Node 直跑；每步驟皆檢核必要條件。
-
-範例片段：
-
-```ts
-// 類別與優先權（取代 enum）
-export const ServiceType = { Consultation: 'Consultation', Examination: 'Examination', /* ... */ } as const;
-export type ServiceType = typeof ServiceType[keyof typeof ServiceType];
-
-// 排程（僅 Requested 可排程，時間需在未來）
-export function scheduleService(svc: Requested, scheduledTime: DateTime, scheduledBy: ID, staff?: MedicalStaff[], location?: string): Result<Scheduled> {
-  if (new Date(scheduledTime) <= new Date()) return failure(ErrorCode.ValidationFailed, 'Scheduled time must be in the future.');
-  return success({ tag: 'Scheduled', /* ... */ });
+```typescript
+export interface Database {
+  // 每個實體都有完整的 CRUD 操作
+  createPatient(id: string, data: PatientState): Promise<boolean>;
+  readPatient(id: string): Promise<PatientState | null>;
+  updatePatient(id: string, data: PatientState): Promise<boolean>;
+  deletePatient(id: string): Promise<boolean>;
+  findAllPatients(): Promise<PatientState[]>;
+  // ... 預約、處方、服務的對應操作
 }
 ```
-
----
 
 ## Result ADT（統一成功/失敗回傳）
 
-```ts
+```typescript
 export type Result<T> = Success<T> | Failure;
-export function success<T>(data: T): Success<T> { return { success: true, data }; }
-export function failure(code: ErrorCode, message: string, details?: Record<string, unknown>): Failure { return { success: false, error: { code, message, details } }; }
-export function isSuccess<T>(r: Result<T>): r is Success<T> { return r.success === true; }
+
+export function success<T>(data: T): Success<T> { 
+  return { success: true, data }; 
+}
+
+export function failure(
+  code: ErrorCode, 
+  message: string, 
+  details?: Record<string, unknown>
+): Failure { 
+  return { success: false, error: { code, message, details } }; 
+}
+
+export function isSuccess<T>(r: Result<T>): r is Success<T> { 
+  return r.success === true; 
+}
 ```
 
-## 設計重點（程式面）
+## 設計重點
 
-- `Result<T>`：成功/失敗以 ADT 表示（`success`/`failure`），統一錯誤碼 `ErrorCode`。
-- 狀態機：以帶 `tag` 的聯合型別描述狀態與轉換，避免非法轉換。
-- 類型守衛：`isXxx` 讓分支內自動縮小型別，避免斷言。
-- 零依賴直跑：用 const 物件 + 字面量聯合取代 enum，相容 TypeScript 編譯。
+- **Result\<T\>**：成功/失敗以 ADT 表示（`success`/`failure`），統一錯誤碼 `ErrorCode`
+- **狀態機**：以帶 `tag` 的聯合型別描述狀態與轉換，避免非法轉換
+- **類型守衛**：`isXxx` 讓分支內自動縮小型別，避免斷言
+- **資料庫抽象**：CQRS 模式，可無縫切換不同資料庫實作
+- **零依賴直跑**：用 const 物件 + 字面量聯合取代 enum，相容 TypeScript 編譯
 
 ## 技術特色
 
 ✅ **類型安全**：使用 TypeScript 的強型別系統確保編譯時期的錯誤檢查  
 ✅ **狀態管理**：透過 ADT 實現清晰的狀態轉換和業務邏輯  
 ✅ **錯誤處理**：統一的 Result 類型處理成功和失敗情況  
+✅ **資料庫抽象**：CQRS 模式設計，可無縫切換資料庫實作  
 ✅ **模組化設計**：清晰的模組分工和職責分離  
 ✅ **現代化前端**：使用 TailwindCSS 實現響應式設計  
 ✅ **RESTful API**：標準的 REST API 設計，易於擴展和維護
+
+## 專案亮點
+
+### 🎯 類型優先設計
+這個專案展示了如何讓類型系統引導業務邏輯的實現，而非僅僅作為註解。每個狀態轉換都有明確的類型約束，編譯器會確保我們不會遺漏任何邊界情況。
+
+### 🏗️ 資料庫抽象層
+設計了完整的 CQRS 資料庫抽象層，目前使用 CSV 檔案模擬，但可以輕鬆切換到 PostgreSQL、MongoDB 或任何其他資料庫，而不需要修改業務邏輯代碼。
+
+### 🔄 ADT 狀態機
+使用代數資料類型實現的狀態機確保了醫院業務流程的正確性，每個狀態轉換都是類型安全的，避免了常見的狀態管理錯誤。
 
 ## 授權
 

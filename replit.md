@@ -1,25 +1,34 @@
 # mini-HIS: 醫院資訊系統示範專案
 
 ## Project Overview
-A TypeScript-based Hospital Information System demonstration project that showcases "type-first" development methodology and Algebraic Data Types (ADT) to simplify and standardize code logic.
+A TypeScript-based Hospital Information System demonstration project that showcases "type-first" development methodology and Algebraic Data Types (ADT) to simplify and standardize code logic. Now includes a complete web interface with database abstraction layer.
 
 ## Project Structure
 ```
 mini-HIS/
+├── README.md         # Project documentation
 ├── src/
+│   ├── public/       # Frontend static files (HTML + TailwindCSS + JS)
+│   ├── database/     # Database abstraction layer (CQRS pattern)
+│   │   ├── interface.ts    # Database interface definition
+│   │   ├── csv-database.ts # CSV database implementation
+│   │   └── index.ts        # Database instance export
 │   ├── types/        # Type definitions
 │   ├── models/       # Model definitions (Patient, Appointment, Prescription, MedicalService)
-│   └── index.ts      # Main entry point - full hospital workflow demo
+│   ├── db.csv        # CSV database file (simulates database)
+│   ├── server.ts     # Express backend server
+│   └── index.ts      # Console demo program
 ```
 
 ## Current Status
-✅ **WORKING** - Project successfully imported and configured for Replit environment
+✅ **WORKING** - Complete web application with database abstraction layer
 
 ## Setup Details
 - **Language**: TypeScript with Node.js 20.19.3
-- **Dependencies**: typescript, ts-node (zero runtime dependencies)
-- **Module System**: CommonJS (for compatibility)
-- **Workflow**: Runs main demo showing complete hospital workflow
+- **Frontend**: HTML + TailwindCSS CDN + Vanilla JavaScript
+- **Backend**: Express.js + TypeScript
+- **Database**: CSV file simulation with CQRS abstraction layer
+- **Architecture**: Can seamlessly switch database implementations
 
 ## Available Scripts
 - `npm run start` - Start Express web server (port 5000)
@@ -27,24 +36,29 @@ mini-HIS/
 - `npm run demo` - Run console demo of hospital workflow
 
 ## Key Features
-- Type-safe state machines using TypeScript union types
-- ADT (Algebraic Data Type) implementation with Result<T> pattern
-- Zero external dependencies (pure TypeScript/Node.js)
-- Complete hospital workflow: Registration → Admission → Prescription → Medical Services → Discharge
+- **Web Interface**: Complete hospital management system with responsive UI
+- **Database Abstraction**: CQRS pattern allows seamless database switching
+- **Type-safe state machines**: Using TypeScript union types
+- **ADT implementation**: Result<T> pattern for error handling
+- **RESTful API**: Complete API endpoints for all hospital operations
+- **Complete hospital workflow**: Registration → Admission → Prescription → Medical Services → Discharge
 
 ## Architecture Highlights
 - **Type-First Development**: All business logic is guided by TypeScript types
-- **State Management**: Each entity (Patient, Appointment, etc.) has clearly defined states with type-safe transitions
+- **Database Abstraction Layer**: CQRS pattern for easy database switching (currently CSV, can switch to PostgreSQL/MongoDB)
+- **State Management**: Each entity has clearly defined states with type-safe transitions
 - **Error Handling**: Unified Result<T> type for success/failure handling
-- **Modularity**: Separate modules for each domain (Patient, Appointment, Prescription, MedicalService)
+- **Modularity**: Separate modules for each domain with clear interfaces
 
-## Recent Changes (Setup)
-- Configured TypeScript with CommonJS modules for Node.js compatibility
-- Added package.json with proper scripts for running demos and examples
-- Set up workflow to run the main demonstration
-- Verified all examples work correctly
+## Recent Changes (Major Update)
+- **Added Web Interface**: Complete frontend with TailwindCSS and vanilla JavaScript
+- **Database Abstraction**: Implemented CQRS pattern for database operations
+- **Backend API**: Express server with RESTful endpoints
+- **Project Restructure**: Moved public to src/public, added database layer
+- **CSV Database**: Simulation layer that can be easily replaced with real databases
 
 ## User Preferences
-- Keep the zero-dependency approach (TypeScript + Node.js only)
-- Maintain type-first development methodology
-- Preserve educational structure with examples and learning materials
+- Focus on CSV database implementation (no multi-database code complexity)
+- Maintain CQRS API design for seamless future database changes
+- Preserve type-first development methodology
+- Keep database abstraction layer clean and focused

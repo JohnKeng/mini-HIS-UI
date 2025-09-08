@@ -485,6 +485,64 @@ app.get('/', (_req, res) => {
   res.sendFile(path.join(process.cwd(), 'src', 'public', 'index.html'));
 });
 
+// ========== 刪除端點 ==========
+
+// 刪除患者
+app.delete('/api/patients/:id', async (req, res) => {
+  try {
+    const success = await database.deletePatient(req.params.id);
+    if (success) {
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: { message: 'Patient not found' } });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: 'Failed to delete patient' } });
+  }
+});
+
+// 刪除預約
+app.delete('/api/appointments/:id', async (req, res) => {
+  try {
+    const success = await database.deleteAppointment(req.params.id);
+    if (success) {
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: 'Failed to delete appointment' } });
+  }
+});
+
+// 刪除處方
+app.delete('/api/prescriptions/:id', async (req, res) => {
+  try {
+    const success = await database.deletePrescription(req.params.id);
+    if (success) {
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: 'Failed to delete prescription' } });
+  }
+});
+
+// 刪除醫療服務
+app.delete('/api/services/:id', async (req, res) => {
+  try {
+    const success = await database.deleteService(req.params.id);
+    if (success) {
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: { message: 'Service not found' } });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: 'Failed to delete service' } });
+  }
+});
+
 app.listen(port, '0.0.0.0', () => {
   console.log(`mini-HIS 服務器運行於 http://0.0.0.0:${port}`);
 });

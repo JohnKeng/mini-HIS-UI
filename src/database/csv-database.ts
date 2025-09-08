@@ -1,5 +1,9 @@
 import fs from 'fs/promises';
-import type { DatabaseInterface, EntityType, EntityState } from './interface.ts';
+import type { DatabaseInterface, EntityState } from './interface.ts';
+import type { PatientState } from '../models/Patient.ts';
+import type { AppointmentState } from '../models/Appointment.ts';
+import type { PrescriptionState } from '../models/Prescription.ts';
+import type { ServiceState } from '../models/MedicalService.ts';
 
 export class CSVDatabase implements DatabaseInterface {
   private csvPath: string;

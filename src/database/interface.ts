@@ -3,20 +3,36 @@ import type { AppointmentState } from '../models/Appointment.ts';
 import type { PrescriptionState } from '../models/Prescription.ts';
 import type { ServiceState } from '../models/MedicalService.ts';
 
-export type EntityType = 'patients' | 'appointments' | 'prescriptions' | 'services';
-
 export type EntityState = PatientState | AppointmentState | PrescriptionState | ServiceState;
 
 export interface DatabaseInterface {
-  // 通用 CRUD 操作
-  create(table: EntityType, id: string, data: EntityState): Promise<boolean>;
-  read(table: EntityType, id: string): Promise<EntityState | null>;
-  update(table: EntityType, id: string, data: EntityState): Promise<boolean>;
-  delete(table: EntityType, id: string): Promise<boolean>;
+  // 病患操作
+  createPatient(id: string, data: PatientState): Promise<boolean>;
+  readPatient(id: string): Promise<PatientState | null>;
+  updatePatient(id: string, data: PatientState): Promise<boolean>;
+  deletePatient(id: string): Promise<boolean>;
+  findAllPatients(): Promise<PatientState[]>;
   
-  // 查詢操作
-  findAll(table: EntityType): Promise<EntityState[]>;
-  findWhere(table: EntityType, condition: (item: EntityState) => boolean): Promise<EntityState[]>;
+  // 預約操作
+  createAppointment(id: string, data: AppointmentState): Promise<boolean>;
+  readAppointment(id: string): Promise<AppointmentState | null>;
+  updateAppointment(id: string, data: AppointmentState): Promise<boolean>;
+  deleteAppointment(id: string): Promise<boolean>;
+  findAllAppointments(): Promise<AppointmentState[]>;
+  
+  // 處方操作
+  createPrescription(id: string, data: PrescriptionState): Promise<boolean>;
+  readPrescription(id: string): Promise<PrescriptionState | null>;
+  updatePrescription(id: string, data: PrescriptionState): Promise<boolean>;
+  deletePrescription(id: string): Promise<boolean>;
+  findAllPrescriptions(): Promise<PrescriptionState[]>;
+  
+  // 醫療服務操作
+  createService(id: string, data: ServiceState): Promise<boolean>;
+  readService(id: string): Promise<ServiceState | null>;
+  updateService(id: string, data: ServiceState): Promise<boolean>;
+  deleteService(id: string): Promise<boolean>;
+  findAllServices(): Promise<ServiceState[]>;
 }
 
 export interface DatabaseConfig {

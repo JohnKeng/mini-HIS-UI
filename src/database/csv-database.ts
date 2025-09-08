@@ -77,11 +77,15 @@ export class CSVDatabase implements Database {
     const id = line.substring(firstComma + 1, secondComma);
     const data = line.substring(secondComma + 1);
     
-    return [
-      table.trim(),
-      id.trim(),
-      data.startsWith('"') && data.endsWith('"') ? data.slice(1, -1).replace(/""/g, '"') : data.trim()
-    ];
+    // 處理 CSV 中被雙引號包圍的 JSON 字串
+    let cleanData = data.trim();
+    if (cleanData.startsWith('"') && cleanData.endsWith('"')) {
+      cleanData = cleanData.slice(1, -1);
+      // 將 CSV 轉義的雙引號 ("") 轉換回正常的雙引號 (")
+      cleanData = cleanData.replace(/""/g, '"');
+    }
+    
+    return [table.trim(), id.trim(), cleanData];
   }
 
   private getEntityId(entity: EntityState): string {

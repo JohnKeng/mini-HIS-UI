@@ -85,6 +85,25 @@
           "country": "台灣"
         }
       }
+    },
+    {
+      "tag": "Registered",
+      "patientId": "pt-1757337839227",
+      "registeredAt": "2025-09-08T13:23:59.227Z",
+      "info": {
+        "id": "pt-node22-test",
+        "name": "Node22測試患者",
+        "birthDate": "1995-06-15",
+        "gender": "Male",
+        "contactNumber": "0988776655",
+        "address": {
+          "street": "Node22街",
+          "city": "台北市",
+          "state": "中正區",
+          "postalCode": "100",
+          "country": "台灣"
+        }
+      }
     }
   ],
   "appointments": [

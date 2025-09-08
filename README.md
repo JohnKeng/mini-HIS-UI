@@ -15,7 +15,7 @@
 🔧 **技術架構**
 - **前端**：HTML + TailwindCSS + 原生 JavaScript
 - **後端**：Node.js + Express.js + TypeScript
-- **資料庫抽象層**：CQRS 模式，目前使用 CSV 模擬，可無縫切換其他資料庫
+- **資料庫抽象層**：CQRS 模式，目前使用 JSON 檔案，可無縫切換其他資料庫
 - **類型系統**：完全使用 TypeScript ADT 實現狀態管理
 
 ## 開發理念
@@ -62,7 +62,7 @@ export interface Database {
 ```
 
 **設計優勢**：
-- 🔄 **無縫切換**：可輕鬆從 CSV 切換到 PostgreSQL、MongoDB 等資料庫
+- 🔄 **無縫切換**：可輕鬆從 JSON 切換到 PostgreSQL、MongoDB 等資料庫
 - 🎯 **明確職責**：讀寫操作分離，職責清晰
 - 🛡️ **類型安全**：每個操作都有明確的輸入輸出類型
 - 🧪 **易於測試**：可輕鬆模擬資料庫操作進行單元測試
@@ -77,9 +77,9 @@ mini-HIS/
 │   │   ├── index.html # 主頁面 (使用 TailwindCSS CDN)
 │   │   └── app.js     # 前端 JavaScript 邏輯
 │   ├── database/     # 資料庫抽象層
-│   │   ├── interface.ts    # 資料庫介面定義 (CQRS)
-│   │   ├── csv-database.ts # CSV 資料庫實作
-│   │   └── index.ts        # 資料庫實例匯出
+│   │   ├── interface.ts     # 資料庫介面定義 (CQRS)
+│   │   ├── json-database.ts # JSON 資料庫實作
+│   │   └── index.ts         # 資料庫實例匯出
 │   ├── types/        # 類型定義
 │   │   ├── common.ts # 通用類型
 │   │   └── results.ts # 結果類型 (ADT)
@@ -88,7 +88,7 @@ mini-HIS/
 │   │   ├── Appointment.ts   # 預約系統模組
 │   │   ├── Prescription.ts  # 藥物處方模組
 │   │   └── MedicalService.ts # 醫療服務模組
-│   ├── db.csv        # CSV 資料庫檔案
+│   ├── db.json       # JSON 資料庫檔案
 │   ├── server.ts     # Express 後端服務器
 │   └── index.ts      # 控制台示範程式
 ├── package.json      # Node.js 專案配置
@@ -98,8 +98,8 @@ mini-HIS/
 ## 如何運行
 
 ### 環境需求
-- Node.js 20+
-- TypeScript
+- Node.js 22+ (支援原生 TypeScript)
+- TypeScript (用於類型檢查)
 
 ### 安裝依賴
 
@@ -227,7 +227,7 @@ export function completeAppointment(
 
 ### 3. 資料庫抽象層 (database/)
 
-CQRS 模式設計，目前使用 CSV 模擬，未來可無縫切換至其他資料庫：
+CQRS 模式設計，目前使用 JSON 檔案，未來可無縫切換至其他資料庫：
 
 ```typescript
 export interface Database {
@@ -287,7 +287,7 @@ export function isSuccess<T>(r: Result<T>): r is Success<T> {
 這個專案展示了如何讓類型系統引導業務邏輯的實現，而非僅僅作為註解。每個狀態轉換都有明確的類型約束，編譯器會確保我們不會遺漏任何邊界情況。
 
 ### 🏗️ 資料庫抽象層
-設計了完整的 CQRS 資料庫抽象層，目前使用 CSV 檔案模擬，但可以輕鬆切換到 PostgreSQL、MongoDB 或任何其他資料庫，而不需要修改業務邏輯代碼。
+設計了完整的 CQRS 資料庫抽象層，目前使用 JSON 檔案儲存，但可以輕鬆切換到 PostgreSQL、MongoDB 或任何其他資料庫，而不需要修改業務邏輯代碼。
 
 ### 🔄 ADT 狀態機
 使用代數資料類型實現的狀態機確保了醫院業務流程的正確性，每個狀態轉換都是類型安全的，避免了常見的狀態管理錯誤。

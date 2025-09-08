@@ -24,7 +24,7 @@ mini-HIS/
 ✅ **WORKING** - Complete web application with database abstraction layer
 
 ## Setup Details
-- **Language**: TypeScript with Node.js 20.19.3
+- **Language**: TypeScript with Node.js 22.17.0 (native TypeScript support)
 - **Frontend**: HTML + TailwindCSS CDN + Vanilla JavaScript
 - **Backend**: Express.js + TypeScript
 - **Database**: JSON file database with CQRS abstraction layer

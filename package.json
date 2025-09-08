@@ -4,9 +4,9 @@
   "description": "這是一個使用 TypeScript 開發的醫院資訊系統 (Hospital Information System) 示範專案，旨在展示「先寫類型再寫邏輯」的開發方法，以及如何使用代數資料類型 (Algebraic Data Types, ADT) 來規範和簡化程式碼邏輯。",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "ts-node src/server.ts",
-    "start": "ts-node src/server.ts",
-    "demo": "ts-node src/index.ts",
+    "dev": "node --experimental-strip-types src/server.ts",
+    "start": "node --experimental-strip-types src/server.ts",
+    "demo": "node --experimental-strip-types src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -21,7 +21,6 @@
   "dependencies": {
     "@types/express": "^5.0.3",
     "express": "^5.1.0",
-    "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   }
 }

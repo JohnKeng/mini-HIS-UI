@@ -45,7 +45,7 @@ const port = 5000;
 
 // 中介軟體
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static('src/public'));
 
 // 記憶體資料儲存 (實際專案應使用資料庫)
 const patients = new Map<string, PatientState>();
@@ -428,7 +428,7 @@ app.post('/api/services/:id/complete', (req, res) => {
 
 // 首頁路由
 app.get('/', (_req, res) => {
-  res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
+  res.sendFile(path.join(process.cwd(), 'src', 'public', 'index.html'));
 });
 
 app.listen(port, '0.0.0.0', () => {

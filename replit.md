@@ -10,12 +10,12 @@ mini-HIS/
 ├── src/
 │   ├── public/       # Frontend static files (HTML + TailwindCSS + JS)
 │   ├── database/     # Database abstraction layer (CQRS pattern)
-│   │   ├── interface.ts    # Database interface definition
-│   │   ├── csv-database.ts # CSV database implementation
-│   │   └── index.ts        # Database instance export
+│   │   ├── interface.ts     # Database interface definition
+│   │   ├── json-database.ts # JSON database implementation
+│   │   └── index.ts         # Database instance export
 │   ├── types/        # Type definitions
 │   ├── models/       # Model definitions (Patient, Appointment, Prescription, MedicalService)
-│   ├── db.csv        # CSV database file (simulates database)
+│   ├── db.json       # JSON database file
 │   ├── server.ts     # Express backend server
 │   └── index.ts      # Console demo program
 ```
@@ -27,7 +27,7 @@ mini-HIS/
 - **Language**: TypeScript with Node.js 20.19.3
 - **Frontend**: HTML + TailwindCSS CDN + Vanilla JavaScript
 - **Backend**: Express.js + TypeScript
-- **Database**: CSV file simulation with CQRS abstraction layer
+- **Database**: JSON file database with CQRS abstraction layer
 - **Architecture**: Can seamlessly switch database implementations
 
 ## Available Scripts
@@ -45,7 +45,7 @@ mini-HIS/
 
 ## Architecture Highlights
 - **Type-First Development**: All business logic is guided by TypeScript types
-- **Database Abstraction Layer**: CQRS pattern for easy database switching (currently CSV, can switch to PostgreSQL/MongoDB)
+- **Database Abstraction Layer**: CQRS pattern for easy database switching (currently JSON, can switch to PostgreSQL/MongoDB)
 - **State Management**: Each entity has clearly defined states with type-safe transitions
 - **Error Handling**: Unified Result<T> type for success/failure handling
 - **Modularity**: Separate modules for each domain with clear interfaces
@@ -60,7 +60,7 @@ mini-HIS/
 - **Project Restructure**: Moved public to src/public, added database layer
 
 ## User Preferences
-- Focus on CSV database implementation (no multi-database code complexity)
+- Focus on JSON database implementation (no multi-database code complexity)
 - Maintain CQRS API design for seamless future database changes
 - Preserve type-first development methodology
 - Keep database abstraction layer clean and focused

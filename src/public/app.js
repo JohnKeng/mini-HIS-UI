@@ -703,10 +703,16 @@ async function deletePatient(patientId) {
         return;
     }
     
-    // 直接使用數據庫刪除 (因為 DELETE API 有問題)
-    allPatients = allPatients.filter(p => p.info.id !== patientId);
-    showMessage('✅ 患者已成功刪除', 'success');
-    loadPatients();
+    const result = await apiRequest(`${API_BASE}/patients/${patientId}`, {
+        method: 'DELETE'
+    });
+    
+    if (result.success) {
+        showMessage('✅ 患者已成功刪除', 'success');
+        loadPatients();
+    } else {
+        showMessage(`刪除失敗: ${result.error.message}`, 'error');
+    }
 }
 
 async function deleteAppointment(appointmentId) {
@@ -714,10 +720,16 @@ async function deleteAppointment(appointmentId) {
         return;
     }
     
-    // 直接使用數據庫刪除
-    allAppointments = allAppointments.filter(a => a.info.id !== appointmentId);
-    showMessage('✅ 預約已成功刪除', 'success');
-    loadAppointments();
+    const result = await apiRequest(`${API_BASE}/appointments/${appointmentId}`, {
+        method: 'DELETE'
+    });
+    
+    if (result.success) {
+        showMessage('✅ 預約已成功刪除', 'success');
+        loadAppointments();
+    } else {
+        showMessage(`刪除失敗: ${result.error.message}`, 'error');
+    }
 }
 
 async function deletePrescription(prescriptionId) {
@@ -725,10 +737,16 @@ async function deletePrescription(prescriptionId) {
         return;
     }
     
-    // 直接使用數據庫刪除
-    allPrescriptions = allPrescriptions.filter(p => p.info.id !== prescriptionId);
-    showMessage('✅ 處方已成功刪除', 'success');
-    loadPrescriptions();
+    const result = await apiRequest(`${API_BASE}/prescriptions/${prescriptionId}`, {
+        method: 'DELETE'
+    });
+    
+    if (result.success) {
+        showMessage('✅ 處方已成功刪除', 'success');
+        loadPrescriptions();
+    } else {
+        showMessage(`刪除失敗: ${result.error.message}`, 'error');
+    }
 }
 
 async function deleteService(serviceId) {
@@ -736,10 +754,16 @@ async function deleteService(serviceId) {
         return;
     }
     
-    // 直接使用數據庫刪除
-    allServices = allServices.filter(s => s.info.id !== serviceId);
-    showMessage('✅ 醫療服務已成功刪除', 'success');
-    loadServices();
+    const result = await apiRequest(`${API_BASE}/services/${serviceId}`, {
+        method: 'DELETE'
+    });
+    
+    if (result.success) {
+        showMessage('✅ 醫療服務已成功刪除', 'success');
+        loadServices();
+    } else {
+        showMessage(`刪除失敗: ${result.error.message}`, 'error');
+    }
 }
 
 // ========== 醫療服務 ==========

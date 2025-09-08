@@ -1,1 +1,2 @@
 table,id,data
+patients,pt-test-001,"{""tag"":""Registered"",""patientId"":""pt-1757335576036"",""registeredAt"":""2025-09-08T12:46:16.036Z"",""info"":{""id"":""pt-test-001"",""name"":""測試患者"",""birthDate"":""1990-01-01"",""gender"":""Male"",""contactNumber"":""0912345678"",""address"":{""street"":""測試街道123號"",""city"":""台北市"",""state"":""信義區"",""postalCode"":""110"",""country"":""台灣""}}}"

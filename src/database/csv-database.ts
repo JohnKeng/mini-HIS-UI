@@ -66,16 +66,13 @@ export class CSVDatabase implements Database {
   }
 
   private parseCSVLine(line: string): [string, string, string] {
-    const firstComma = line.indexOf(',');
-    const secondComma = line.indexOf(',', firstComma + 1);
-    
-    if (firstComma === -1 || secondComma === -1) {
+    // 使用正規表達式來正確解析 CSV，處理引號內的逗號
+    const match = line.match(/^([^,]*),([^,]*),(.*)$/);
+    if (!match) {
       return ['', '', ''];
     }
     
-    const table = line.substring(0, firstComma);
-    const id = line.substring(firstComma + 1, secondComma);
-    const data = line.substring(secondComma + 1);
+    const [, table, id, data] = match;
     
     // 處理 CSV 中被雙引號包圍的 JSON 字串
     let cleanData = data.trim();

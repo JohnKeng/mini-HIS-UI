@@ -39,6 +39,7 @@ import {
 import type { ServiceState } from './models/MedicalService.ts';
 
 import { isSuccess } from './types/results.ts';
+import { database } from './database/factory.ts';
 
 const app = express();
 const port = 5000;
@@ -47,102 +48,147 @@ const port = 5000;
 app.use(express.json());
 app.use(express.static('src/public'));
 
-// 記憶體資料儲存 (實際專案應使用資料庫)
-const patients = new Map<string, PatientState>();
-const appointments = new Map<string, AppointmentState>();
-const prescriptions = new Map<string, PrescriptionState>();
-const services = new Map<string, ServiceState>();
+// 使用資料庫抽象層 (可輕鬆切換不同資料庫)
+// const patients = new Map<string, PatientState>();
+// const appointments = new Map<string, AppointmentState>();
+// const prescriptions = new Map<string, PrescriptionState>();
+// const services = new Map<string, ServiceState>();
+
+// 輔助函式：從實體中提取 ID
+function getEntityId(entity: PatientState | AppointmentState | PrescriptionState | ServiceState): string {
+  if ('info' in entity && entity.info && typeof entity.info === 'object' && 'id' in entity.info) {
+    return entity.info.id as string;
+  }
+  return '';
+}
 
 // Patient API 端點
-app.post('/api/patients', (req, res) => {
+app.post('/api/patients', async (req, res) => {
   const { patientInfo } = req.body;
   const patientId = `pt-${Date.now()}`;
   
   const result = registerPatient(patientInfo, patientId);
   if (isSuccess(result)) {
-    patients.set(patientId, result.data);
-    return res.json({ success: true, data: result.data });
+    const saved = await database.create('patients', patientId, result.data);
+    if (saved) {
+      return res.json({ success: true, data: result.data });
+    } else {
+      return res.status(500).json({ success: false, error: { message: 'Failed to save patient' } });
+    }
   } else {
     return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.get('/api/patients/:id', (req, res) => {
-  const patient = patients.get(req.params.id);
-  if (patient) {
-    res.json({ success: true, data: patient });
-  } else {
-    res.status(404).json({ success: false, error: { message: 'Patient not found' } });
+app.get('/api/patients/:id', async (req, res) => {
+  try {
+    const patient = await database.read('patients', req.params.id);
+    if (patient) {
+      res.json({ success: true, data: patient });
+    } else {
+      res.status(404).json({ success: false, error: { message: 'Patient not found' } });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: 'Failed to fetch patient' } });
   }
 });
 
-app.get('/api/patients', (_req, res) => {
-  const allPatients = Array.from(patients.values());
-  res.json({ success: true, data: allPatients });
-});
-
-app.post('/api/patients/:id/admit', (req, res) => {
-  const patient = patients.get(req.params.id);
-  if (!patient) {
-    return res.status(404).json({ success: false, error: { message: 'Patient not found' } });
-  }
-  
-  if (!isRegistered(patient)) {
-    return res.status(400).json({ success: false, error: { message: 'Patient must be registered first' } });
-  }
-  
-  const { wardNumber, bedNumber, attendingDoctorId } = req.body;
-  const result = admitPatient(patient, wardNumber, bedNumber, attendingDoctorId);
-  
-  if (isSuccess(result)) {
-    patients.set(req.params.id, result.data);
-    return res.json({ success: true, data: result.data });
-  } else {
-    return res.status(400).json({ success: false, error: result.error });
+app.get('/api/patients', async (_req, res) => {
+  try {
+    const allPatients = await database.findAll('patients');
+    res.json({ success: true, data: allPatients });
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: 'Failed to fetch patients' } });
   }
 });
 
-app.post('/api/patients/:id/discharge', (req, res) => {
-  const patient = patients.get(req.params.id);
-  if (!patient) {
-    return res.status(404).json({ success: false, error: { message: 'Patient not found' } });
+app.post('/api/patients/:id/admit', async (req, res) => {
+  try {
+    const patient = await database.read('patients', req.params.id);
+    if (!patient) {
+      return res.status(404).json({ success: false, error: { message: 'Patient not found' } });
+    }
+    
+    if (!isRegistered(patient)) {
+      return res.status(400).json({ success: false, error: { message: 'Patient must be registered first' } });
+    }
+    
+    const { wardNumber, bedNumber, attendingDoctorId } = req.body;
+    const result = admitPatient(patient, wardNumber, bedNumber, attendingDoctorId);
+    
+    if (isSuccess(result)) {
+      const saved = await database.update('patients', req.params.id, result.data);
+      if (saved) {
+        return res.json({ success: true, data: result.data });
+      } else {
+        return res.status(500).json({ success: false, error: { message: 'Failed to update patient' } });
+      }
+    } else {
+      return res.status(400).json({ success: false, error: result.error });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: 'Failed to admit patient' } });
   }
-  
-  if (!isAdmitted(patient)) {
-    return res.status(400).json({ success: false, error: { message: 'Patient must be admitted first' } });
-  }
-  
-  const { summary, followUpDate } = req.body;
-  const result = dischargePatient(patient, summary, followUpDate);
-  
-  if (isSuccess(result)) {
-    patients.set(req.params.id, result.data);
-    return res.json({ success: true, data: result.data });
-  } else {
-    return res.status(400).json({ success: false, error: result.error });
+});
+
+app.post('/api/patients/:id/discharge', async (req, res) => {
+  try {
+    const patient = await database.read('patients', req.params.id);
+    if (!patient) {
+      return res.status(404).json({ success: false, error: { message: 'Patient not found' } });
+    }
+    
+    if (!isAdmitted(patient)) {
+      return res.status(400).json({ success: false, error: { message: 'Patient must be admitted first' } });
+    }
+    
+    const { summary, followUpDate } = req.body;
+    const result = dischargePatient(patient, summary, followUpDate);
+    
+    if (isSuccess(result)) {
+      const saved = await database.update('patients', req.params.id, result.data);
+      if (saved) {
+        return res.json({ success: true, data: result.data });
+      } else {
+        return res.status(500).json({ success: false, error: { message: 'Failed to update patient' } });
+      }
+    } else {
+      return res.status(400).json({ success: false, error: result.error });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: 'Failed to discharge patient' } });
   }
 });
 
 // Appointment API 端點
-app.post('/api/appointments', (req, res) => {
+app.post('/api/appointments', async (req, res) => {
   const { patientId, doctorId, department, timeSlot, purpose } = req.body;
   const result = requestAppointment(patientId, doctorId, department, timeSlot, purpose);
   
   if (isSuccess(result)) {
-    appointments.set(result.data.info.id, result.data);
-    return res.json({ success: true, data: result.data });
+    const appointmentId = getEntityId(result.data);
+    const saved = await database.create('appointments', appointmentId, result.data);
+    if (saved) {
+      return res.json({ success: true, data: result.data });
+    } else {
+      return res.status(500).json({ success: false, error: { message: 'Failed to save appointment' } });
+    }
   } else {
     return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.get('/api/appointments', (_req, res) => {
-  const allAppointments = Array.from(appointments.values());
-  res.json({ success: true, data: allAppointments });
+app.get('/api/appointments', async (_req, res) => {
+  try {
+    const allAppointments = await database.findAll('appointments');
+    res.json({ success: true, data: allAppointments });
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: 'Failed to fetch appointments' } });
+  }
 });
 
-app.post('/api/appointments/:id/confirm', (req, res) => {
-  const appointment = appointments.get(req.params.id);
+app.post('/api/appointments/:id/confirm', async (req, res) => {
+  const appointment = await database.read('appointments', req.params.id);
   if (!appointment) {
     return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
   }
@@ -155,15 +201,15 @@ app.post('/api/appointments/:id/confirm', (req, res) => {
   const result = confirmAppointment(appointment, confirmationNumber);
   
   if (isSuccess(result)) {
-    appointments.set(req.params.id, result.data);
+    await database.update('appointments', req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.post('/api/appointments/:id/checkin', (req, res) => {
-  const appointment = appointments.get(req.params.id);
+app.post('/api/appointments/:id/checkin', async (req, res) => {
+  const appointment = await database.read('appointments', req.params.id);
   if (!appointment) {
     return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
   }
@@ -175,15 +221,15 @@ app.post('/api/appointments/:id/checkin', (req, res) => {
   const result = checkInAppointment(appointment);
   
   if (isSuccess(result)) {
-    appointments.set(req.params.id, result.data);
+    await database.update('appointments', req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.post('/api/appointments/:id/start', (req, res) => {
-  const appointment = appointments.get(req.params.id);
+app.post('/api/appointments/:id/start', async (req, res) => {
+  const appointment = await database.read('appointments', req.params.id);
   if (!appointment) {
     return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
   }
@@ -195,15 +241,15 @@ app.post('/api/appointments/:id/start', (req, res) => {
   const result = startAppointment(appointment);
   
   if (isSuccess(result)) {
-    appointments.set(req.params.id, result.data);
+    await database.update('appointments', req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.post('/api/appointments/:id/complete', (req, res) => {
-  const appointment = appointments.get(req.params.id);
+app.post('/api/appointments/:id/complete', async (req, res) => {
+  const appointment = await database.read('appointments', req.params.id);
   if (!appointment) {
     return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
   }
@@ -216,7 +262,7 @@ app.post('/api/appointments/:id/complete', (req, res) => {
   const result = completeAppointment(appointment, followUpNeeded, notes);
   
   if (isSuccess(result)) {
-    appointments.set(req.params.id, result.data);
+    await database.update('appointments', req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
@@ -224,25 +270,29 @@ app.post('/api/appointments/:id/complete', (req, res) => {
 });
 
 // Prescription API 端點
-app.post('/api/prescriptions', (req, res) => {
+app.post('/api/prescriptions', async (req, res) => {
   const { patientId, doctorId, items, notes } = req.body;
   const result = createPrescription(patientId, doctorId, items, notes);
   
   if (isSuccess(result)) {
-    prescriptions.set(result.data.info.id, result.data);
+    await database.create('prescriptions', getEntityId(result.data), result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.get('/api/prescriptions', (_req, res) => {
-  const allPrescriptions = Array.from(prescriptions.values());
-  res.json({ success: true, data: allPrescriptions });
+app.get('/api/prescriptions', async (_req, res) => {
+  try {
+    const allPrescriptions = await database.findAll('prescriptions');
+    res.json({ success: true, data: allPrescriptions });
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: 'Failed to fetch prescriptions' } });
+  }
 });
 
-app.post('/api/prescriptions/:id/submit', (req, res) => {
-  const prescription = prescriptions.get(req.params.id);
+app.post('/api/prescriptions/:id/submit', async (req, res) => {
+  const prescription = await database.read('prescriptions', req.params.id);
   if (!prescription) {
     return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
   }
@@ -254,15 +304,15 @@ app.post('/api/prescriptions/:id/submit', (req, res) => {
   const result = submitPrescription(prescription);
   
   if (isSuccess(result)) {
-    prescriptions.set(req.params.id, result.data);
+    await database.update('prescriptions', req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.post('/api/prescriptions/:id/start-preparation', (req, res) => {
-  const prescription = prescriptions.get(req.params.id);
+app.post('/api/prescriptions/:id/start-preparation', async (req, res) => {
+  const prescription = await database.read('prescriptions', req.params.id);
   if (!prescription) {
     return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
   }
@@ -275,15 +325,15 @@ app.post('/api/prescriptions/:id/start-preparation', (req, res) => {
   const result = startPrescriptionPreparation(prescription, pharmacistId);
   
   if (isSuccess(result)) {
-    prescriptions.set(req.params.id, result.data);
+    await database.update('prescriptions', req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.post('/api/prescriptions/:id/complete-preparing', (req, res) => {
-  const prescription = prescriptions.get(req.params.id);
+app.post('/api/prescriptions/:id/complete-preparing', async (req, res) => {
+  const prescription = await database.read('prescriptions', req.params.id);
   if (!prescription) {
     return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
   }
@@ -296,15 +346,15 @@ app.post('/api/prescriptions/:id/complete-preparing', (req, res) => {
   const result = completePreparing(prescription, preparationNotes);
   
   if (isSuccess(result)) {
-    prescriptions.set(req.params.id, result.data);
+    await database.update('prescriptions', req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.post('/api/prescriptions/:id/dispense', (req, res) => {
-  const prescription = prescriptions.get(req.params.id);
+app.post('/api/prescriptions/:id/dispense', async (req, res) => {
+  const prescription = await database.read('prescriptions', req.params.id);
   if (!prescription) {
     return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
   }
@@ -317,7 +367,7 @@ app.post('/api/prescriptions/:id/dispense', (req, res) => {
   const result = dispensePrescription(prescription, dispensedBy, instructions);
   
   if (isSuccess(result)) {
-    prescriptions.set(req.params.id, result.data);
+    await database.update('prescriptions', req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
@@ -325,25 +375,29 @@ app.post('/api/prescriptions/:id/dispense', (req, res) => {
 });
 
 // Medical Service API 端點
-app.post('/api/services', (req, res) => {
+app.post('/api/services', async (req, res) => {
   const { patientId, serviceType, serviceName, priority, estimatedDuration, requestedBy, requiredResources, notes } = req.body;
   const result = requestService(patientId, serviceType, serviceName, priority, estimatedDuration, requestedBy, requiredResources, notes);
   
   if (isSuccess(result)) {
-    services.set(result.data.info.id, result.data);
+    await database.create('services', getEntityId(result.data), result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.get('/api/services', (_req, res) => {
-  const allServices = Array.from(services.values());
-  res.json({ success: true, data: allServices });
+app.get('/api/services', async (_req, res) => {
+  try {
+    const allServices = await database.findAll('services');
+    res.json({ success: true, data: allServices });
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: 'Failed to fetch services' } });
+  }
 });
 
-app.post('/api/services/:id/schedule', (req, res) => {
-  const service = services.get(req.params.id);
+app.post('/api/services/:id/schedule', async (req, res) => {
+  const service = await database.read('services', req.params.id);
   if (!service) {
     return res.status(404).json({ success: false, error: { message: 'Service not found' } });
   }
@@ -356,15 +410,15 @@ app.post('/api/services/:id/schedule', (req, res) => {
   const result = scheduleService(service, scheduledTime, scheduledBy, staff, location);
   
   if (isSuccess(result)) {
-    services.set(req.params.id, result.data);
+    await database.update('services', req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.post('/api/services/:id/start-preparation', (req, res) => {
-  const service = services.get(req.params.id);
+app.post('/api/services/:id/start-preparation', async (req, res) => {
+  const service = await database.read('services', req.params.id);
   if (!service) {
     return res.status(404).json({ success: false, error: { message: 'Service not found' } });
   }
@@ -377,15 +431,15 @@ app.post('/api/services/:id/start-preparation', (req, res) => {
   const result = startServicePreparation(service, staff, location, preparationNotes);
   
   if (isSuccess(result)) {
-    services.set(req.params.id, result.data);
+    await database.update('services', req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.post('/api/services/:id/start', (req, res) => {
-  const service = services.get(req.params.id);
+app.post('/api/services/:id/start', async (req, res) => {
+  const service = await database.read('services', req.params.id);
   if (!service) {
     return res.status(404).json({ success: false, error: { message: 'Service not found' } });
   }
@@ -398,15 +452,15 @@ app.post('/api/services/:id/start', (req, res) => {
   const result = startService(service, performingStaff, serviceNotes);
   
   if (isSuccess(result)) {
-    services.set(req.params.id, result.data);
+    await database.update('services', req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });
   }
 });
 
-app.post('/api/services/:id/complete', (req, res) => {
-  const service = services.get(req.params.id);
+app.post('/api/services/:id/complete', async (req, res) => {
+  const service = await database.read('services', req.params.id);
   if (!service) {
     return res.status(404).json({ success: false, error: { message: 'Service not found' } });
   }
@@ -419,7 +473,7 @@ app.post('/api/services/:id/complete', (req, res) => {
   const result = completeService(service, results, actualDuration, followUpInstructions);
   
   if (isSuccess(result)) {
-    services.set(req.params.id, result.data);
+    await database.update('services', req.params.id, result.data);
     return res.json({ success: true, data: result.data });
   } else {
     return res.status(400).json({ success: false, error: result.error });

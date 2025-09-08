@@ -1,5 +1,4 @@
 import fs from 'fs/promises';
-import path from 'path';
 import type { DatabaseInterface, EntityType, EntityState } from './interface.ts';
 
 export class CSVDatabase implements DatabaseInterface {

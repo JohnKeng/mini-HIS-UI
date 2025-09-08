@@ -170,6 +170,12 @@ async function showPatientDetail(patientId) {
             
             ${admissionInfo}
             ${dischargeInfo}
+            
+            <div class="mt-6 pt-4 border-t border-gray-200">
+                <button onclick="deletePatient('${patient.info.id}')" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors">
+                    刪除患者
+                </button>
+            </div>
         </div>
     `;
 
@@ -205,6 +211,12 @@ async function showAppointmentDetail(appointmentId) {
                     ${appointment.confirmedAt ? `<div><span class="font-medium">確認時間:</span> ${new Date(appointment.confirmedAt).toLocaleString()}</div>` : ''}
                     ${appointment.checkedInAt ? `<div><span class="font-medium">報到時間:</span> ${new Date(appointment.checkedInAt).toLocaleString()}</div>` : ''}
                 </div>
+            </div>
+            
+            <div class="mt-6 pt-4 border-t border-gray-200">
+                <button onclick="deleteAppointment('${appointment.info.id}')" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors">
+                    刪除預約
+                </button>
             </div>
         </div>
     `;
@@ -254,6 +266,12 @@ async function showPrescriptionDetail(prescriptionId) {
                     ${prescription.preparedAt ? `<div><span class="font-medium">調劑完成:</span> ${new Date(prescription.preparedAt).toLocaleString()}</div>` : ''}
                     ${prescription.dispensedAt ? `<div><span class="font-medium">發藥時間:</span> ${new Date(prescription.dispensedAt).toLocaleString()}</div>` : ''}
                 </div>
+            </div>
+            
+            <div class="mt-6 pt-4 border-t border-gray-200">
+                <button onclick="deletePrescription('${prescription.info.id}')" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors">
+                    刪除處方
+                </button>
             </div>
         </div>
     `;
@@ -306,6 +324,12 @@ async function showServiceDetail(serviceId) {
                     </div>
                 </div>
             ` : ''}
+            
+            <div class="mt-6 pt-4 border-t border-gray-200">
+                <button onclick="deleteService('${service.info.id}')" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors">
+                    刪除服務
+                </button>
+            </div>
         </div>
     `;
 
@@ -670,6 +694,79 @@ async function dispensePrescription(prescriptionId) {
         } else {
             showMessage(`發藥失敗: ${result.error.message}`, 'error');
         }
+    }
+}
+
+// ========== 刪除功能 ==========
+async function deletePatient(patientId) {
+    if (!confirm('確定要刪除此患者嗎？此操作無法撤銷。')) {
+        return;
+    }
+    
+    const result = await apiRequest(`${API_BASE}/patients/${patientId}`, {
+        method: 'DELETE'
+    });
+    
+    if (result.success) {
+        showMessage('患者已刪除', 'success');
+        hideModal();
+        loadPatients();
+    } else {
+        showMessage(`刪除失敗: ${result.error.message}`, 'error');
+    }
+}
+
+async function deleteAppointment(appointmentId) {
+    if (!confirm('確定要刪除此預約嗎？此操作無法撤銷。')) {
+        return;
+    }
+    
+    const result = await apiRequest(`${API_BASE}/appointments/${appointmentId}`, {
+        method: 'DELETE'
+    });
+    
+    if (result.success) {
+        showMessage('預約已刪除', 'success');
+        hideModal();
+        loadAppointments();
+    } else {
+        showMessage(`刪除失敗: ${result.error.message}`, 'error');
+    }
+}
+
+async function deletePrescription(prescriptionId) {
+    if (!confirm('確定要刪除此處方嗎？此操作無法撤銷。')) {
+        return;
+    }
+    
+    const result = await apiRequest(`${API_BASE}/prescriptions/${prescriptionId}`, {
+        method: 'DELETE'
+    });
+    
+    if (result.success) {
+        showMessage('處方已刪除', 'success');
+        hideModal();
+        loadPrescriptions();
+    } else {
+        showMessage(`刪除失敗: ${result.error.message}`, 'error');
+    }
+}
+
+async function deleteService(serviceId) {
+    if (!confirm('確定要刪除此醫療服務嗎？此操作無法撤銷。')) {
+        return;
+    }
+    
+    const result = await apiRequest(`${API_BASE}/services/${serviceId}`, {
+        method: 'DELETE'
+    });
+    
+    if (result.success) {
+        showMessage('醫療服務已刪除', 'success');
+        hideModal();
+        loadServices();
+    } else {
+        showMessage(`刪除失敗: ${result.error.message}`, 'error');
     }
 }
 

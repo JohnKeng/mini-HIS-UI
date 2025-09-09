@@ -15,6 +15,12 @@ function displayPatients(patients) {
     tbody.innerHTML = '';
     
     patients.forEach(patient => {
+        // 確保患者資料結構完整
+        if (!patient || !patient.info || !patient.info.id) {
+            console.warn('跳過無效的患者資料:', patient);
+            return;
+        }
+        
         const row = document.createElement('tr');
         row.className = 'border-b hover:bg-gray-50';
         

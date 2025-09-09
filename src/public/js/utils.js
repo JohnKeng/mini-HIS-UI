@@ -24,7 +24,7 @@ async function loadPatientOptions(datalistId) {
         result.data.forEach(patient => {
             const option = document.createElement('option');
             option.value = patient.info.id;
-            option.textContent = `${patient.info.name} (${patient.info.id})`;
+            option.textContent = `${patient.info.id} + ${patient.info.name}`;
             option.setAttribute('data-name', patient.info.name);
             option.setAttribute('data-id', patient.info.id);
             datalistElement.appendChild(option);

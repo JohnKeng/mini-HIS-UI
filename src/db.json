@@ -61,6 +61,11 @@
           "country": "台灣"
         }
       }
+    },
+    {
+      "tag": "Registered",
+      "patientId": "pt-1757388450559",
+      "registeredAt": "2025-09-09T03:27:30.559Z"
     }
   ],
   "appointments": [

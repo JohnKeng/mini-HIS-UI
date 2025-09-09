@@ -273,6 +273,23 @@
       "requestedAt": "2025-09-08T14:06:25.702Z",
       "requestedBy": "doc-001",
       "scheduledAt": "2025-09-09T04:21:15.966Z"
+    },
+    {
+      "tag": "Requested",
+      "info": {
+        "id": "svc-1757391817519",
+        "patientId": "p-1757389083975 + 呱呱",
+        "serviceType": "Examination",
+        "priority": "Normal",
+        "estimatedDuration": 45,
+        "requiredResources": [
+          "X光機",
+          "技術人員"
+        ],
+        "notes": "檢查胸部"
+      },
+      "requestedAt": "2025-09-09T04:23:37.519Z",
+      "requestedBy": "doc-001"
     }
   ]
 }

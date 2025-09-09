@@ -98,6 +98,64 @@ app.get('/api/patients', async (_req, res) => {
   }
 });
 
+// 開始準備處方
+app.post('/api/prescriptions/:id/start-preparing', async (req, res) => {
+  try {
+    const prescription = await database.readPrescription(req.params.id);
+    if (!prescription) {
+      return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
+    }
+    
+    if (prescription.tag !== 'Submitted') {
+      return res.status(400).json({ success: false, error: { message: 'Prescription must be submitted first' } });
+    }
+    
+    const result = startPrescriptionPreparation(prescription, 'prep-001');
+    
+    if (isSuccess(result)) {
+      const saved = await database.updatePrescription(req.params.id, result.data);
+      if (saved) {
+        return res.json({ success: true, data: result.data });
+      } else {
+        return res.status(500).json({ success: false, error: { message: 'Failed to update prescription' } });
+      }
+    } else {
+      return res.status(400).json({ success: false, error: result.error });
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, error: { message: 'Failed to start preparing prescription' } });
+  }
+});
+
+// 開始準備醫療服務
+app.post('/api/services/:id/start-preparing', async (req, res) => {
+  try {
+    const service = await database.readService(req.params.id);
+    if (!service) {
+      return res.status(404).json({ success: false, error: { message: 'Service not found' } });
+    }
+    
+    if (service.tag !== 'Scheduled') {
+      return res.status(400).json({ success: false, error: { message: 'Service must be scheduled first' } });
+    }
+    
+    const result = startServicePreparation(service, ['準備器材'], 'staff-001');
+    
+    if (isSuccess(result)) {
+      const saved = await database.updateService(req.params.id, result.data);
+      if (saved) {
+        return res.json({ success: true, data: result.data });
+      } else {
+        return res.status(500).json({ success: false, error: { message: 'Failed to update service' } });
+      }
+    } else {
+      return res.status(400).json({ success: false, error: result.error });
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, error: { message: 'Failed to start preparing service' } });
+  }
+});
+
 // 移除患者入院API端點
 
 // 移除患者出院API端點

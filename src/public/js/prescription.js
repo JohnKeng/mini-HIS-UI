@@ -123,6 +123,12 @@ async function showPrescriptionDetail(prescriptionId) {
                 <div class="text-sm">${prescription.info.notes}</div>
             </div>
             ` : ''}
+            
+            <div class="mt-6 flex justify-end">
+                <button onclick="window.prescription.deletePrescription('${prescription.info.id}'); window.ui.hideModal();" class="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-colors font-semibold">
+                    刪除處方
+                </button>
+            </div>
         </div>
     `;
 

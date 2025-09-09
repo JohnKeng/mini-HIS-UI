@@ -3,6 +3,7 @@
   let currentRecordId = '';
   let patientId = '';
   let appointmentId = '';
+  let recordsCache = [];
 
   function getQS(name) {
     const url = new URL(window.location.href);
@@ -55,6 +56,8 @@
     const select = document.getElementById('recordSelect');
     select.innerHTML = '<option value="">選擇既有病歷...</option>';
     if (r.success && Array.isArray(r.data)) {
+      // 快取並按照時間排序（新到舊）
+      recordsCache = r.data.slice().sort((a, b) => new Date(b.info.createdAt) - new Date(a.info.createdAt));
       r.data.forEach(rec => {
         const opt = document.createElement('option');
         opt.value = rec.info.id;
@@ -63,12 +66,39 @@
         select.appendChild(opt);
       });
     }
+
+    // 渲染右側清單
+    renderRecordList();
+  }
+
+  function renderRecordList() {
+    const listEl = document.getElementById('recordListSidebar');
+    if (!listEl) return;
+    listEl.innerHTML = '';
+    if (!recordsCache || recordsCache.length === 0) {
+      listEl.innerHTML = '<div class="text-gray-500">尚無病歷</div>';
+      return;
+    }
+    recordsCache.forEach(rec => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      const active = currentRecordId === rec.info.id;
+      btn.className = `w-full text-left px-3 py-2 border rounded transition-colors ${active ? 'border-blue-400 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'}`;
+      btn.dataset.id = rec.info.id;
+      btn.dataset.json = JSON.stringify(rec);
+      btn.innerHTML = `
+        <div class="font-medium">${new Date(rec.info.createdAt).toLocaleString()}</div>
+        <div class="text-gray-600 truncate">${rec.data.diagnosis || '未填診斷'}</div>
+      `;
+      listEl.appendChild(btn);
+    });
   }
 
   function newRecord() {
     currentRecordId = '';
     document.getElementById('recordSelect').value = '';
     setForm(null);
+    renderRecordList();
   }
 
   async function saveRecord(e) {
@@ -95,7 +125,9 @@
         window.ui.showMessage('病歷已建立', 'success');
         currentRecordId = res.data.info.id;
         setForm(res.data);
-        loadPatientAndRecords();
+        // 更新快取與側邊清單
+        recordsCache.unshift(res.data);
+        renderRecordList();
       } else {
         window.ui.showMessage(`儲存失敗: ${res.error.message}`, 'error');
       }
@@ -107,7 +139,14 @@
       if (res.success) {
         window.ui.showMessage('病歷已更新', 'success');
         setForm(res.data);
-        loadPatientAndRecords();
+        // 更新快取中的該筆資料並重渲染
+        const idx = recordsCache.findIndex(r => r.info.id === currentRecordId);
+        if (idx !== -1) {
+          recordsCache[idx] = res.data;
+          // 依更新時間重新排序（新到舊）
+          recordsCache.sort((a, b) => new Date(b.info.updatedAt || b.info.createdAt) - new Date(a.info.updatedAt || a.info.createdAt));
+        }
+        renderRecordList();
       } else {
         window.ui.showMessage(`更新失敗: ${res.error.message}`, 'error');
       }
@@ -125,7 +164,33 @@
       const opt = e.target.options[e.target.selectedIndex];
       const rec = opt?.dataset?.json ? JSON.parse(opt.dataset.json) : null;
       setForm(rec);
+      renderRecordList();
     });
+
+    // 側邊既有病歷清單點擊事件（事件委派）
+    const listEl = document.getElementById('recordListSidebar');
+    if (listEl) {
+      listEl.addEventListener('click', (e) => {
+        let target = e.target;
+        while (target && target !== listEl && !target.dataset.id) {
+          target = target.parentElement;
+        }
+        if (target && target.dataset.id) {
+          currentRecordId = target.dataset.id;
+          const rec = target.dataset.json ? JSON.parse(target.dataset.json) : null;
+          setForm(rec);
+          // 標示選中項
+          document.querySelectorAll('#recordListSidebar [data-id]').forEach(el => {
+            el.classList.remove('border-blue-400', 'bg-blue-50');
+            el.classList.add('border-gray-200');
+          });
+          target.classList.remove('border-gray-200');
+          target.classList.add('border-blue-400', 'bg-blue-50');
+          // 同步下拉選單選擇（若存在）
+          const select = document.getElementById('recordSelect');
+          if (select) select.value = currentRecordId;
+        }
+      });
+    }
   });
 })();
-

@@ -121,7 +121,7 @@
       "followUpNotes": ""
     },
     {
-      "tag": "Confirmed",
+      "tag": "CheckedIn",
       "info": {
         "id": "appt-1757395365563",
         "patientId": "p-1757391410002",
@@ -133,7 +133,24 @@
         }
       },
       "requestedAt": "2025-09-09T05:22:45.563Z",
-      "confirmedAt": "2025-09-09T05:22:48.847Z"
+      "confirmedAt": "2025-09-09T05:22:48.847Z",
+      "checkedInAt": "2025-09-09T09:52:23.911Z"
+    },
+    {
+      "tag": "Confirmed",
+      "info": {
+        "id": "appt-1757411570216",
+        "patientId": "p-1757392090939",
+        "doctorId": "doc-001",
+        "department": "Cardiology",
+        "timeSlot": {
+          "start": "2025-09-09T02:02:00.000Z",
+          "end": "2025-09-09T02:32:00.000Z"
+        },
+        "purpose": "心跳停止"
+      },
+      "requestedAt": "2025-09-09T09:52:50.216Z",
+      "confirmedAt": "2025-09-09T09:52:52.618Z"
     }
   ],
   "prescriptions": [

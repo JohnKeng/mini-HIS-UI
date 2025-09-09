@@ -87,6 +87,7 @@ function showMessage(message, type = 'info') {
 // 彈窗管理
 function showModal(title, content) {
     const overlay = document.getElementById('detailModal');
+    if (!overlay) return; // 某些頁面沒有 modal 元素
     const card = overlay.querySelector('div');
     const titleEl = document.getElementById('modalTitle');
     const contentEl = document.getElementById('modalContent');
@@ -120,6 +121,7 @@ function showModal(title, content) {
 
 function hideModal() {
     const overlay = document.getElementById('detailModal');
+    if (!overlay) return; // 某些頁面沒有 modal 元素
     const card = overlay.querySelector('div');
     // Animate out
     overlay.classList.add('opacity-0');
@@ -131,13 +133,20 @@ function hideModal() {
     }, 180);
 }
 
-// 關閉彈窗事件
-document.getElementById('closeModal').addEventListener('click', hideModal);
-document.getElementById('detailModal').addEventListener('click', (e) => {
-    if (e.target.id === 'detailModal') {
-        hideModal();
-    }
-});
+// 關閉彈窗事件（容錯：頁面可能沒有這些元素）
+const closeBtnEl = document.getElementById('closeModal');
+if (closeBtnEl) {
+    closeBtnEl.addEventListener('click', hideModal);
+}
+
+const overlayEl = document.getElementById('detailModal');
+if (overlayEl) {
+    overlayEl.addEventListener('click', (e) => {
+        if (e.target.id === 'detailModal') {
+            hideModal();
+        }
+    });
+}
 
 // 導出 UI 函數
 window.ui = {

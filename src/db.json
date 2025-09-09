@@ -65,7 +65,7 @@
   ],
   "appointments": [
     {
-      "tag": "CheckedIn",
+      "tag": "InProgress",
       "info": {
         "id": "appt-1757336943722",
         "patientId": "pt-web-001",
@@ -80,10 +80,11 @@
       "requestedAt": "2025-09-08T13:09:03.722Z",
       "confirmedAt": "2025-09-08T13:09:08.934Z",
       "confirmationNumber": "CONF-1757336948385",
-      "checkedInAt": "2025-09-08T13:09:10.343Z"
+      "checkedInAt": "2025-09-08T13:09:10.343Z",
+      "startedAt": "2025-09-09T02:43:03.934Z"
     },
     {
-      "tag": "Requested",
+      "tag": "Confirmed",
       "info": {
         "id": "appt-1757339865903",
         "patientId": "pt-1757339824164",
@@ -95,7 +96,9 @@
         },
         "purpose": "來看護士"
       },
-      "requestedAt": "2025-09-08T13:57:45.903Z"
+      "requestedAt": "2025-09-08T13:57:45.903Z",
+      "confirmedAt": "2025-09-09T02:43:08.312Z",
+      "confirmationNumber": "CONF-1757385788209"
     }
   ],
   "prescriptions": [

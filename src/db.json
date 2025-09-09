@@ -2,30 +2,6 @@
   "patients": [
     {
       "tag": "Discharged",
-      "patientId": "pt-1757336260417",
-      "registeredAt": "2025-09-08T12:57:40.417Z",
-      "admittedAt": "2025-09-08T12:58:24.939Z",
-      "dischargedAt": "2025-09-08T12:58:29.632Z",
-      "info": {
-        "id": "pt-json-001",
-        "name": "JSON測試患者",
-        "birthDate": "1990-01-01",
-        "gender": "Male",
-        "contactNumber": "0912345678",
-        "address": {
-          "street": "JSON街123號",
-          "city": "台北市",
-          "state": "信義區",
-          "postalCode": "110",
-          "country": "台灣"
-        }
-      },
-      "diagnoses": [],
-      "dischargeSummary": "病情穩定，可以出院",
-      "followUpDate": "2025-09-15T12:58:29.066Z"
-    },
-    {
-      "tag": "Discharged",
       "patientId": "pt-1757339824964",
       "registeredAt": "2025-09-08T13:57:04.964Z",
       "admittedAt": "2025-09-09T03:38:54.114Z",

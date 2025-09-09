@@ -60,6 +60,23 @@
           "zipCode": "100"
         }
       }
+    },
+    {
+      "tag": "Registered",
+      "patientId": "pt-1757392091057",
+      "registeredAt": "2025-09-09T04:28:11.057Z",
+      "info": {
+        "id": "p-1757392090939",
+        "name": "摩堤",
+        "birthDate": "1989-05-09",
+        "gender": "Male",
+        "contactNumber": "99",
+        "address": {
+          "street": "山上",
+          "city": "台北市",
+          "zipCode": "100"
+        }
+      }
     }
   ],
   "appointments": [
@@ -80,6 +97,20 @@
       "confirmedAt": "2025-09-09T02:43:08.312Z",
       "confirmationNumber": "CONF-1757385788209",
       "checkedInAt": "2025-09-09T03:30:22.325Z"
+    },
+    {
+      "tag": "Requested",
+      "info": {
+        "id": "appt-1757392042416",
+        "patientId": "p-1757389083975 + 呱呱",
+        "doctorId": "doc-001",
+        "department": "Cardiology",
+        "timeSlot": {
+          "start": "2025-09-09T04:27:00.000Z",
+          "end": "2025-09-09T04:57:00.000Z"
+        }
+      },
+      "requestedAt": "2025-09-09T04:27:22.416Z"
     }
   ],
   "prescriptions": [
@@ -114,61 +145,6 @@
     {
       "tag": "Created",
       "info": {
-        "id": "rx-1757388841886",
-        "patientId": "pt-json-001",
-        "doctorId": "doc-001",
-        "items": [
-          {
-            "medicationId": "med-001",
-            "medication": {
-              "id": "med-001",
-              "name": "阿斯匹靈",
-              "code": "ASPIRIN",
-              "dosageForm": "錠劑",
-              "strength": "100mg"
-            },
-            "dosage": "1 錠",
-            "frequency": "每日三次",
-            "route": "口服",
-            "duration": "7 天",
-            "instructions": "飯後服用"
-          }
-        ],
-        "notes": "緩解疼痛和發炎"
-      },
-      "createdAt": "2025-09-09T03:34:01.886Z"
-    },
-    {
-      "tag": "Submitted",
-      "info": {
-        "id": "rx-1757388850242",
-        "patientId": "pt-web-001",
-        "doctorId": "doc-001",
-        "items": [
-          {
-            "medicationId": "med-001",
-            "medication": {
-              "id": "med-001",
-              "name": "阿斯匹靈",
-              "code": "ASPIRIN",
-              "dosageForm": "錠劑",
-              "strength": "100mg"
-            },
-            "dosage": "1 錠",
-            "frequency": "每日三次",
-            "route": "口服",
-            "duration": "7 天",
-            "instructions": "飯後服用"
-          }
-        ],
-        "notes": "緩解疼痛和發炎"
-      },
-      "createdAt": "2025-09-09T03:34:10.242Z",
-      "submittedAt": "2025-09-09T04:20:41.323Z"
-    },
-    {
-      "tag": "Created",
-      "info": {
         "id": "rx-1757391518339",
         "patientId": "p-1757391410002",
         "doctorId": "doc-001",
@@ -192,33 +168,6 @@
         "notes": "緩解疼痛和發炎"
       },
       "createdAt": "2025-09-09T04:18:38.339Z"
-    },
-    {
-      "tag": "Created",
-      "info": {
-        "id": "rx-1757391601125",
-        "patientId": "p-1757389083975 + 呱呱",
-        "doctorId": "doc-001",
-        "items": [
-          {
-            "medicationId": "med-001",
-            "medication": {
-              "id": "med-001",
-              "name": "阿斯匹靈",
-              "code": "ASPIRIN",
-              "dosageForm": "錠劑",
-              "strength": "100mg"
-            },
-            "dosage": "1 錠",
-            "frequency": "每日三次",
-            "route": "口服",
-            "duration": "7 天",
-            "instructions": "飯後服用"
-          }
-        ],
-        "notes": "緩解疼痛和發炎"
-      },
-      "createdAt": "2025-09-09T04:20:01.125Z"
     }
   ],
   "services": [

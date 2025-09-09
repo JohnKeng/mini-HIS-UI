@@ -1,6 +1,20 @@
 // API 基礎 URL
 const API_BASE = '/api';
 
+// 表單收縮展開功能
+function toggleForm(containerId, button) {
+    const container = document.getElementById(containerId);
+    const arrow = button.querySelector('span');
+    
+    if (container.style.display === 'none') {
+        container.style.display = 'block';
+        arrow.textContent = '▲';
+    } else {
+        container.style.display = 'none';
+        arrow.textContent = '▼';
+    }
+}
+
 // DOM 元素
 const patientBtn = document.getElementById('patientBtn');
 const appointmentBtn = document.getElementById('appointmentBtn');

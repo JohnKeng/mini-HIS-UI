@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('patientForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const patientData = {
+        const patientInfo = {
             id: `p-${Date.now()}`,
             name: document.getElementById('patientName').value,
             birthDate: document.getElementById('patientBirthDate').value,
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         const result = await window.api.apiRequest(`${window.api.API_BASE}/patients`, {
             method: 'POST',
-            body: JSON.stringify(patientData)
+            body: JSON.stringify({ patientInfo })
         });
         
         if (result.success) {

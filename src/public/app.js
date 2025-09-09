@@ -132,19 +132,21 @@ function getPatientName(patientId) {
     return patient ? patient.info.name : '未知患者';
 }
 
-async function loadPatientOptions(selectElementId) {
+async function loadPatientOptions(datalistId) {
     const result = await apiRequest(`${API_BASE}/patients`);
     if (result.success) {
-        const selectElement = document.getElementById(selectElementId);
-        // 清空現有選項（保留第一個預設選項）
-        selectElement.innerHTML = '<option value="">請選擇病患</option>';
+        const datalistElement = document.getElementById(datalistId);
+        // 清空現有選項
+        datalistElement.innerHTML = '';
         
         // 添加病患選項
         result.data.forEach(patient => {
             const option = document.createElement('option');
             option.value = patient.info.id;
             option.textContent = `${patient.info.name} (${patient.info.id})`;
-            selectElement.appendChild(option);
+            option.setAttribute('data-name', patient.info.name);
+            option.setAttribute('data-id', patient.info.id);
+            datalistElement.appendChild(option);
         });
     }
 }
@@ -1040,21 +1042,21 @@ appointmentBtn.addEventListener('click', async () => {
     showPanel('appointment');
     await loadPatients(); // 確保患者資料已載入
     loadAppointments();
-    loadPatientOptions('appointmentPatientId');
+    loadPatientOptions('appointmentPatientList');
 });
 
 prescriptionBtn.addEventListener('click', async () => {
     showPanel('prescription');
     await loadPatients(); // 確保患者資料已載入
     loadPrescriptions();
-    loadPatientOptions('prescriptionPatientId');
+    loadPatientOptions('prescriptionPatientList');
 });
 
 serviceBtn.addEventListener('click', async () => {
     showPanel('service');
     await loadPatients(); // 確保患者資料已載入
     loadServices();
-    loadPatientOptions('servicePatientId');
+    loadPatientOptions('servicePatientList');
 });
 
 // 表單提交處理

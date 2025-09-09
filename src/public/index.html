@@ -52,12 +52,7 @@
                     <button id="prescriptionBtn" data-panel="prescription" class="nav-tab px-5 py-3 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-white border-r border-blue-300">處方</button>
                     <button id="serviceBtn" data-panel="service" class="nav-tab px-5 py-3 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-white">服務</button>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <button aria-label="新增預約" onclick="window.appointment.openCreateModal()" class="hidden panel-action-appointment bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">新增預約</button>
-                    <button aria-label="新增患者" onclick="window.patient.openCreateModal()" class="hidden panel-action-patient bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">新增患者</button>
-                    <button aria-label="開立新處方" onclick="window.prescription.openCreateModal()" class="hidden panel-action-prescription bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">開立新處方</button>
-                    <button aria-label="新增服務" onclick="window.service.openCreateModal()" class="hidden panel-action-service bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">新增服務</button>
-                </div>
+                <!-- 右側動作按鈕已移至各列表上方 -->
             </div>
 
             <!-- 內容區域 -->
@@ -169,9 +164,10 @@
 
                     <!-- 病患列表 -->
                     <div>
-                        <h3 class="text-xl font-medium mb-6 text-gray-900">
-                            病患列表
-                        </h3>
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-medium text-gray-900">病患列表</h3>
+                            <button aria-label="新增患者" onclick="window.patient.openCreateModal()" class="hidden panel-action-patient px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-white border border-blue-300 rounded-md shadow-sm focus:outline-none">新增患者</button>
+                        </div>
                         <div
                             id="patientList"
                             class="overflow-x-auto border border-gray-200 rounded-lg"
@@ -375,9 +371,10 @@
 
                     <!-- 預約列表 -->
                     <div>
-                        <h3 class="text-xl font-medium mb-6 text-gray-900">
-                            預約列表
-                        </h3>
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-medium text-gray-900">預約列表</h3>
+                            <button aria-label="新增預約" onclick="window.appointment.openCreateModal()" class="hidden panel-action-appointment px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-white border border-blue-300 rounded-md shadow-sm focus:outline-none">新增預約</button>
+                        </div>
                         <div
                             id="appointmentList"
                             class="overflow-x-auto border border-gray-200 rounded-lg"
@@ -553,9 +550,10 @@
 
                     <!-- 處方列表 -->
                     <div>
-                        <h3 class="text-xl font-medium mb-6 text-gray-900">
-                            處方列表
-                        </h3>
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-medium text-gray-900">處方列表</h3>
+                            <button aria-label="開立新處方" onclick="window.prescription.openCreateModal()" class="hidden panel-action-prescription px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-white border border-blue-300 rounded-md shadow-sm focus:outline-none">開立新處方</button>
+                        </div>
                         <div
                             id="prescriptionList"
                             class="overflow-x-auto border border-gray-200 rounded-lg"
@@ -735,7 +733,10 @@
 
                     <!-- 服務列表 -->
                     <div>
-                        <h3 class="text-lg font-semibold mb-4">服務列表</h3>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold">服務列表</h3>
+                            <button aria-label="新增服務" onclick="window.service.openCreateModal()" class="hidden panel-action-service px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-white border border-blue-300 rounded-md shadow-sm focus:outline-none">新增服務</button>
+                        </div>
                         <div id="serviceList" class="overflow-x-auto">
                             <table class="min-w-full table-auto">
                                 <thead class="bg-gray-100">

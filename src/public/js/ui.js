@@ -34,15 +34,16 @@ function showPanel(panelName) {
         panels[panelName].classList.remove('hidden');
     }
     
-    // 更新 segmented 導覽按鈕的 active 樣式
+    // 更新側邊導航樣式（符合參考風格）
     const tabs = document.querySelectorAll('#topNav .nav-tab');
     tabs.forEach(btn => {
-        if (btn.getAttribute('data-panel') === panelName) {
-            btn.classList.add('bg-white', 'text-blue-700');
-            btn.classList.remove('bg-blue-50');
+        const isActive = btn.getAttribute('data-panel') === panelName;
+        if (isActive) {
+            btn.classList.add('bg-slate-200', 'text-slate-900', 'font-medium');
+            btn.classList.remove('text-slate-700');
         } else {
-            btn.classList.remove('bg-white', 'text-blue-700');
-            btn.classList.add('bg-blue-50');
+            btn.classList.remove('bg-slate-200', 'text-slate-900', 'font-medium');
+            btn.classList.add('text-slate-700');
         }
     });
 

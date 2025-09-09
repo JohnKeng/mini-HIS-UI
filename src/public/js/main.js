@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             id: `p-${Date.now()}`,
             name: document.getElementById('patientName').value,
             birthDate: document.getElementById('patientBirthDate').value,
-            gender: document.querySelector('input[name="gender"]:checked').value,
+            gender: document.querySelector('input[name="gender"]:checked')?.value || '',
             contactNumber: document.getElementById('patientPhone').value,
             address: {
                 street: document.getElementById('patientAddress').value,

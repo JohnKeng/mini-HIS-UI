@@ -2,6 +2,7 @@ import type { PatientState } from '../models/Patient.ts';
 import type { AppointmentState } from '../models/Appointment.ts';
 import type { PrescriptionState } from '../models/Prescription.ts';
 import type { ServiceState } from '../models/MedicalService.ts';
+import type { MedicalRecordState } from '../models/MedicalRecord.ts';
 
 export interface Database {
   // 病患操作
@@ -31,4 +32,11 @@ export interface Database {
   updateService(id: string, data: ServiceState): Promise<boolean>;
   deleteService(id: string): Promise<boolean>;
   findAllServices(): Promise<ServiceState[]>;
+  
+  // 病歷操作
+  createMedicalRecord(id: string, data: MedicalRecordState): Promise<boolean>;
+  readMedicalRecord(id: string): Promise<MedicalRecordState | null>;
+  updateMedicalRecord(id: string, data: MedicalRecordState): Promise<boolean>;
+  deleteMedicalRecord(id: string): Promise<boolean>;
+  findMedicalRecordsByPatient(patientId: string): Promise<MedicalRecordState[]>;
 }

@@ -33,6 +33,8 @@ function displayAppointments(appointments) {
             'Completed': 'bg-blue-900 text-white border border-blue-900'
         }[appointment.tag] || 'bg-blue-100 text-blue-800 border border-blue-300';
         
+        const statusText = appointment.tag === 'Completed' ? '病歷' : appointment.tag;
+        
         const patientName = window.utils.getPatientName(appointment.info.patientId);
         const appointmentTime = appointment.info.timeSlot ? 
             new Date(appointment.info.timeSlot.start).toLocaleString('zh-TW') : '未設定';
@@ -44,7 +46,7 @@ function displayAppointments(appointments) {
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${appointmentTime}</td>
             <td class="px-4 py-2">
                 <span class="px-2 py-1 rounded-full text-xs ${statusColor}">
-                    ${appointment.tag}
+                    ${statusText}
                 </span>
             </td>
             <td class="px-4 py-2">
@@ -76,11 +78,15 @@ function getAppointmentActions(appointment) {
     }
     
     if (appointment.tag === 'CheckedIn') {
-        actions.push(`<button onclick="window.appointment.startAppointment('${appointment.info.id}')" class="bg-purple-500 text-white px-3 py-1 rounded text-xs hover:bg-purple-600">開始</button>`);
+        actions.push(`<button onclick="window.appointment.startAppointment('${appointment.info.id}')" class="bg-purple-500 text-white px-3 py-1 rounded text-xs hover:bg-purple-600">叫號</button>`);
     }
     
     if (appointment.tag === 'InProgress') {
-        actions.push(`<button onclick="window.appointment.completeAppointment('${appointment.info.id}')" class="bg-gray-500 text-white px-3 py-1 rounded text-xs hover:bg-gray-600">完成</button>`);
+        actions.push(`<button onclick="window.appointment.openMedicalRecordAfterComplete('${appointment.info.id}')" class="bg-gray-500 text-white px-3 py-1 rounded text-xs hover:bg-gray-600">病歷</button>`);
+    }
+    
+    if (appointment.tag === 'Completed') {
+        actions.push(`<button onclick="window.appointment.openMedicalRecord('${appointment.info.patientId}', '${appointment.info.id}')" class="bg-gray-700 text-white px-3 py-1 rounded text-xs hover:bg-gray-800">病歷</button>`);
     }
     
     return actions.join(' ');
@@ -197,6 +203,29 @@ async function completeAppointment(appointmentId) {
     }
 }
 
+// 完成預約後開啟病歷頁
+async function openMedicalRecordAfterComplete(appointmentId) {
+    const appt = window.utils.allAppointments.find(a => a.info.id === appointmentId);
+    const patientId = appt?.info?.patientId;
+    const result = await window.api.apiRequest(`${window.api.API_BASE}/appointments/${appointmentId}/complete`, {
+        method: 'POST',
+        body: JSON.stringify({ followUpNeeded: false, notes: '' })
+    });
+    if (result.success) {
+        window.ui.showMessage('預約完成，開啟病歷', 'success');
+        window.appointment.openMedicalRecord(patientId, appointmentId);
+        loadAppointments();
+    } else {
+        window.ui.showMessage(`完成失敗: ${result.error.message}`, 'error');
+    }
+}
+
+// 直接開啟病歷頁
+function openMedicalRecord(patientId, appointmentId) {
+    const url = `medical-record.html?patientId=${encodeURIComponent(patientId)}&appointmentId=${encodeURIComponent(appointmentId)}`;
+    window.open(url, '_blank');
+}
+
 // 刪除預約
 async function deleteAppointment(appointmentId) {
     if (!confirm('確定要刪除此預約嗎？')) return;
@@ -223,7 +252,9 @@ window.appointment = {
     startAppointment,
     completeAppointment,
     deleteAppointment,
-    openCreateModal
+    openCreateModal,
+    openMedicalRecord,
+    openMedicalRecordAfterComplete
 };
 
 // 以彈窗方式新增預約

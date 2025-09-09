@@ -101,7 +101,7 @@
       "completedAt": "2025-09-09T05:22:27.532Z"
     },
     {
-      "tag": "CheckedIn",
+      "tag": "Completed",
       "info": {
         "id": "appt-1757394806962",
         "patientId": "p-1757389083975",
@@ -114,7 +114,11 @@
       },
       "requestedAt": "2025-09-09T05:13:26.962Z",
       "confirmedAt": "2025-09-09T05:22:23.112Z",
-      "checkedInAt": "2025-09-09T05:22:24.756Z"
+      "checkedInAt": "2025-09-09T05:22:24.756Z",
+      "startedAt": "2025-09-09T09:48:22.701Z",
+      "completedAt": "2025-09-09T09:48:23.172Z",
+      "followUpNeeded": false,
+      "followUpNotes": ""
     },
     {
       "tag": "Confirmed",
@@ -243,6 +247,25 @@
       },
       "requestedAt": "2025-09-09T05:05:12.881Z",
       "requestedBy": "doc-001"
+    }
+  ],
+  "medicalRecords": [
+    {
+      "info": {
+        "id": "mr-1757411366798",
+        "patientId": "p-1757389083975",
+        "appointmentId": "appt-1757394806962",
+        "createdAt": "2025-09-09T09:49:26.798Z",
+        "updatedAt": "2025-09-09T09:49:26.798Z"
+      },
+      "data": {
+        "chiefComplaint": "大腦病變",
+        "historyOfPresentIllness": "憂鬱",
+        "pastMedicalHistory": "嗜睡",
+        "physicalExam": "缺陷",
+        "diagnosis": "弱智",
+        "treatmentPlan": "回家"
+      }
     }
   ]
 }

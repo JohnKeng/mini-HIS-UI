@@ -4,14 +4,16 @@ import type { PatientState } from '../models/Patient.ts';
 import type { AppointmentState } from '../models/Appointment.ts';
 import type { PrescriptionState } from '../models/Prescription.ts';
 import type { ServiceState } from '../models/MedicalService.ts';
+import type { MedicalRecordState } from '../models/MedicalRecord.ts';
 
-type EntityState = PatientState | AppointmentState | PrescriptionState | ServiceState;
+type EntityState = PatientState | AppointmentState | PrescriptionState | ServiceState | MedicalRecordState;
 
 interface DatabaseSchema {
   patients: PatientState[];
   appointments: AppointmentState[];
   prescriptions: PrescriptionState[];
   services: ServiceState[];
+  medicalRecords: MedicalRecordState[];
 }
 
 export class JsonDatabase implements Database {
@@ -26,6 +28,10 @@ export class JsonDatabase implements Database {
     try {
       const jsonContent = await fs.readFile(this.jsonPath, 'utf-8');
       this.cache = JSON.parse(jsonContent);
+      // 向後相容：確保新增集合存在
+      if (!(this.cache as any).medicalRecords) {
+        (this.cache as any).medicalRecords = [];
+      }
     } catch (error) {
       // 如果檔案不存在，建立空檔案
       if ((error as any).code === 'ENOENT') {
@@ -42,7 +48,8 @@ export class JsonDatabase implements Database {
       patients: [],
       appointments: [],
       prescriptions: [],
-      services: []
+      services: [],
+      medicalRecords: []
     };
     this.cache = emptySchema;
     await this.saveData();
@@ -255,5 +262,47 @@ export class JsonDatabase implements Database {
   async findAllServices(): Promise<ServiceState[]> {
     await this.loadData();
     return this.cache?.services || [];
+  }
+
+  // 病歷操作
+  async createMedicalRecord(id: string, data: MedicalRecordState): Promise<boolean> {
+    await this.loadData();
+    if (!this.cache) return false;
+    const exists = this.cache.medicalRecords.some(item => this.getEntityId(item) === id);
+    if (exists) return false;
+    this.cache.medicalRecords.push(data);
+    await this.saveData();
+    return true;
+  }
+
+  async readMedicalRecord(id: string): Promise<MedicalRecordState | null> {
+    await this.loadData();
+    if (!this.cache) return null;
+    return this.cache.medicalRecords.find(item => this.getEntityId(item) === id) || null;
+  }
+
+  async updateMedicalRecord(id: string, data: MedicalRecordState): Promise<boolean> {
+    await this.loadData();
+    if (!this.cache) return false;
+    const index = this.cache.medicalRecords.findIndex(item => this.getEntityId(item) === id);
+    if (index === -1) return false;
+    this.cache.medicalRecords[index] = data;
+    await this.saveData();
+    return true;
+  }
+
+  async deleteMedicalRecord(id: string): Promise<boolean> {
+    await this.loadData();
+    if (!this.cache) return false;
+    const index = this.cache.medicalRecords.findIndex(item => this.getEntityId(item) === id);
+    if (index === -1) return false;
+    this.cache.medicalRecords.splice(index, 1);
+    await this.saveData();
+    return true;
+  }
+
+  async findMedicalRecordsByPatient(patientId: string): Promise<MedicalRecordState[]> {
+    await this.loadData();
+    return (this.cache?.medicalRecords || []).filter(r => r.info.patientId === patientId);
   }
 }

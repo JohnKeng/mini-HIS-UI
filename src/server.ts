@@ -36,6 +36,8 @@ import type { ServiceState } from './models/MedicalService.ts';
 import type { MedicalStaff } from './types/common.ts';
 import { isSuccess } from './types/results.ts';
 import { database } from './database/index.ts';
+import type { MedicalRecordState } from './models/MedicalRecord.ts';
+import { createMedicalRecord, updateMedicalRecord } from './models/MedicalRecord.ts';
 
 const app = express();
 const port = 5000;
@@ -220,6 +222,73 @@ app.post('/api/appointments', async (req, res) => {
     }
   } else {
     return res.status(400).json({ success: false, error: result.error });
+  }
+});
+
+// Medical Record API 端點
+app.get('/api/medical-records', async (req, res) => {
+  try {
+    const patientId = (req.query.patientId as string) || '';
+    if (patientId) {
+      const records = await database.findMedicalRecordsByPatient(patientId);
+      return res.json({ success: true, data: records });
+    }
+    // 無 patientId 時不回傳全部，避免洩漏；回空陣列
+    return res.json({ success: true, data: [] });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: { message: 'Failed to fetch medical records' } });
+  }
+});
+
+app.get('/api/medical-records/:id', async (req, res) => {
+  try {
+    const record = await database.readMedicalRecord(req.params.id);
+    if (!record) return res.status(404).json({ success: false, error: { message: 'Medical record not found' } });
+    return res.json({ success: true, data: record });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: { message: 'Failed to fetch medical record' } });
+  }
+});
+
+app.post('/api/medical-records', async (req, res) => {
+  try {
+    const { patientId, doctorId, appointmentId, data } = req.body as {
+      patientId: string; doctorId?: string; appointmentId?: string; data: MedicalRecordState['data'];
+    };
+    if (!patientId || !data) {
+      return res.status(400).json({ success: false, error: { message: 'Missing required fields' } });
+    }
+    const patient = await database.readPatient(patientId);
+    if (!patient) {
+      return res.status(400).json({ success: false, error: { message: 'Invalid patientId' } });
+    }
+    const record = createMedicalRecord(patientId, doctorId, appointmentId, {
+      chiefComplaint: data.chiefComplaint || '',
+      historyOfPresentIllness: data.historyOfPresentIllness || '',
+      pastMedicalHistory: data.pastMedicalHistory || '',
+      physicalExam: data.physicalExam || '',
+      diagnosis: data.diagnosis || '',
+      treatmentPlan: data.treatmentPlan || ''
+    });
+    const saved = await database.createMedicalRecord(record.info.id, record);
+    if (!saved) return res.status(500).json({ success: false, error: { message: 'Failed to save medical record' } });
+    return res.json({ success: true, data: record });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: { message: 'Failed to create medical record' } });
+  }
+});
+
+app.put('/api/medical-records/:id', async (req, res) => {
+  try {
+    const record = await database.readMedicalRecord(req.params.id);
+    if (!record) return res.status(404).json({ success: false, error: { message: 'Medical record not found' } });
+    const updates = req.body?.data || {};
+    const updated = updateMedicalRecord(record, updates);
+    const ok = await database.updateMedicalRecord(updated.info.id, updated);
+    if (!ok) return res.status(500).json({ success: false, error: { message: 'Failed to update medical record' } });
+    return res.json({ success: true, data: updated });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: { message: 'Failed to update medical record' } });
   }
 });
 

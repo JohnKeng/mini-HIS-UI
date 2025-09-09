@@ -199,6 +199,41 @@ curl -X POST http://localhost:5000/api/services \
   }'
 ```
 
+## 5. 醫師（設定）API
+
+### 5.1 取得所有醫師
+```bash
+curl -X GET http://localhost:5000/api/doctors
+```
+
+### 5.2 新增醫師（ID 由伺服器產生 dr-XX）
+```bash
+curl -X POST http://localhost:5000/api/doctors \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "王大明"
+  }'
+```
+
+### 5.3 取得單一醫師
+```bash
+curl -X GET http://localhost:5000/api/doctors/doc-001
+```
+
+### 5.4 更新醫師姓名（ID 不可修改）
+```bash
+curl -X PUT http://localhost:5000/api/doctors/dr-01 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "王小明"
+  }'
+```
+
+### 5.5 刪除醫師
+```bash
+curl -X DELETE http://localhost:5000/api/doctors/dr-01
+```
+
 ### 4.2 獲取所有服務
 ```bash
 curl -X GET http://localhost:5000/api/services

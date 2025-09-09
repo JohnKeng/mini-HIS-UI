@@ -24,7 +24,7 @@ function displayAppointments(appointments) {
     
     appointments.forEach(appointment => {
         const row = document.createElement('tr');
-        
+
         const statusColor = {
             'Requested': 'bg-blue-100 text-blue-700 border border-blue-300',
             'Confirmed': 'bg-blue-200 text-blue-800 border border-blue-400',
@@ -43,23 +43,19 @@ function displayAppointments(appointments) {
         const room = appointment.roomNumber || appointment.clinicRoom || '-';
         const createdAt = appointment.requestedAt ? new Date(appointment.requestedAt).toLocaleString('zh-TW') : '-';
         const notes = appointment.info?.notes || '-';
-        
+
         const patientName = window.utils.getPatientName(appointment.info.patientId);
-        const appointmentTime = appointment.info.timeSlot ? 
-            new Date(appointment.info.timeSlot.start).toLocaleString('zh-TW') : '未設定';
-        
-        row.innerHTML = `
+        const appointmentTime = appointment.info.timeSlot ? new Date(appointment.info.timeSlot.start).toLocaleString('zh-TW') : '未設定';
+
+        // 不同表格的列模板
+        const htmlCheckedIn = `
             <td class="px-4 py-2 sticky left-0 bg-white z-10 w-[260px]">
                 <div class="font-medium cursor-pointer hover:text-blue-600" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${patientName}</div>
                 <div class="text-xs text-slate-500 font-mono cursor-pointer hover:text-blue-600" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${appointment.info.patientId}</div>
             </td>
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[140px]" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${appointment.info.department || '未設定'}</td>
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[220px] whitespace-nowrap" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${appointmentTime}</td>
-            <td class="px-4 py-2 w-[140px]">
-                <span class="px-2 py-1 rounded-full text-xs ${statusColor}">
-                    ${statusText}
-                </span>
-            </td>
+            <td class="px-4 py-2 w-[140px]"><span class="px-2 py-1 rounded-full text-xs ${statusColor}">${statusText}</span></td>
             <td class="px-4 py-2 w-[160px]">${doctor}</td>
             <td class="px-4 py-2 w-[240px] truncate" title="${purpose}">${purpose}</td>
             <td class="px-4 py-2 w-[160px]">${numberOrQueue}</td>
@@ -67,17 +63,30 @@ function displayAppointments(appointments) {
             <td class="px-4 py-2 w-[160px]">${room}</td>
             <td class="px-4 py-2 w-[220px]">${createdAt}</td>
             <td class="px-4 py-2 w-[200px] truncate" title="${notes}">${notes}</td>
-            <td class="px-4 py-2 sticky right-0 bg-white z-10 w-[180px]">
-                ${getAppointmentActions(appointment)}
+            <td class="px-4 py-2 sticky right-0 bg-white z-10 w-[180px]">${getAppointmentActions(appointment)}</td>`;
+
+        const htmlAppointments = `
+            <td class="px-4 py-2 sticky left-0 bg-white z-10 w-[260px]">
+                <div class="font-medium cursor-pointer hover:text-blue-600" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${patientName}</div>
+                <div class="text-xs text-slate-500 font-mono cursor-pointer hover:text-blue-600" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${appointment.info.patientId}</div>
             </td>
-        `;
-        
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[140px]" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${appointment.info.department || '未設定'}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[220px] whitespace-nowrap" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${appointmentTime}</td>
+            <td class="px-4 py-2 w-[140px]"><span class="px-2 py-1 rounded-full text-xs ${statusColor}">${statusText}</span></td>
+            <td class="px-4 py-2 w-[160px]">${doctor}</td>
+            <td class="px-4 py-2 w-[240px] truncate" title="${purpose}">${purpose}</td>
+            <td class="px-4 py-2 w-[220px]">${createdAt}</td>
+            <td class="px-4 py-2 w-[200px] truncate" title="${notes}">${notes}</td>
+            <td class="px-4 py-2 sticky right-0 bg-white z-10 w-[180px]">${getAppointmentActions(appointment)}</td>`;
+
         // 根據狀態決定添加到哪個表格
         if (checkedInStatuses.includes(appointment.tag)) {
             row.className = 'border-b hover:bg-blue-50';
+            row.innerHTML = htmlCheckedIn;
             checkedInTbody.appendChild(row);
         } else if (appointmentStatuses.includes(appointment.tag)) {
             row.className = 'border-b hover:bg-gray-50';
+            row.innerHTML = htmlAppointments;
             appointmentTbody.appendChild(row);
         }
     });

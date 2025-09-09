@@ -47,13 +47,16 @@
             <input type="text" placeholder="搜尋病患..." class="w-full pl-10 pr-4 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500">
           </div>
         </div>
-        <nav class="flex-1 px-4 pb-4">
+        <nav class="flex-1 px-4 pb-4 flex flex-col">
           <ul id="topNav" class="space-y-1">
             <li><a href="#" data-panel="appointment" class="nav-tab block px-3 py-2 text-sm font-medium text-slate-900 bg-slate-200 rounded-md">儀表板</a></li>
             <li><a href="#" data-panel="patient" class="nav-tab block px-3 py-2 text-sm text-slate-700 rounded-md hover:bg-slate-200">患者</a></li>
             <li><a href="#" data-panel="prescription" class="nav-tab block px-3 py-2 text-sm text-slate-700 rounded-md hover:bg-slate-200">處方</a></li>
             <li><a href="#" data-panel="service" class="nav-tab block px-3 py-2 text-sm text-slate-700 rounded-md hover:bg-slate-200">服務</a></li>
           </ul>
+          <div class="mt-auto pt-4 border-t border-slate-200">
+            <a href="#" data-panel="settings" class="nav-tab block px-3 py-2 text-sm text-slate-700 rounded-md hover:bg-slate-200">設定</a>
+          </div>
         </nav>
       </aside>
 
@@ -334,7 +337,7 @@
                             <button aria-label="新增預約" onclick="window.appointment.openCreateModal()" class="hidden section-action-appointment px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-white border border-blue-300 rounded-md shadow-sm focus:outline-none">新增預約</button>
                         </div>
                         <div id="appointmentList" class="relative overflow-x-auto border border-gray-200 rounded-lg">
-                            <table class="min-w-[1800px]">
+                            <table class="min-w-[1500px]">
                                 <thead class="bg-slate-100 border-b border-gray-200">
                                     <tr>
                                         <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 sticky left-0 z-20 bg-slate-100 w-[260px]">患者（姓名＋ID）</th>
@@ -343,9 +346,6 @@
                                         <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[140px]">狀態</th>
                                         <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">醫師</th>
                                         <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[240px]">目的/主訴</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">掛號/叫號</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[220px]">報到時間</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">診間/房號</th>
                                         <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[220px]">建立時間</th>
                                         <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[200px]">備註</th>
                                         <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 sticky right-0 z-20 bg-slate-100 w-[180px]">操作</th>
@@ -669,6 +669,26 @@
                         </div>
                     </div>
           </div>
+
+          <!-- 設定面板 -->
+          <div id="settingsPanel" class="panel hidden bg-white p-6 rounded-lg shadow-sm mb-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-medium text-gray-900">醫師管理</h3>
+              <button aria-label="新增醫師" onclick="window.settings.openCreateDoctorModal()" class="section-action-settings px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50">新增醫師</button>
+            </div>
+            <div class="relative overflow-x-auto border border-gray-200 rounded-lg">
+              <table class="min-w-[800px]">
+                <thead class="bg-slate-100 border-b border-gray-200">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-slate-700 w-[240px]">醫師ID</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-slate-700 w-[260px]">姓名</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-slate-700 sticky right-0 bg-slate-100 w-[180px]">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="doctorTableBody" class="bg-white divide-y divide-gray-200"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </main>
     </div>
@@ -695,6 +715,7 @@
     <script src="js/appointment.js"></script>
     <script src="js/prescription.js"></script>
     <script src="js/service.js"></script>
+    <script src="js/settings.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>

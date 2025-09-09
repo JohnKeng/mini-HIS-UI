@@ -5,6 +5,7 @@ import type { AppointmentState } from '../models/Appointment.ts';
 import type { PrescriptionState } from '../models/Prescription.ts';
 import type { ServiceState } from '../models/MedicalService.ts';
 import type { MedicalRecordState } from '../models/MedicalRecord.ts';
+import type { Doctor } from '../types/common.ts';
 
 type EntityState = PatientState | AppointmentState | PrescriptionState | ServiceState | MedicalRecordState;
 
@@ -14,6 +15,7 @@ interface DatabaseSchema {
   prescriptions: PrescriptionState[];
   services: ServiceState[];
   medicalRecords: MedicalRecordState[];
+  doctors: Doctor[];
 }
 
 export class JsonDatabase implements Database {
@@ -32,6 +34,9 @@ export class JsonDatabase implements Database {
       if (!(this.cache as any).medicalRecords) {
         (this.cache as any).medicalRecords = [];
       }
+      if (!(this.cache as any).doctors) {
+        (this.cache as any).doctors = [];
+      }
     } catch (error) {
       // 如果檔案不存在，建立空檔案
       if ((error as any).code === 'ENOENT') {
@@ -49,7 +54,8 @@ export class JsonDatabase implements Database {
       appointments: [],
       prescriptions: [],
       services: [],
-      medicalRecords: []
+      medicalRecords: [],
+      doctors: []
     };
     this.cache = emptySchema;
     await this.saveData();
@@ -304,5 +310,52 @@ export class JsonDatabase implements Database {
   async findMedicalRecordsByPatient(patientId: string): Promise<MedicalRecordState[]> {
     await this.loadData();
     return (this.cache?.medicalRecords || []).filter(r => r.info.patientId === patientId);
+  }
+
+  // 醫師（設定）
+  async createDoctor(id: string, data: Doctor): Promise<boolean> {
+    await this.loadData();
+    if (!this.cache) return false;
+    const exists = this.cache.doctors.some(d => d.id === id);
+    if (exists) return false;
+    this.cache.doctors.push({ id: data.id, name: data.name });
+    await this.saveData();
+    return true;
+  }
+
+  async readDoctor(id: string): Promise<Doctor | null> {
+    await this.loadData();
+    if (!this.cache) return null;
+    return this.cache.doctors.find(d => d.id === id) || null;
+  }
+
+  async updateDoctor(oldId: string, data: Doctor): Promise<boolean> {
+    await this.loadData();
+    if (!this.cache) return false;
+    const index = this.cache.doctors.findIndex(d => d.id === oldId);
+    if (index === -1) return false;
+    // 若更換 ID，需確認新 ID 不與他人衝突
+    if (oldId !== data.id) {
+      const conflict = this.cache.doctors.some(d => d.id === data.id);
+      if (conflict) return false;
+    }
+    this.cache.doctors[index] = { id: data.id, name: data.name };
+    await this.saveData();
+    return true;
+  }
+
+  async deleteDoctor(id: string): Promise<boolean> {
+    await this.loadData();
+    if (!this.cache) return false;
+    const index = this.cache.doctors.findIndex(d => d.id === id);
+    if (index === -1) return false;
+    this.cache.doctors.splice(index, 1);
+    await this.saveData();
+    return true;
+  }
+
+  async findAllDoctors(): Promise<Doctor[]> {
+    await this.loadData();
+    return this.cache?.doctors || [];
   }
 }

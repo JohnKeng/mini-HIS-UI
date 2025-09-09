@@ -210,11 +210,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupPatientSelectionDisplay('appointmentPatientId', 'appointmentPatientList');
     setupPatientSelectionDisplay('prescriptionPatientId', 'prescriptionPatientList');
     setupPatientSelectionDisplay('servicePatientId', 'servicePatientList');
+
+    // 若切換到設定面板，載入醫師清單
+    const tabs = document.querySelectorAll('.nav-tab');
+    tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const panel = btn.getAttribute('data-panel');
+            if (panel === 'settings' && window.settings?.loadDoctors) {
+                window.settings.loadDoctors();
+            }
+        });
+    });
 });
 
-// Segmented 導覽按鈕事件處理
-document.querySelectorAll('#topNav .nav-tab').forEach(btn => {
-    btn.addEventListener('click', async () => {
+// 側邊導覽按鈕事件處理（含設定）
+document.querySelectorAll('.nav-tab').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+        e.preventDefault();
         const panel = btn.getAttribute('data-panel');
         if (!panel) return;
         window.ui.showPanel(panel);
@@ -233,6 +245,8 @@ document.querySelectorAll('#topNav .nav-tab').forEach(btn => {
             if (window.patient?.loadPatients) await window.patient.loadPatients();
             if (window.service?.loadServices) window.service.loadServices();
             if (window.utils?.loadPatientOptions) window.utils.loadPatientOptions('servicePatientList');
+        } else if (panel === 'settings') {
+            if (window.settings?.loadDoctors) window.settings.loadDoctors();
         }
     });
 });

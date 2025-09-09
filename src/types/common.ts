@@ -79,3 +79,9 @@ export interface TimeSlot {
   start: DateTime;
   end: DateTime;
 }
+
+// 醫師（設定用，僅包含 id 與姓名）
+export interface Doctor {
+  id: ID;
+  name: string;
+}

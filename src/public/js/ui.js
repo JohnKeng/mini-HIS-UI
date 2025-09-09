@@ -5,7 +5,8 @@ const panels = {
     patient: document.getElementById('patientPanel'),
     appointment: document.getElementById('appointmentPanel'),
     prescription: document.getElementById('prescriptionPanel'),
-    service: document.getElementById('servicePanel')
+    service: document.getElementById('servicePanel'),
+    settings: document.getElementById('settingsPanel')
 };
 
 // 切換表單顯示/隱藏
@@ -35,7 +36,7 @@ function showPanel(panelName) {
     }
     
     // 更新側邊導航樣式（符合參考風格）
-    const tabs = document.querySelectorAll('#topNav .nav-tab');
+    const tabs = document.querySelectorAll('.nav-tab');
     tabs.forEach(btn => {
         const isActive = btn.getAttribute('data-panel') === panelName;
         if (isActive) {
@@ -52,9 +53,10 @@ function showPanel(panelName) {
         appointment: '.panel-action-appointment',
         patient: '.panel-action-patient',
         prescription: '.panel-action-prescription',
-        service: '.panel-action-service'
+        service: '.panel-action-service',
+        settings: '.panel-action-settings'
     };
-    document.querySelectorAll('.panel-action-appointment, .panel-action-patient, .panel-action-prescription, .panel-action-service')
+    document.querySelectorAll('.panel-action-appointment, .panel-action-patient, .panel-action-prescription, .panel-action-service, .panel-action-settings')
         .forEach(el => el.classList.add('hidden'));
     const selector = actionMap[panelName];
     if (selector) {

@@ -33,7 +33,7 @@ import {
   completeService
 } from './models/MedicalService.ts';
 import type { ServiceState } from './models/MedicalService.ts';
-import type { MedicalStaff } from './types/common.ts';
+import type { MedicalStaff, Doctor } from './types/common.ts';
 import { isSuccess } from './types/results.ts';
 import { database } from './database/index.ts';
 import type { MedicalRecordState } from './models/MedicalRecord.ts';
@@ -247,6 +247,71 @@ app.get('/api/medical-records/:id', async (req, res) => {
     return res.json({ success: true, data: record });
   } catch (error) {
     return res.status(500).json({ success: false, error: { message: 'Failed to fetch medical record' } });
+  }
+});
+
+// Doctors（設定）API 端點
+app.get('/api/doctors', async (_req, res) => {
+  try {
+    const doctors = await database.findAllDoctors();
+    return res.json({ success: true, data: doctors });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: { message: 'Failed to fetch doctors' } });
+  }
+});
+
+app.get('/api/doctors/:id', async (req, res) => {
+  try {
+    const doctor = await database.readDoctor(req.params.id);
+    if (!doctor) return res.status(404).json({ success: false, error: { message: 'Doctor not found' } });
+    return res.json({ success: true, data: doctor });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: { message: 'Failed to fetch doctor' } });
+  }
+});
+
+app.post('/api/doctors', async (req, res) => {
+  try {
+    const { name } = req.body as Partial<Doctor>;
+    if (!name) return res.status(400).json({ success: false, error: { message: 'Missing name' } });
+    // 產生 dr-XX 流水號
+    const list = await database.findAllDoctors();
+    const maxNum = list
+      .map(d => (d.id || '').match(/^dr-(\d{2,})$/))
+      .filter(Boolean)
+      .map(m => parseInt((m as RegExpMatchArray)[1], 10))
+      .reduce((a, b) => Math.max(a, b), 0);
+    const nextNum = (maxNum + 1).toString().padStart(2, '0');
+    const newId = `dr-${nextNum}`;
+    const ok = await database.createDoctor(newId, { id: newId, name });
+    if (!ok) return res.status(400).json({ success: false, error: { message: 'Doctor save failed' } });
+    return res.json({ success: true, data: { id: newId, name } });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: { message: 'Failed to create doctor' } });
+  }
+});
+
+app.put('/api/doctors/:id', async (req, res) => {
+  try {
+    const oldId = req.params.id;
+    const { name } = req.body as Partial<Doctor>;
+    if (!name) return res.status(400).json({ success: false, error: { message: 'Missing name' } });
+    // 僅允許更新姓名，ID 不可修改
+    const ok = await database.updateDoctor(oldId, { id: oldId, name });
+    if (!ok) return res.status(400).json({ success: false, error: { message: 'Doctor update failed (not found)' } });
+    return res.json({ success: true, data: { id: oldId, name } });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: { message: 'Failed to update doctor' } });
+  }
+});
+
+app.delete('/api/doctors/:id', async (req, res) => {
+  try {
+    const ok = await database.deleteDoctor(req.params.id);
+    if (!ok) return res.status(404).json({ success: false, error: { message: 'Doctor not found' } });
+    return res.json({ success: true });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: { message: 'Failed to delete doctor' } });
   }
 });
 

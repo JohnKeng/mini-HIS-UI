@@ -3,6 +3,7 @@ import type { AppointmentState } from '../models/Appointment.ts';
 import type { PrescriptionState } from '../models/Prescription.ts';
 import type { ServiceState } from '../models/MedicalService.ts';
 import type { MedicalRecordState } from '../models/MedicalRecord.ts';
+import type { Doctor } from '../types/common.ts';
 
 export interface Database {
   // 病患操作
@@ -39,4 +40,11 @@ export interface Database {
   updateMedicalRecord(id: string, data: MedicalRecordState): Promise<boolean>;
   deleteMedicalRecord(id: string): Promise<boolean>;
   findMedicalRecordsByPatient(patientId: string): Promise<MedicalRecordState[]>;
+
+  // 醫師（設定）
+  createDoctor(id: string, data: Doctor): Promise<boolean>;
+  readDoctor(id: string): Promise<Doctor | null>;
+  updateDoctor(oldId: string, data: Doctor): Promise<boolean>;
+  deleteDoctor(id: string): Promise<boolean>;
+  findAllDoctors(): Promise<Doctor[]>;
 }

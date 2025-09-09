@@ -158,6 +158,13 @@ npm run demo
 - `POST /api/services/:id/start` - 開始服務
 - `POST /api/services/:id/complete` - 完成服務
 
+### 醫師（設定）
+- `GET /api/doctors` - 取得所有醫師
+- `GET /api/doctors/:id` - 取得單一醫師
+- `POST /api/doctors` - 新增醫師（body: `{ name }`；ID 由伺服器自動產生 `dr-XX`）
+- `PUT /api/doctors/:id` - 更新醫師姓名（ID 不可修改）
+- `DELETE /api/doctors/:id` - 刪除醫師
+
 ## 核心模組說明
 
 ### 1. 病患管理 (Patient.ts)

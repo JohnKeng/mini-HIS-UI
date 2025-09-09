@@ -223,7 +223,7 @@ async function openMedicalRecordAfterComplete(appointmentId) {
 // 直接開啟病歷頁
 function openMedicalRecord(patientId, appointmentId) {
     const url = `medical-record.html?patientId=${encodeURIComponent(patientId)}&appointmentId=${encodeURIComponent(appointmentId)}`;
-    window.open(url, '_blank');
+    window.location.href = url;
 }
 
 // 刪除預約

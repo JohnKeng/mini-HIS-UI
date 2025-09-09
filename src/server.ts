@@ -564,7 +564,12 @@ app.post('/api/services/:id/start', async (req, res) => {
     return res.status(400).json({ success: false, error: { message: 'Service must be in InPreparation state' } });
   }
   
-  const { performingStaff, serviceNotes } = req.body;
+  const body = req.body || {};
+  const performingStaff = Array.isArray(body.performingStaff) && body.performingStaff.length > 0
+    ? body.performingStaff
+    : service.assignedStaff; // 預設使用已指派的人員
+  const serviceNotes = Array.isArray(body.serviceNotes) ? body.serviceNotes : [];
+
   const result = startService(service, performingStaff, serviceNotes);
   
   if (isSuccess(result)) {

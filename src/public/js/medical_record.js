@@ -53,18 +53,9 @@
     if (p.success) fillPatientInfo(p.data);
     // 病歷列表
     const r = await window.api.apiRequest(`${window.api.API_BASE}/medical-records?patientId=${encodeURIComponent(patientId)}`);
-    const select = document.getElementById('recordSelect');
-    select.innerHTML = '<option value="">選擇既有病歷...</option>';
     if (r.success && Array.isArray(r.data)) {
       // 快取並按照時間排序（新到舊）
       recordsCache = r.data.slice().sort((a, b) => new Date(b.info.createdAt) - new Date(a.info.createdAt));
-      r.data.forEach(rec => {
-        const opt = document.createElement('option');
-        opt.value = rec.info.id;
-        opt.textContent = `${new Date(rec.info.createdAt).toLocaleString()} - ${rec.data.diagnosis || '未填診斷'}`;
-        opt.dataset.json = JSON.stringify(rec);
-        select.appendChild(opt);
-      });
     }
 
     // 渲染右側清單
@@ -83,7 +74,7 @@
       const btn = document.createElement('button');
       btn.type = 'button';
       const active = currentRecordId === rec.info.id;
-      btn.className = `w-full text-left px-3 py-2 border rounded transition-colors ${active ? 'border-blue-400 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'}`;
+      btn.className = `w-full text-left px-4 py-3 border rounded-md transition-colors ${active ? 'border-blue-400 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'}`;
       btn.dataset.id = rec.info.id;
       btn.dataset.json = JSON.stringify(rec);
       btn.innerHTML = `
@@ -96,7 +87,6 @@
 
   function newRecord() {
     currentRecordId = '';
-    document.getElementById('recordSelect').value = '';
     setForm(null);
     renderRecordList();
   }
@@ -155,17 +145,7 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     loadPatientAndRecords();
-    document.getElementById('newRecordBtn').addEventListener('click', newRecord);
     document.getElementById('recordForm').addEventListener('submit', saveRecord);
-    document.getElementById('recordSelect').addEventListener('change', (e) => {
-      const id = e.target.value;
-      if (!id) { newRecord(); return; }
-      currentRecordId = id;
-      const opt = e.target.options[e.target.selectedIndex];
-      const rec = opt?.dataset?.json ? JSON.parse(opt.dataset.json) : null;
-      setForm(rec);
-      renderRecordList();
-    });
 
     // 側邊既有病歷清單點擊事件（事件委派）
     const listEl = document.getElementById('recordListSidebar');
@@ -186,9 +166,6 @@
           });
           target.classList.remove('border-gray-200');
           target.classList.add('border-blue-400', 'bg-blue-50');
-          // 同步下拉選單選擇（若存在）
-          const select = document.getElementById('recordSelect');
-          if (select) select.value = currentRecordId;
         }
       });
     }

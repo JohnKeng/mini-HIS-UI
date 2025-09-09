@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   </head>
-  <body class="bg-gray-100 min-h-screen font-sans">
+  <body class="bg-gray-100 min-h-screen font-sans flex flex-col min-w-[820px] overflow-y-scroll">
     <nav class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-sm border-b border-blue-200">
       <div class="max-w-7xl mx-auto px-6">
         <div class="flex justify-between items-center py-6">
@@ -22,50 +22,44 @@
       </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto px-6 py-8 flex gap-6">
+    <div class="flex-grow max-w-7xl mx-auto px-6 py-12 flex gap-6">
       <!-- 中央主要區域：病歷顯示與編輯 -->
       <main class="flex-1">
-        <section class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+        <section class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
           <div class="mb-4">
             <h2 class="text-xl font-semibold text-gray-900">病歷資料</h2>
-            <p class="text-sm text-gray-600 mt-1">操作指引：選擇既有病歷或點擊「新增病歷」。填寫表單後按「儲存病歷」。</p>
+            <p class="text-sm text-gray-600 mt-1">操作指引：從右側清單選擇既有病歷，或直接在下方表單填寫後按「儲存病歷」建立新病歷。</p>
+            <div id="recordMeta" class="text-xs text-gray-500 mt-1"></div>
           </div>
 
-          <div class="flex items-center gap-3 mb-6">
-            <select id="recordSelect" class="px-3 py-2 border rounded w-64">
-              <option value="">選擇既有病歷...</option>
-            </select>
-            <button id="newRecordBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">新增病歷</button>
-            <span id="recordMeta" class="text-xs text-gray-500"></span>
-          </div>
 
           <form id="recordForm" class="grid grid-cols-1 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-900 mb-1">主訴</label>
-              <textarea id="chiefComplaint" class="w-full px-3 py-2 border rounded" rows="2"></textarea>
+              <label class="block text-sm font-medium text-gray-900 mb-2">主訴</label>
+              <textarea id="chiefComplaint" class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors" rows="2"></textarea>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-900 mb-1">現病史</label>
-              <textarea id="hpi" class="w-full px-3 py-2 border rounded" rows="3"></textarea>
+              <label class="block text-sm font-medium text-gray-900 mb-2">現病史</label>
+              <textarea id="hpi" class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors" rows="3"></textarea>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-900 mb-1">既往史</label>
-              <textarea id="pmh" class="w-full px-3 py-2 border rounded" rows="3"></textarea>
+              <label class="block text-sm font-medium text-gray-900 mb-2">既往史</label>
+              <textarea id="pmh" class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors" rows="3"></textarea>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-900 mb-1">體格檢查</label>
-              <textarea id="pe" class="w-full px-3 py-2 border rounded" rows="3"></textarea>
+              <label class="block text-sm font-medium text-gray-900 mb-2">體格檢查</label>
+              <textarea id="pe" class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors" rows="3"></textarea>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-900 mb-1">診斷</label>
-              <textarea id="dx" class="w-full px-3 py-2 border rounded" rows="2"></textarea>
+              <label class="block text-sm font-medium text-gray-900 mb-2">診斷</label>
+              <textarea id="dx" class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors" rows="2"></textarea>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-900 mb-1">處方與治療計劃</label>
-              <textarea id="plan" class="w-full px-3 py-2 border rounded" rows="3"></textarea>
+              <label class="block text-sm font-medium text-gray-900 mb-2">處方與治療計劃</label>
+              <textarea id="plan" class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors" rows="3"></textarea>
             </div>
             <div class="pt-2">
-              <button id="saveBtn" type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">儲存病歷</button>
+              <button id="saveBtn" type="submit" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-md hover:from-blue-600 hover:to-blue-700 transition-colors font-medium">儲存病歷</button>
             </div>
           </form>
         </section>
@@ -91,6 +85,14 @@
     </div>
 
     <div id="messageContainer" class="fixed top-4 right-4 z-50"></div>
+
+    <footer class="bg-gradient-to-r from-blue-50 to-blue-100 border-t border-blue-200 py-4 mt-auto">
+      <div class="container mx-auto px-4 text-center">
+        <div class="text-sm font-medium text-blue-600">
+          此為 Serverless 服務，資料不會永久儲存，僅供學習使用。
+        </div>
+      </div>
+    </footer>
 
     <script src="js/api.js"></script>
     <script src="js/ui.js"></script>

@@ -248,7 +248,7 @@
   ],
   "services": [
     {
-      "tag": "Requested",
+      "tag": "Completed",
       "info": {
         "id": "svc-1757394312881",
         "patientId": "p-1757389083975",
@@ -263,7 +263,34 @@
         "notes": "檢查胸部"
       },
       "requestedAt": "2025-09-09T05:05:12.881Z",
-      "requestedBy": "doc-001"
+      "requestedBy": "doc-001",
+      "scheduledAt": "2025-09-09T10:01:46.898Z",
+      "preparationStartedAt": "2025-09-09T10:01:47.548Z",
+      "startedAt": "2025-09-09T10:04:24.768Z",
+      "completedAt": "2025-09-09T10:04:25.413Z",
+      "assignedStaff": [
+        {
+          "id": "staff-001",
+          "name": "醫護人員",
+          "birthDate": "2025-09-09T10:01:47.548Z",
+          "gender": "other",
+          "staffType": "labTechnician",
+          "department": "檢驗科",
+          "licenseNumber": "LIC-0001"
+        }
+      ],
+      "location": "檢驗室",
+      "actualStaff": [
+        {
+          "id": "staff-001",
+          "name": "醫護人員",
+          "birthDate": "2025-09-09T10:01:47.548Z",
+          "gender": "other",
+          "staffType": "labTechnician",
+          "department": "檢驗科",
+          "licenseNumber": "LIC-0001"
+        }
+      ]
     }
   ],
   "medicalRecords": [
@@ -316,6 +343,23 @@
         "physicalExam": "缺陷",
         "diagnosis": "弱智",
         "treatmentPlan": "回家"
+      }
+    },
+    {
+      "info": {
+        "id": "mr-1757412659533",
+        "patientId": "pt-1757339824164",
+        "appointmentId": "appt-1757339865903",
+        "createdAt": "2025-09-09T10:10:59.533Z",
+        "updatedAt": "2025-09-09T10:10:59.533Z"
+      },
+      "data": {
+        "chiefComplaint": "胖",
+        "historyOfPresentIllness": "吃太多",
+        "pastMedicalHistory": "",
+        "physicalExam": "",
+        "diagnosis": "患者吃太多酸辣魚",
+        "treatmentPlan": "吃更多"
       }
     }
   ]

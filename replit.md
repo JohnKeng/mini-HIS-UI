@@ -58,6 +58,10 @@ mini-HIS/
 - **Database Abstraction**: Implemented CQRS pattern for database operations
 - **Backend API**: Express server with RESTful endpoints
 - **Project Restructure**: Moved public to src/public, added database layer
+- **Admission/Discharge Removal**: Removed all patient admission and discharge functionality as requested
+- **Data Integrity**: Fixed patient registration to ensure complete data structure
+- **UI Spacing**: Improved spacing between form buttons and input areas across all four screens
+- **Error Handling**: Fixed null reference errors in patient data handling
 
 ## User Preferences
 - Focus on JSON database implementation (no multi-database code complexity)

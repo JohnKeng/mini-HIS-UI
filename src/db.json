@@ -115,7 +115,7 @@
   ],
   "prescriptions": [
     {
-      "tag": "Submitted",
+      "tag": "Dispensed",
       "info": {
         "id": "rx-1757340631888",
         "patientId": "pt-1757339824164",
@@ -140,10 +140,14 @@
         "notes": "緩解疼痛和發炎"
       },
       "createdAt": "2025-09-08T14:10:31.888Z",
-      "submittedAt": "2025-09-09T04:20:33.518Z"
+      "submittedAt": "2025-09-09T04:20:33.518Z",
+      "preparationStartedAt": "2025-09-09T04:28:25.073Z",
+      "preparedAt": "2025-09-09T04:28:27.795Z",
+      "dispensedAt": "2025-09-09T04:28:29.793Z",
+      "pharmacistId": "prep-001"
     },
     {
-      "tag": "Created",
+      "tag": "Prepared",
       "info": {
         "id": "rx-1757391518339",
         "patientId": "p-1757391410002",
@@ -167,12 +171,43 @@
         ],
         "notes": "緩解疼痛和發炎"
       },
-      "createdAt": "2025-09-09T04:18:38.339Z"
+      "createdAt": "2025-09-09T04:18:38.339Z",
+      "submittedAt": "2025-09-09T04:28:32.928Z",
+      "preparationStartedAt": "2025-09-09T04:28:34.121Z",
+      "preparedAt": "2025-09-09T04:28:36.081Z",
+      "pharmacistId": "prep-001"
+    },
+    {
+      "tag": "Created",
+      "info": {
+        "id": "rx-1757392121523",
+        "patientId": "p-1757392090939 + 摩堤",
+        "doctorId": "doc-001",
+        "items": [
+          {
+            "medicationId": "med-001",
+            "medication": {
+              "id": "med-001",
+              "name": "阿斯匹靈",
+              "code": "ASPIRIN",
+              "dosageForm": "錠劑",
+              "strength": "100mg"
+            },
+            "dosage": "1 錠",
+            "frequency": "每日三次",
+            "route": "口服",
+            "duration": "7 天",
+            "instructions": "飯後服用"
+          }
+        ],
+        "notes": "緩解疼痛和發炎"
+      },
+      "createdAt": "2025-09-09T04:28:41.523Z"
     }
   ],
   "services": [
     {
-      "tag": "Scheduled",
+      "tag": "InPreparation",
       "info": {
         "id": "svc-1757340385702",
         "patientId": "pt-1757339824164",
@@ -187,14 +222,19 @@
       },
       "requestedAt": "2025-09-08T14:06:25.702Z",
       "requestedBy": "doc-001",
-      "scheduledAt": "2025-09-09T04:21:15.966Z"
+      "scheduledAt": "2025-09-09T04:21:15.966Z",
+      "preparationStartedAt": "2025-09-09T04:28:52.893Z",
+      "assignedStaff": [
+        "準備器材"
+      ],
+      "location": "staff-001"
     },
     {
       "tag": "Requested",
       "info": {
-        "id": "svc-1757391817519",
-        "patientId": "p-1757389083975 + 呱呱",
-        "serviceType": "Examination",
+        "id": "svc-1757392144473",
+        "patientId": "p-1757392090939 + 摩堤",
+        "serviceType": "Laboratory",
         "priority": "Normal",
         "estimatedDuration": 45,
         "requiredResources": [
@@ -203,7 +243,7 @@
         ],
         "notes": "檢查胸部"
       },
-      "requestedAt": "2025-09-09T04:23:37.519Z",
+      "requestedAt": "2025-09-09T04:29:04.473Z",
       "requestedBy": "doc-001"
     }
   ]

@@ -197,6 +197,33 @@
         "notes": "緩解疼痛和發炎"
       },
       "createdAt": "2025-09-09T03:34:10.242Z"
+    },
+    {
+      "tag": "Created",
+      "info": {
+        "id": "rx-1757391518339",
+        "patientId": "p-1757391410002 + 大頭",
+        "doctorId": "doc-001",
+        "items": [
+          {
+            "medicationId": "med-001",
+            "medication": {
+              "id": "med-001",
+              "name": "阿斯匹靈",
+              "code": "ASPIRIN",
+              "dosageForm": "錠劑",
+              "strength": "100mg"
+            },
+            "dosage": "1 錠",
+            "frequency": "每日三次",
+            "route": "口服",
+            "duration": "7 天",
+            "instructions": "飯後服用"
+          }
+        ],
+        "notes": "緩解疼痛和發炎"
+      },
+      "createdAt": "2025-09-09T04:18:38.339Z"
     }
   ],
   "services": [

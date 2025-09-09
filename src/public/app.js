@@ -484,12 +484,19 @@ async function loadAppointments() {
 }
 
 function displayAppointments(appointments) {
-    const tbody = document.getElementById('appointmentTableBody');
-    tbody.innerHTML = '';
+    const checkedInTbody = document.getElementById('checkedInTableBody');
+    const appointmentTbody = document.getElementById('appointmentTableBody');
+    
+    // 清空兩個表格
+    checkedInTbody.innerHTML = '';
+    appointmentTbody.innerHTML = '';
+    
+    // 根據狀態分類預約
+    const checkedInStatuses = ['CheckedIn', 'InProgress', 'Completed'];
+    const appointmentStatuses = ['Requested', 'Confirmed'];
     
     appointments.forEach(appointment => {
         const row = document.createElement('tr');
-        row.className = 'border-b hover:bg-gray-50';
         
         const statusColor = {
             'Requested': 'bg-blue-100 text-blue-700 border border-blue-300',
@@ -518,7 +525,14 @@ function displayAppointments(appointments) {
             </td>
         `;
         
-        tbody.appendChild(row);
+        // 根據狀態決定添加到哪個表格
+        if (checkedInStatuses.includes(appointment.tag)) {
+            row.className = 'border-b hover:bg-blue-50';
+            checkedInTbody.appendChild(row);
+        } else if (appointmentStatuses.includes(appointment.tag)) {
+            row.className = 'border-b hover:bg-gray-50';
+            appointmentTbody.appendChild(row);
+        }
     });
 }
 

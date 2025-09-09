@@ -70,7 +70,7 @@
         "id": "appt-1757336943722",
         "patientId": "pt-web-001",
         "doctorId": "doc-001",
-        "department": "Cardiology",
+        "department": "心臟科",
         "timeSlot": {
           "start": "2025-09-08T13:08:00.000Z",
           "end": "2025-09-08T13:38:00.000Z"
@@ -89,7 +89,7 @@
         "id": "appt-1757339865903",
         "patientId": "pt-1757339824164",
         "doctorId": "陳信宏",
-        "department": "Orthopedics",
+        "department": "骨科",
         "timeSlot": {
           "start": "2025-09-08T13:57:00.000Z",
           "end": "2025-09-08T14:27:00.000Z"
@@ -136,8 +136,8 @@
       "info": {
         "id": "svc-1757340385702",
         "patientId": "pt-1757339824164",
-        "serviceType": "Surgery",
-        "priority": "Emergency",
+        "serviceType": "手術",
+        "priority": "急診",
         "estimatedDuration": 45,
         "requiredResources": [
           "X光機",

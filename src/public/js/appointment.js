@@ -44,6 +44,7 @@ function displayAppointments(appointments) {
         const room = appointment.roomNumber || appointment.clinicRoom || '-';
         const createdAt = appointment.requestedAt ? new Date(appointment.requestedAt).toLocaleString('zh-TW') : '-';
         const notes = appointment.info?.notes || '-';
+        const calledAt = appointment.startedAt ? new Date(appointment.startedAt).toLocaleString('zh-TW') : '-';
 
         const patientName = window.utils.getPatientName(appointment.info.patientId);
         const appointmentTime = appointment.info.timeSlot ? new Date(appointment.info.timeSlot.start).toLocaleString('zh-TW') : '未設定';
@@ -55,13 +56,13 @@ function displayAppointments(appointments) {
                 <div class="text-xs text-slate-500 font-mono cursor-pointer hover:text-blue-600" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${appointment.info.patientId}</div>
             </td>
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[140px]" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${appointment.info.department || '未設定'}</td>
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[220px] whitespace-nowrap" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${appointmentTime}</td>
             <td class="px-4 py-2 w-[140px]"><span class="px-2 py-1 rounded-full text-xs ${statusColor}">${statusText}</span></td>
-            <td class="px-4 py-2 w-[200px]">${doctor}</td>
+            <td class="px-4 py-2 w-[180px]">${doctor}</td>
             <td class="px-4 py-2 w-[240px] truncate" title="${purpose}">${purpose}</td>
-            <td class="px-4 py-2 w-[160px]">${numberOrQueue}</td>
-            <td class="px-4 py-2 w-[220px]">${checkedInAt}</td>
+            <td class="px-4 py-2 w-[200px]">${calledAt}</td>
             <td class="px-4 py-2 w-[160px]">${room}</td>
+            <td class="px-4 py-2 w-[200px]">${checkedInAt}</td>
+            <td class="px-4 py-2 w-[220px] whitespace-nowrap">${appointmentTime}</td>
             <td class="px-4 py-2 w-[220px]">${createdAt}</td>
             <td class="px-4 py-2 w-[200px] truncate" title="${notes}">${notes}</td>
             <td class="px-4 py-2 sticky right-0 bg-white z-10 w-[180px]">${getAppointmentActions(appointment)}</td>`;

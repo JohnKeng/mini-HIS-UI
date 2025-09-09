@@ -61,7 +61,7 @@
       <!-- 主內容 -->
       <main class="flex-1 flex flex-col overflow-hidden">
         <header class="h-16 flex-shrink-0 flex items-center justify-between px-6 border-b border-slate-200">
-          <div class="text-sm text-slate-500"></div>
+          <div class="text-sm text-slate-500">此為 Serverless 服務，資料不會永久儲存，僅供學習使用。</div>
           <div class="flex items-center gap-2">
             <button aria-label="新增預約" onclick="window.appointment?.openCreateModal()" class="hidden panel-action-appointment px-3 py-1.5 text-sm font-medium text-sky-700 bg-white border border-sky-500 rounded-md hover:bg-sky-50">新增預約</button>
             <button aria-label="新增患者" onclick="window.patient?.openCreateModal()" class="hidden panel-action-patient px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50">新增患者</button>
@@ -182,19 +182,19 @@
                             <table class="min-w-[1500px]">
                                 <thead class="bg-slate-100 border-b border-gray-200">
                                     <tr>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 sticky left-0 z-20 bg-slate-100 w-[160px]">患者ID</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[200px]">姓名</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px] whitespace-nowrap">出生日期</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[120px]">性別</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[180px]">聯絡電話</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[280px]">地址</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[220px]">過敏/慢性摘要</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[200px]">最近就診</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">主治醫師</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[200px]">保險/身分</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">標籤</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[140px]">狀態</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 sticky right-0 z-20 bg-slate-100 w-[180px]">操作</th>
+                                        <th class="px-6 py-4 text-center text-sm font-medium text-slate-700 sticky left-0 z-20 bg-slate-100 w-[160px]">患者ID</th>
+                                        <th class="px-6 py-4 text-center text-sm font-medium text-slate-700 w-[200px]">姓名</th>
+                                        <th class="px-6 py-4 text-center text-sm font-medium text-slate-700 w-[160px] whitespace-nowrap">出生日期</th>
+                                        <th class="px-6 py-4 text-center text-sm font-medium text-slate-700 w-[120px]">性別</th>
+                                        <th class="px-6 py-4 text-center text-sm font-medium text-slate-700 w-[180px]">聯絡電話</th>
+                                        <th class="px-6 py-4 text-center text-sm font-medium text-slate-700 w-[280px]">地址</th>
+                                        <th class="px-6 py-4 text-center text-sm font-medium text-slate-700 w-[220px]">過敏/慢性摘要</th>
+                                        <th class="px-6 py-4 text-center text-sm font-medium text-slate-700 w-[200px]">最近就診</th>
+                                        <th class="px-6 py-4 text-center text-sm font-medium text-slate-700 w-[160px]">主治醫師</th>
+                                        <th class="px-6 py-4 text-center text-sm font-medium text-slate-700 w-[200px]">保險/身分</th>
+                                        <th class="px-6 py-4 text-center text-sm font-medium text-slate-700 w-[160px]">標籤</th>
+                                        <th class="px-6 py-4 text-center text-sm font-medium text-slate-700 w-[140px]">狀態</th>
+                                        <th class="px-6 py-4 text-center text-sm font-medium text-slate-700 sticky right-0 z-20 bg-slate-100 w-[180px]">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="patientTableBody" class="bg-white divide-y divide-gray-200">
@@ -309,13 +309,13 @@
                                     <tr>
                                         <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 sticky left-0 z-20 bg-blue-100 w-[260px]">患者（姓名＋ID）</th>
                                         <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[140px]">科別</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[220px] whitespace-nowrap">預約時間</th>
                                         <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[140px]">狀態</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[160px]">醫師</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[180px]">醫師</th>
                                         <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[240px]">目的/主訴</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[160px]">掛號/叫號</th>
-                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[220px]">報到時間</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[200px]">叫號</th>
                                         <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[160px]">診間/房號</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[200px]">報到時間</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[220px] whitespace-nowrap">預約時間</th>
                                         <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[220px]">建立時間</th>
                                         <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[200px]">備註</th>
                                         <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 sticky right-0 z-20 bg-blue-100 w-[180px]">操作</th>
@@ -674,7 +674,7 @@
               <h3 class="text-xl font-medium text-gray-900">醫師管理</h3>
               <button aria-label="新增醫師" onclick="window.settings.openCreateDoctorModal()" class="section-action-settings px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50">新增醫師</button>
             </div>
-            <div class="relative overflow-x-auto border border-gray-200 rounded-lg">
+            <div class="relative overflow-x-auto border border-gray-200 rounded-lg max-w-[720px]">
               <table class="min-w-[800px]">
                 <thead class="bg-slate-100 border-b border-gray-200">
                   <tr>

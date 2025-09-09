@@ -8,7 +8,7 @@ let allServices = [];
 
 // 根據患者ID獲取患者姓名
 function getPatientName(patientId) {
-    const patient = allPatients.find(p => p.info.id === patientId);
+    const patient = allPatients.find(p => p.info && p.info.id === patientId);
     return patient ? patient.info.name : '未知患者';
 }
 

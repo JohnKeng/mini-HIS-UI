@@ -85,7 +85,7 @@
       "info": {
         "id": "appt-1757339865903",
         "patientId": "pt-1757339824164",
-        "doctorId": "陳信宏",
+        "doctorId": "dr-01",
         "department": "骨科",
         "timeSlot": {
           "start": "2025-09-08T13:57:00.000Z",
@@ -105,7 +105,7 @@
       "info": {
         "id": "appt-1757394806962",
         "patientId": "p-1757389083975",
-        "doctorId": "doc-001",
+        "doctorId": "dr-02",
         "department": "Cardiology",
         "timeSlot": {
           "start": "2025-09-09T05:13:00.000Z",
@@ -125,7 +125,7 @@
       "info": {
         "id": "appt-1757395365563",
         "patientId": "p-1757391410002",
-        "doctorId": "doc-001",
+        "doctorId": "dr-01",
         "department": "Cardiology",
         "timeSlot": {
           "start": "2025-09-09T07:22:00.000Z",
@@ -141,7 +141,7 @@
       "info": {
         "id": "appt-1757411570216",
         "patientId": "p-1757392090939",
-        "doctorId": "doc-001",
+        "doctorId": "dr-02",
         "department": "Cardiology",
         "timeSlot": {
           "start": "2025-09-09T02:02:00.000Z",
@@ -159,7 +159,7 @@
       "info": {
         "id": "rx-1757391518339",
         "patientId": "p-1757391410002",
-        "doctorId": "doc-001",
+        "doctorId": "dr-02",
         "items": [
           {
             "medicationId": "med-001",
@@ -191,7 +191,7 @@
       "info": {
         "id": "rx-1757392676767",
         "patientId": "p-1757389083975",
-        "doctorId": "doc-001",
+        "doctorId": "dr-01",
         "items": [
           {
             "medicationId": "med-001",
@@ -222,7 +222,7 @@
       "info": {
         "id": "rx-1757395332350",
         "patientId": "pt-1757339824164",
-        "doctorId": "doc-001",
+        "doctorId": "dr-02",
         "items": [
           {
             "medicationId": "med-001",
@@ -263,7 +263,7 @@
         "notes": "檢查胸部"
       },
       "requestedAt": "2025-09-09T05:05:12.881Z",
-      "requestedBy": "doc-001",
+      "requestedBy": "dr-02",
       "scheduledAt": "2025-09-09T10:01:46.898Z",
       "preparationStartedAt": "2025-09-09T10:01:47.548Z",
       "startedAt": "2025-09-09T10:04:24.768Z",
@@ -308,7 +308,7 @@
         "notes": "怕痛"
       },
       "requestedAt": "2025-09-09T16:14:37.989Z",
-      "requestedBy": "doc-001"
+      "requestedBy": "dr-02"
     }
   ],
   "medicalRecords": [

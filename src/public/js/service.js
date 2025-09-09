@@ -2,6 +2,7 @@
 
 // 載入醫療服務資料
 async function loadServices() {
+    if (window.utils?.ensureDoctorsLoaded) await window.utils.ensureDoctorsLoaded();
     const result = await window.api.apiRequest(`${window.api.API_BASE}/services`);
     if (result.success) {
         window.utils.allServices = result.data;
@@ -31,7 +32,7 @@ function displayServices(services) {
         const serviceName = service.info.description || service.info.serviceName || '未設定';
         const serviceType = service.info.serviceType || '未設定';
         const priority = service.info.priority || '未設定';
-        const requestedBy = service.requestedBy || '-';
+        const requestedBy = window.utils.getDoctorDisplay(service.requestedBy);
         const requestedAt = service.requestedAt ? new Date(service.requestedAt).toLocaleString('zh-TW') : '-';
         const estimated = (service.info.estimatedDuration != null) ? `${service.info.estimatedDuration} 分鐘` : '-';
         const scheduledTime = service.scheduledTime ? new Date(service.scheduledTime).toLocaleString('zh-TW') : '-';
@@ -50,7 +51,7 @@ function displayServices(services) {
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[160px]" onclick="window.service.showServiceDetail('${service.info.id}')">${serviceType}</td>
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[140px]" onclick="window.service.showServiceDetail('${service.info.id}')">${priority}</td>
             <td class="px-4 py-2 w-[140px]"><span class="px-2 py-1 rounded-full text-xs ${statusColor}">${service.tag}</span></td>
-            <td class="px-4 py-2 w-[160px]">${requestedBy}</td>
+            <td class="px-4 py-2 w-[200px]">${requestedBy}</td>
             <td class="px-4 py-2 w-[220px]">${requestedAt}</td>
             <td class="px-4 py-2 w-[160px]">${estimated}</td>
             <td class="px-4 py-2 w-[220px]">${scheduleInfo}</td>
@@ -89,10 +90,12 @@ function getServiceActions(service) {
 
 // 顯示醫療服務詳細資訊
 async function showServiceDetail(serviceId) {
+    if (window.utils?.ensureDoctorsLoaded) await window.utils.ensureDoctorsLoaded();
     const service = window.utils.allServices.find(s => s.info.id === serviceId);
     if (!service) return;
 
     const patientName = window.utils.getPatientName(service.info.patientId);
+    const requesterDisplay = window.utils.getDoctorDisplay(service.requestedBy);
     
     const resourcesList = service.info.requiredResources?.map(resource => 
         `<span class="bg-gray-100 px-2 py-1 rounded text-sm">${resource}</span>`
@@ -110,7 +113,7 @@ async function showServiceDetail(serviceId) {
                     <div><span class="font-medium">服務名稱:</span> ${service.info.description || service.info.serviceName || '未設定'}</div>
                     <div><span class="font-medium">優先級:</span> ${service.info.priority}</div>
                     <div><span class="font-medium">預計時長:</span> ${service.info.estimatedDuration} 分鐘</div>
-                    <div><span class="font-medium">申請人:</span> ${service.info.requestedBy}</div>
+                    <div><span class="font-medium">請求者:</span> ${requesterDisplay}</div>
                     <div><span class="font-medium">當前狀態:</span> ${service.tag}</div>
                     <div><span class="font-medium">建立時間:</span> ${new Date(service.createdAt).toLocaleString()}</div>
                 </div>
@@ -264,8 +267,9 @@ function openCreateModal() {
                     <input id="newServiceDuration" type="number" value="45" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
                 </div>
                 <div>
-                    <label for="newServiceRequestedBy" class="block text-sm font-medium mb-1">請求者 ID</label>
-                    <input id="newServiceRequestedBy" type="text" value="doc-001" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    <label for="newServiceRequestedBy" class="block text-sm font-medium mb-1">選擇請求者</label>
+                    <input id="newServiceRequestedBy" type="text" list="newServiceRequesterList" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    <datalist id="newServiceRequesterList"></datalist>
                 </div>
                 <div class="md:col-span-2">
                     <label for="newServiceNotes" class="block text-sm font-medium mb-1">備註</label>
@@ -280,6 +284,16 @@ function openCreateModal() {
     `;
     window.ui.showModal('新增服務', content);
     if (window.utils?.loadPatientOptions) window.utils.loadPatientOptions('newServicePatientList');
+    if (window.utils?.loadDoctorOptions) window.utils.loadDoctorOptions('newServiceRequesterList');
+
+    const requesterInput = document.getElementById('newServiceRequestedBy');
+    const requesterList = document.getElementById('newServiceRequesterList');
+    if (requesterInput && requesterList) {
+        requesterInput.addEventListener('change', () => {
+            const opt = requesterList.querySelector(`option[value="${requesterInput.value}"]`);
+            if (opt) requesterInput.value = opt.getAttribute('data-id') || requesterInput.value;
+        });
+    }
 
     document.getElementById('serviceCreateForm').addEventListener('submit', async (e) => {
         e.preventDefault();

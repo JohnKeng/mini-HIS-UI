@@ -2,6 +2,7 @@
 
 // 載入處方資料
 async function loadPrescriptions() {
+    if (window.utils?.ensureDoctorsLoaded) await window.utils.ensureDoctorsLoaded();
     const result = await window.api.apiRequest(`${window.api.API_BASE}/prescriptions`);
     if (result.success) {
         window.utils.allPrescriptions = result.data;
@@ -31,7 +32,7 @@ function displayPrescriptions(prescriptions) {
         const mainMedication = firstItem ? firstItem.medication.name : '未設定';
         const dosageFreq = firstItem ? `${firstItem.dosage || '-'} × ${firstItem.frequency || '-'}` : '-';
         const createdTime = new Date(prescription.createdAt).toLocaleString('zh-TW');
-        const doctor = prescription.info.doctorId || '-';
+        const doctor = window.utils.getDoctorDisplay(prescription.info.doctorId);
         const duration = firstItem?.duration || '-';
         const refill = '-';
         const dispensed = prescription.tag === 'Prepared' || prescription.tag === 'Dispensed' ? '是' : '否';
@@ -49,7 +50,7 @@ function displayPrescriptions(prescriptions) {
             <td class="px-4 py-2 w-[140px]">
                 <span class="px-2 py-1 rounded-full text-xs ${statusColor}">${prescription.tag}</span>
             </td>
-            <td class="px-4 py-2 w-[160px]">${doctor}</td>
+            <td class="px-4 py-2 w-[200px]">${doctor}</td>
             <td class="px-4 py-2 w-[160px]">${duration}</td>
             <td class="px-4 py-2 w-[160px]">${refill}</td>
             <td class="px-4 py-2 w-[140px]">${dispensed}</td>
@@ -87,10 +88,12 @@ function getPrescriptionActions(prescription) {
 
 // 顯示處方詳細資訊
 async function showPrescriptionDetail(prescriptionId) {
+    if (window.utils?.ensureDoctorsLoaded) await window.utils.ensureDoctorsLoaded();
     const prescription = window.utils.allPrescriptions.find(p => p.info.id === prescriptionId);
     if (!prescription) return;
 
     const patientName = window.utils.getPatientName(prescription.info.patientId);
+    const doctorDisplay = window.utils.getDoctorDisplay(prescription.info.doctorId);
     
     const medicationsList = prescription.info.items?.map(item => `
         <div class="bg-white p-3 rounded border">
@@ -116,7 +119,7 @@ async function showPrescriptionDetail(prescriptionId) {
                     <div><span class="font-medium">處方 ID:</span> ${prescription.info.id}</div>
                     <div><span class="font-medium">患者 ID:</span> ${prescription.info.patientId}</div>
                     <div><span class="font-medium">患者姓名:</span> ${patientName}</div>
-                    <div><span class="font-medium">醫生 ID:</span> ${prescription.info.doctorId}</div>
+                    <div><span class="font-medium">開立醫師:</span> ${doctorDisplay}</div>
                     <div><span class="font-medium">當前狀態:</span> ${prescription.tag}</div>
                     <div><span class="font-medium">建立時間:</span> ${new Date(prescription.createdAt).toLocaleString()}</div>
                 </div>
@@ -243,8 +246,9 @@ function openCreateModal() {
                     <datalist id="newPrescriptionPatientList"></datalist>
                 </div>
                 <div>
-                    <label for="newPrescriptionDoctorId" class="block text-sm font-medium mb-1">醫生 ID</label>
-                    <input id="newPrescriptionDoctorId" type="text" value="doc-001" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    <label for="newPrescriptionDoctorId" class="block text-sm font-medium mb-1">選擇醫師</label>
+                    <input id="newPrescriptionDoctorId" type="text" list="newPrescriptionDoctorList" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    <datalist id="newPrescriptionDoctorList"></datalist>
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium mb-1">主要藥物</label>
@@ -273,8 +277,17 @@ function openCreateModal() {
     `;
     window.ui.showModal('開立新處方', content);
     if (window.utils?.loadPatientOptions) window.utils.loadPatientOptions('newPrescriptionPatientList');
+    if (window.utils?.loadDoctorOptions) window.utils.loadDoctorOptions('newPrescriptionDoctorList');
 
     const form = document.getElementById('prescriptionCreateForm');
+    const docInput = document.getElementById('newPrescriptionDoctorId');
+    const docList = document.getElementById('newPrescriptionDoctorList');
+    if (docInput && docList) {
+        docInput.addEventListener('change', () => {
+            const opt = docList.querySelector(`option[value="${docInput.value}"]`);
+            if (opt) docInput.value = opt.getAttribute('data-id') || docInput.value;
+        });
+    }
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const payload = {

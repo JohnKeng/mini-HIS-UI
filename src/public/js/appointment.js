@@ -2,6 +2,7 @@
 
 // 載入預約資料
 async function loadAppointments() {
+    if (window.utils?.ensureDoctorsLoaded) await window.utils.ensureDoctorsLoaded();
     const result = await window.api.apiRequest(`${window.api.API_BASE}/appointments`);
     if (result.success) {
         window.utils.allAppointments = result.data;
@@ -36,7 +37,7 @@ function displayAppointments(appointments) {
         const statusText = appointment.tag === 'Completed' ? '病歷' : appointment.tag;
 
         // 額外欄位（滑動查看更多）
-        const doctor = appointment.info?.doctorId || '-';
+        const doctor = window.utils.getDoctorDisplay(appointment.info?.doctorId);
         const purpose = appointment.info?.purpose || '-';
         const numberOrQueue = appointment.confirmationNumber || '-';
         const checkedInAt = appointment.checkedInAt ? new Date(appointment.checkedInAt).toLocaleString('zh-TW') : '-';
@@ -56,7 +57,7 @@ function displayAppointments(appointments) {
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[140px]" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${appointment.info.department || '未設定'}</td>
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[220px] whitespace-nowrap" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${appointmentTime}</td>
             <td class="px-4 py-2 w-[140px]"><span class="px-2 py-1 rounded-full text-xs ${statusColor}">${statusText}</span></td>
-            <td class="px-4 py-2 w-[160px]">${doctor}</td>
+            <td class="px-4 py-2 w-[200px]">${doctor}</td>
             <td class="px-4 py-2 w-[240px] truncate" title="${purpose}">${purpose}</td>
             <td class="px-4 py-2 w-[160px]">${numberOrQueue}</td>
             <td class="px-4 py-2 w-[220px]">${checkedInAt}</td>
@@ -73,7 +74,7 @@ function displayAppointments(appointments) {
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[140px]" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${appointment.info.department || '未設定'}</td>
             <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[220px] whitespace-nowrap" onclick="window.appointment.showAppointmentDetail('${appointment.info.id}')">${appointmentTime}</td>
             <td class="px-4 py-2 w-[140px]"><span class="px-2 py-1 rounded-full text-xs ${statusColor}">${statusText}</span></td>
-            <td class="px-4 py-2 w-[160px]">${doctor}</td>
+            <td class="px-4 py-2 w-[200px]">${doctor}</td>
             <td class="px-4 py-2 w-[240px] truncate" title="${purpose}">${purpose}</td>
             <td class="px-4 py-2 w-[220px]">${createdAt}</td>
             <td class="px-4 py-2 w-[200px] truncate" title="${notes}">${notes}</td>
@@ -121,10 +122,12 @@ function getAppointmentActions(appointment) {
 
 // 顯示預約詳細資訊
 async function showAppointmentDetail(appointmentId) {
+    if (window.utils?.ensureDoctorsLoaded) await window.utils.ensureDoctorsLoaded();
     const appointment = window.utils.allAppointments.find(a => a.info.id === appointmentId);
     if (!appointment) return;
 
     const patientName = window.utils.getPatientName(appointment.info.patientId);
+    const doctorDisplay = window.utils.getDoctorDisplay(appointment.info.doctorId);
     const timeSlot = appointment.info.timeSlot ? {
         start: new Date(appointment.info.timeSlot.start).toLocaleString(),
         end: new Date(appointment.info.timeSlot.end).toLocaleString()
@@ -142,7 +145,7 @@ async function showAppointmentDetail(appointmentId) {
                     <div><span class="font-medium">預約 ID:</span> ${appointment.info.id}</div>
                     <div><span class="font-medium">患者 ID:</span> ${appointment.info.patientId}</div>
                     <div><span class="font-medium">患者姓名:</span> ${patientName}</div>
-                    <div><span class="font-medium">醫生 ID:</span> ${appointment.info.doctorId}</div>
+                    <div><span class="font-medium">醫師:</span> ${doctorDisplay}</div>
                     <div><span class="font-medium">科別:</span> ${appointment.info.department}</div>
                     <div><span class="font-medium">當前狀態:</span> ${appointment.tag}</div>
                 </div>
@@ -296,8 +299,9 @@ function openCreateModal() {
                     <datalist id="newAppointmentPatientList"></datalist>
                 </div>
                 <div>
-                    <label for="newAppointmentDoctorId" class="block text-sm font-medium mb-1">醫生 ID</label>
-                    <input id="newAppointmentDoctorId" type="text" value="doc-001" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    <label for="newAppointmentDoctorId" class="block text-sm font-medium mb-1">選擇醫師</label>
+                    <input id="newAppointmentDoctorId" type="text" list="newAppointmentDoctorList" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    <datalist id="newAppointmentDoctorList"></datalist>
                 </div>
                 <div>
                     <label for="newAppointmentDepartment" class="block text-sm font-medium mb-1">科別</label>
@@ -326,6 +330,7 @@ function openCreateModal() {
     `;
     window.ui.showModal('新增預約', content);
     if (window.utils?.loadPatientOptions) window.utils.loadPatientOptions('newAppointmentPatientList');
+    if (window.utils?.loadDoctorOptions) window.utils.loadDoctorOptions('newAppointmentDoctorList');
 
     const input = document.getElementById('newAppointmentPatientId');
     const datalist = document.getElementById('newAppointmentPatientList');
@@ -333,6 +338,14 @@ function openCreateModal() {
         input.addEventListener('change', () => {
             const opt = datalist.querySelector(`option[value="${input.value}"]`);
             if (opt) input.value = opt.getAttribute('data-id') || input.value;
+        });
+    }
+    const docInput = document.getElementById('newAppointmentDoctorId');
+    const docList = document.getElementById('newAppointmentDoctorList');
+    if (docInput && docList) {
+        docInput.addEventListener('change', () => {
+            const opt = docList.querySelector(`option[value="${docInput.value}"]`);
+            if (opt) docInput.value = opt.getAttribute('data-id') || docInput.value;
         });
     }
 

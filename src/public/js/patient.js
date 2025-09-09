@@ -30,19 +30,31 @@ function displayPatients(patients) {
             'Discharged': 'bg-blue-200 text-blue-700 border border-blue-300'
         }[patient.tag] || 'bg-blue-100 text-blue-800 border border-blue-300';
         
+        const contact = patient.info.contactNumber || '-';
+        const address = patient.info.address ? `${patient.info.address.street || ''} ${patient.info.address.city || ''}`.trim() : '-';
+        const allergies = Array.isArray(patient.info.allergies) && patient.info.allergies.length > 0 ? patient.info.allergies.join('、') : '-';
+        const chronic = '-';
+        const lastVisit = '-';
+        const attending = '-';
+        const insurance = patient.info.insuranceNumber || '-';
+        const tags = '-';
+
         row.innerHTML = `
-            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="window.patient.showPatientDetail('${patient.info.id}')">${patient.info.id}</td>
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium" onclick="window.patient.showPatientDetail('${patient.info.id}')">${patient.info.name}</td>
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="window.patient.showPatientDetail('${patient.info.id}')">${patient.info.birthDate}</td>
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="window.patient.showPatientDetail('${patient.info.id}')">${patient.info.gender === 'Male' ? '男' : '女'}</td>
-            <td class="px-4 py-2">
-                <span class="px-2 py-1 rounded-full text-xs ${statusColor}">
-                    ${patient.tag}
-                </span>
+            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600 sticky left-0 bg-white z-10 w-[160px]" onclick="window.patient.showPatientDetail('${patient.info.id}')">${patient.info.id}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium w-[200px]" onclick="window.patient.showPatientDetail('${patient.info.id}')">${patient.info.name}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[160px] whitespace-nowrap" onclick="window.patient.showPatientDetail('${patient.info.id}')">${patient.info.birthDate}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[120px]" onclick="window.patient.showPatientDetail('${patient.info.id}')">${patient.info.gender === 'Male' || patient.info.gender === 'male' ? '男' : '女'}</td>
+            <td class="px-4 py-2 w-[180px]">${contact}</td>
+            <td class="px-4 py-2 w-[280px] truncate" title="${address}">${address}</td>
+            <td class="px-4 py-2 w-[220px] truncate" title="${allergies || chronic}">${allergies}</td>
+            <td class="px-4 py-2 w-[200px]">${lastVisit}</td>
+            <td class="px-4 py-2 w-[160px]">${attending}</td>
+            <td class="px-4 py-2 w-[200px]">${insurance}</td>
+            <td class="px-4 py-2 w-[160px]">${tags}</td>
+            <td class="px-4 py-2 w-[140px]">
+                <span class="px-2 py-1 rounded-full text-xs ${statusColor}">${patient.tag}</span>
             </td>
-            <td class="px-4 py-2">
-                ${getPatientActions(patient)}
-            </td>
+            <td class="px-4 py-2 sticky right-0 bg-white z-10 w-[180px]">${getPatientActions(patient)}</td>
         `;
         
         tbody.appendChild(row);

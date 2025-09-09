@@ -31,21 +31,33 @@ function displayServices(services) {
         const serviceName = service.info.description || service.info.serviceName || '未設定';
         const serviceType = service.info.serviceType || '未設定';
         const priority = service.info.priority || '未設定';
+        const requestedBy = service.requestedBy || '-';
+        const requestedAt = service.requestedAt ? new Date(service.requestedAt).toLocaleString('zh-TW') : '-';
+        const estimated = (service.info.estimatedDuration != null) ? `${service.info.estimatedDuration} 分鐘` : '-';
+        const scheduledTime = service.scheduledTime ? new Date(service.scheduledTime).toLocaleString('zh-TW') : '-';
+        const location = service.location || '-';
+        const scheduleInfo = scheduledTime !== '-' || location !== '-' ? `${scheduledTime} / ${location}` : '-';
+        const resources = Array.isArray(service.info.requiredResources) && service.info.requiredResources.length > 0 ? service.info.requiredResources.join('、') : '-';
+        const outcome = service.outcome || '-';
+        const notes = service.info.notes || '-';
         
         row.innerHTML = `
-            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="window.service.showServiceDetail('${service.info.id}')">${service.info.patientId}</td>
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium" onclick="window.service.showServiceDetail('${service.info.id}')">${patientName}</td>
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="window.service.showServiceDetail('${service.info.id}')">${serviceName}</td>
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="window.service.showServiceDetail('${service.info.id}')">${serviceType}</td>
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="window.service.showServiceDetail('${service.info.id}')">${priority}</td>
-            <td class="px-4 py-2">
-                <span class="px-2 py-1 rounded-full text-xs ${statusColor}">
-                    ${service.tag}
-                </span>
+            <td class="px-4 py-2 sticky left-0 bg-white z-10 w-[260px]">
+                <div class="font-medium cursor-pointer hover:text-blue-600" onclick="window.service.showServiceDetail('${service.info.id}')">${patientName}</div>
+                <div class="text-xs text-slate-500 font-mono cursor-pointer hover:text-blue-600" onclick="window.service.showServiceDetail('${service.info.id}')">${service.info.patientId}</div>
             </td>
-            <td class="px-4 py-2">
-                ${getServiceActions(service)}
-            </td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[240px]" onclick="window.service.showServiceDetail('${service.info.id}')">${serviceName}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[160px]" onclick="window.service.showServiceDetail('${service.info.id}')">${serviceType}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[140px]" onclick="window.service.showServiceDetail('${service.info.id}')">${priority}</td>
+            <td class="px-4 py-2 w-[140px]"><span class="px-2 py-1 rounded-full text-xs ${statusColor}">${service.tag}</span></td>
+            <td class="px-4 py-2 w-[160px]">${requestedBy}</td>
+            <td class="px-4 py-2 w-[220px]">${requestedAt}</td>
+            <td class="px-4 py-2 w-[160px]">${estimated}</td>
+            <td class="px-4 py-2 w-[220px]">${scheduleInfo}</td>
+            <td class="px-4 py-2 w-[240px] truncate" title="${resources}">${resources}</td>
+            <td class="px-4 py-2 w-[200px] truncate" title="${outcome}">${outcome}</td>
+            <td class="px-4 py-2 w-[200px] truncate" title="${notes}">${notes}</td>
+            <td class="px-4 py-2 sticky right-0 bg-white z-10 w-[180px]">${getServiceActions(service)}</td>
         `;
         
         tbody.appendChild(row);

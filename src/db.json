@@ -291,6 +291,24 @@
           "licenseNumber": "LIC-0001"
         }
       ]
+    },
+    {
+      "tag": "Requested",
+      "info": {
+        "id": "svc-1757434477989",
+        "patientId": "p-1757391410002",
+        "serviceType": "Examination",
+        "description": "大腸鏡",
+        "priority": "Normal",
+        "estimatedDuration": 45,
+        "requiredResources": [
+          "X光機",
+          "技術人員"
+        ],
+        "notes": "怕痛"
+      },
+      "requestedAt": "2025-09-09T16:14:37.989Z",
+      "requestedBy": "doc-001"
     }
   ],
   "medicalRecords": [

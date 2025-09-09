@@ -177,51 +177,26 @@
                             <h3 class="text-xl font-medium text-gray-900">病患列表</h3>
                             <button aria-label="新增患者" onclick="window.patient.openCreateModal()" class="hidden section-action-patient px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-white border border-blue-300 rounded-md shadow-sm focus:outline-none">新增患者</button>
                         </div>
-                        <div
-                            id="patientList"
-                            class="overflow-x-auto border border-gray-200 rounded-lg"
-                        >
-                            <table class="min-w-full">
-                                <thead
-                                    class="bg-gray-50 border-b border-gray-200"
-                                >
+                        <div id="patientList" class="relative overflow-x-auto border border-gray-200 rounded-lg">
+                            <table class="min-w-[1500px]">
+                                <thead class="bg-slate-100 border-b border-gray-200">
                                     <tr>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            患者ID
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            姓名
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            出生日期
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            性別
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            狀態
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            操作
-                                        </th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 sticky left-0 z-20 bg-slate-100 w-[160px]">患者ID</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[200px]">姓名</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px] whitespace-nowrap">出生日期</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[120px]">性別</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[180px]">聯絡電話</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[280px]">地址</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[220px]">過敏/慢性摘要</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[200px]">最近就診</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">主治醫師</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[200px]">保險/身分</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">標籤</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[140px]">狀態</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 sticky right-0 z-20 bg-slate-100 w-[180px]">操作</th>
                                     </tr>
                                 </thead>
-                                <tbody
-                                    id="patientTableBody"
-                                    class="bg-white divide-y divide-gray-200"
-                                >
+                                <tbody id="patientTableBody" class="bg-white divide-y divide-gray-200">
                                     <!-- 動態生成內容 -->
                                 </tbody>
                             </table>
@@ -327,51 +302,25 @@
                         <h3 class="text-xl font-medium mb-6 text-blue-800">
                             掛號列表
                         </h3>
-                        <div
-                            id="checkedInList"
-                            class="overflow-x-auto border border-blue-200 rounded-lg bg-blue-50"
-                        >
-                            <table class="min-w-full">
-                                <thead
-                                    class="bg-blue-100 border-b border-blue-200"
-                                >
+                        <div id="checkedInList" class="relative overflow-x-auto border border-blue-200 rounded-lg bg-blue-50">
+                            <table class="min-w-[1800px]">
+                                <thead class="bg-blue-100 border-b border-blue-200">
                                     <tr>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-blue-800"
-                                        >
-                                            患者ID
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-blue-800"
-                                        >
-                                            患者姓名
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-blue-800"
-                                        >
-                                            科別
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-blue-800"
-                                        >
-                                            預約時間
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-blue-800"
-                                        >
-                                            狀態
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-blue-800"
-                                        >
-                                            操作
-                                        </th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 sticky left-0 z-20 bg-blue-100 w-[260px]">患者（姓名＋ID）</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[140px]">科別</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[220px] whitespace-nowrap">預約時間</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[140px]">狀態</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[160px]">醫師</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[240px]">目的/主訴</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[160px]">掛號/叫號</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[220px]">報到時間</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[160px]">診間/房號</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[220px]">建立時間</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 w-[200px]">備註</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-blue-800 sticky right-0 z-20 bg-blue-100 w-[180px]">操作</th>
                                     </tr>
                                 </thead>
-                                <tbody
-                                    id="checkedInTableBody"
-                                    class="bg-white divide-y divide-blue-200"
-                                >
+                                <tbody id="checkedInTableBody" class="bg-white divide-y divide-blue-200">
                                     <!-- 動態生成內容 -->
                                 </tbody>
                             </table>
@@ -384,51 +333,25 @@
                             <h3 class="text-xl font-medium text-gray-900">預約列表</h3>
                             <button aria-label="新增預約" onclick="window.appointment.openCreateModal()" class="hidden section-action-appointment px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-white border border-blue-300 rounded-md shadow-sm focus:outline-none">新增預約</button>
                         </div>
-                        <div
-                            id="appointmentList"
-                            class="overflow-x-auto border border-gray-200 rounded-lg"
-                        >
-                            <table class="min-w-full">
-                                <thead
-                                    class="bg-gray-50 border-b border-gray-200"
-                                >
+                        <div id="appointmentList" class="relative overflow-x-auto border border-gray-200 rounded-lg">
+                            <table class="min-w-[1800px]">
+                                <thead class="bg-slate-100 border-b border-gray-200">
                                     <tr>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            患者ID
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            患者姓名
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            科別
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            預約時間
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            狀態
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            操作
-                                        </th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 sticky left-0 z-20 bg-slate-100 w-[260px]">患者（姓名＋ID）</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[140px]">科別</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[220px] whitespace-nowrap">預約時間</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[140px]">狀態</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">醫師</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[240px]">目的/主訴</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">掛號/叫號</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[220px]">報到時間</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">診間/房號</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[220px]">建立時間</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[200px]">備註</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 sticky right-0 z-20 bg-slate-100 w-[180px]">操作</th>
                                     </tr>
                                 </thead>
-                                <tbody
-                                    id="appointmentTableBody"
-                                    class="bg-white divide-y divide-gray-200"
-                                >
+                                <tbody id="appointmentTableBody" class="bg-white divide-y divide-gray-200">
                                     <!-- 動態生成內容 -->
                                 </tbody>
                             </table>
@@ -563,51 +486,25 @@
                             <h3 class="text-xl font-medium text-gray-900">處方列表</h3>
                             <button aria-label="開立新處方" onclick="window.prescription.openCreateModal()" class="hidden section-action-prescription px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-white border border-blue-300 rounded-md shadow-sm focus:outline-none">開立新處方</button>
                         </div>
-                        <div
-                            id="prescriptionList"
-                            class="overflow-x-auto border border-gray-200 rounded-lg"
-                        >
-                            <table class="min-w-full">
-                                <thead
-                                    class="bg-gray-50 border-b border-gray-200"
-                                >
+                        <div id="prescriptionList" class="relative overflow-x-auto border border-gray-200 rounded-lg">
+                            <table class="min-w-[1800px]">
+                                <thead class="bg-slate-100 border-b border-gray-200">
                                     <tr>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            患者ID
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            患者姓名
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            主要藥物
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            開立時間
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            狀態
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-sm font-medium text-gray-900"
-                                        >
-                                            操作
-                                        </th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 sticky left-0 z-20 bg-slate-100 w-[260px]">患者（姓名＋ID）</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[260px]">主要藥物</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[200px]">劑量×頻率</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[220px] whitespace-nowrap">開立時間</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[140px]">狀態</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">開立醫師</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">療程</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">續配/到期</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[140px]">已調劑</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[200px]">備註</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[140px]">藥品數量</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 sticky right-0 z-20 bg-slate-100 w-[180px]">操作</th>
                                     </tr>
                                 </thead>
-                                <tbody
-                                    id="prescriptionTableBody"
-                                    class="bg-white divide-y divide-gray-200"
-                                >
+                                <tbody id="prescriptionTableBody" class="bg-white divide-y divide-gray-200">
                                     <!-- 動態生成內容 -->
                                 </tbody>
                             </table>
@@ -746,31 +643,23 @@
                             <h3 class="text-lg font-semibold">服務列表</h3>
                             <button aria-label="新增服務" onclick="window.service.openCreateModal()" class="hidden section-action-service px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-white border border-blue-300 rounded-md shadow-sm focus:outline-none">新增服務</button>
                         </div>
-                        <div id="serviceList" class="overflow-x-auto">
-                            <table class="min-w-full table-auto">
-                                <thead class="bg-gray-100">
+                        <div id="serviceList" class="relative overflow-x-auto">
+                            <table class="min-w-[1800px] table-auto">
+                                <thead class="bg-slate-100">
                                     <tr>
-                                        <th class="px-4 py-2 text-left">
-                                            患者ID
-                                        </th>
-                                        <th class="px-4 py-2 text-left">
-                                            患者姓名
-                                        </th>
-                                        <th class="px-4 py-2 text-left">
-                                            服務名稱
-                                        </th>
-                                        <th class="px-4 py-2 text-left">
-                                            服務類型
-                                        </th>
-                                        <th class="px-4 py-2 text-left">
-                                            優先度
-                                        </th>
-                                        <th class="px-4 py-2 text-left">
-                                            狀態
-                                        </th>
-                                        <th class="px-4 py-2 text-left">
-                                            操作
-                                        </th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 sticky left-0 z-20 bg-slate-100 w-[260px]">患者（姓名＋ID）</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[240px]">服務名稱</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">服務類型</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[140px]">優先度</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[140px]">狀態</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">請求者</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[220px]">請求時間</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[160px]">預估時間</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[220px]">排程/場地</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[240px]">所需資源</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[200px]">結果/報告</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 w-[200px]">備註</th>
+                                        <th class="px-6 py-4 text-left text-sm font-medium text-slate-700 sticky right-0 z-20 bg-slate-100 w-[180px]">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="serviceTableBody">

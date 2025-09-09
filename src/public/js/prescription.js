@@ -27,23 +27,35 @@ function displayPrescriptions(prescriptions) {
         }[prescription.tag] || 'bg-blue-100 text-blue-800 border border-blue-300';
         
         const patientName = window.utils.getPatientName(prescription.info.patientId);
-        const mainMedication = prescription.info.items && prescription.info.items.length > 0 ? 
-            prescription.info.items[0].medication.name : '未設定';
+        const firstItem = (prescription.info.items && prescription.info.items[0]) || null;
+        const mainMedication = firstItem ? firstItem.medication.name : '未設定';
+        const dosageFreq = firstItem ? `${firstItem.dosage || '-'} × ${firstItem.frequency || '-'}` : '-';
         const createdTime = new Date(prescription.createdAt).toLocaleString('zh-TW');
+        const doctor = prescription.info.doctorId || '-';
+        const duration = firstItem?.duration || '-';
+        const refill = '-';
+        const dispensed = prescription.tag === 'Prepared' || prescription.tag === 'Dispensed' ? '是' : '否';
+        const notes = prescription.info.notes || '-';
+        const count = Array.isArray(prescription.info.items) ? prescription.info.items.length : 0;
         
         row.innerHTML = `
-            <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="window.prescription.showPrescriptionDetail('${prescription.info.id}')">${prescription.info.patientId}</td>
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 font-medium" onclick="window.prescription.showPrescriptionDetail('${prescription.info.id}')">${patientName}</td>
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="window.prescription.showPrescriptionDetail('${prescription.info.id}')">${mainMedication}</td>
-            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm" onclick="window.prescription.showPrescriptionDetail('${prescription.info.id}')">${createdTime}</td>
-            <td class="px-4 py-2">
-                <span class="px-2 py-1 rounded-full text-xs ${statusColor}">
-                    ${prescription.tag}
-                </span>
+            <td class="px-4 py-2 sticky left-0 bg-white z-10 w-[260px]">
+                <div class="font-medium cursor-pointer hover:text-blue-600" onclick="window.prescription.showPrescriptionDetail('${prescription.info.id}')">${patientName}</div>
+                <div class="text-xs text-slate-500 font-mono cursor-pointer hover:text-blue-600" onclick="window.prescription.showPrescriptionDetail('${prescription.info.id}')">${prescription.info.patientId}</div>
             </td>
-            <td class="px-4 py-2">
-                ${getPrescriptionActions(prescription)}
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[260px]" onclick="window.prescription.showPrescriptionDetail('${prescription.info.id}')">${mainMedication}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[200px]" onclick="window.prescription.showPrescriptionDetail('${prescription.info.id}')">${dosageFreq}</td>
+            <td class="px-4 py-2 cursor-pointer hover:text-blue-600 text-sm w-[220px] whitespace-nowrap" onclick="window.prescription.showPrescriptionDetail('${prescription.info.id}')">${createdTime}</td>
+            <td class="px-4 py-2 w-[140px]">
+                <span class="px-2 py-1 rounded-full text-xs ${statusColor}">${prescription.tag}</span>
             </td>
+            <td class="px-4 py-2 w-[160px]">${doctor}</td>
+            <td class="px-4 py-2 w-[160px]">${duration}</td>
+            <td class="px-4 py-2 w-[160px]">${refill}</td>
+            <td class="px-4 py-2 w-[140px]">${dispensed}</td>
+            <td class="px-4 py-2 w-[200px] truncate" title="${notes}">${notes}</td>
+            <td class="px-4 py-2 w-[140px]">${count}</td>
+            <td class="px-4 py-2 sticky right-0 bg-white z-10 w-[180px]">${getPrescriptionActions(prescription)}</td>
         `;
         
         tbody.appendChild(row);

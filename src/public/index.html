@@ -353,6 +353,62 @@
                         </div>
                     </div>
 
+                    <!-- 掛號列表 -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-medium mb-6 text-blue-800">
+                            掛號列表
+                        </h3>
+                        <div
+                            id="checkedInList"
+                            class="overflow-x-auto border border-blue-200 rounded-lg bg-blue-50"
+                        >
+                            <table class="min-w-full">
+                                <thead
+                                    class="bg-blue-100 border-b border-blue-200"
+                                >
+                                    <tr>
+                                        <th
+                                            class="px-6 py-4 text-left text-sm font-medium text-blue-800"
+                                        >
+                                            患者ID
+                                        </th>
+                                        <th
+                                            class="px-6 py-4 text-left text-sm font-medium text-blue-800"
+                                        >
+                                            患者姓名
+                                        </th>
+                                        <th
+                                            class="px-6 py-4 text-left text-sm font-medium text-blue-800"
+                                        >
+                                            科別
+                                        </th>
+                                        <th
+                                            class="px-6 py-4 text-left text-sm font-medium text-blue-800"
+                                        >
+                                            預約時間
+                                        </th>
+                                        <th
+                                            class="px-6 py-4 text-left text-sm font-medium text-blue-800"
+                                        >
+                                            狀態
+                                        </th>
+                                        <th
+                                            class="px-6 py-4 text-left text-sm font-medium text-blue-800"
+                                        >
+                                            操作
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody
+                                    id="checkedInTableBody"
+                                    class="bg-white divide-y divide-blue-200"
+                                >
+                                    <!-- 動態生成內容 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                     <!-- 預約列表 -->
                     <div>
                         <h3 class="text-xl font-medium mb-6 text-gray-900">

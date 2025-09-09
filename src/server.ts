@@ -139,7 +139,7 @@ app.post('/api/services/:id/start-preparing', async (req, res) => {
       return res.status(400).json({ success: false, error: { message: 'Service must be scheduled first' } });
     }
     
-    const result = startServicePreparation(service, ['準備器材'], 'staff-001');
+    const result = startServicePreparation(service, ['準備器材'], { id: 'staff-001', name: '醫護人員', role: '技術人員' });
     
     if (isSuccess(result)) {
       const saved = await database.updateService(req.params.id, result.data);

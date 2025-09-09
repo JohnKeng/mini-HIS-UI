@@ -99,6 +99,20 @@
       "requestedAt": "2025-09-08T13:57:45.903Z",
       "confirmedAt": "2025-09-09T02:43:08.312Z",
       "confirmationNumber": "CONF-1757385788209"
+    },
+    {
+      "tag": "Requested",
+      "info": {
+        "id": "appt-1757388351272",
+        "patientId": "pt-json-001",
+        "doctorId": "doc-001",
+        "department": "General",
+        "timeSlot": {
+          "start": "2025-09-12T03:25:00.000Z",
+          "end": "2025-09-12T03:55:00.000Z"
+        }
+      },
+      "requestedAt": "2025-09-09T03:25:51.272Z"
     }
   ],
   "prescriptions": [

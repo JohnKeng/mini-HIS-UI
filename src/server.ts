@@ -33,7 +33,7 @@ import {
   completeService
 } from './models/MedicalService.ts';
 import type { ServiceState } from './models/MedicalService.ts';
-
+import type { MedicalStaff } from './types/common.ts';
 import { isSuccess } from './types/results.ts';
 import { database } from './database/index.ts';
 
@@ -130,7 +130,7 @@ app.put('/api/patients/:id', async (req, res) => {
     }
     return res.json({ success: true, data: updated });
   } catch (error) {
-    res.status(500).json({ success: false, error: { message: 'Failed to update patient' } });
+    return res.status(500).json({ success: false, error: { message: 'Failed to update patient' } });
   }
 });
 
@@ -175,7 +175,16 @@ app.post('/api/services/:id/start-preparing', async (req, res) => {
       return res.status(400).json({ success: false, error: { message: 'Service must be scheduled first' } });
     }
     
-    const result = startServicePreparation(service, ['準備器材'], { id: 'staff-001', name: '醫護人員', role: '技術人員' });
+    const sampleStaff: MedicalStaff[] = [{
+      id: 'staff-001',
+      name: '醫護人員',
+      birthDate: new Date().toISOString(),
+      gender: 'other',
+      staffType: 'labTechnician',
+      department: '檢驗科',
+      licenseNumber: 'LIC-0001'
+    }];
+    const result = startServicePreparation(service, sampleStaff, '檢驗室', '準備器材');
     
     if (isSuccess(result)) {
       const saved = await database.updateService(req.params.id, result.data);

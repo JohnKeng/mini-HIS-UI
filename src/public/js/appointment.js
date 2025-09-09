@@ -132,7 +132,7 @@ async function showAppointmentDetail(appointmentId) {
             </div>
             <div class="mt-6 flex justify-end">
                 <button onclick="window.appointment.deleteAppointment('${appointment.info.id}'); window.ui.hideModal();" class="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-colors font-semibold">
-                    刪除預約
+                    刪除
                 </button>
             </div>
         </div>

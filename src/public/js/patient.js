@@ -90,7 +90,7 @@ async function showPatientDetail(patientId) {
             
             <div class="mt-6 flex justify-end">
                 <button onclick="window.patient.deletePatient('${patient.info.id}'); window.ui.hideModal();" class="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-colors font-semibold">
-                    🗑️ 刪除患者
+                    刪除
                 </button>
             </div>
         </div>
@@ -186,6 +186,7 @@ async function editPatient(patientId) {
 // 刪除患者
 async function deletePatient(patientId) {
     if (!confirm('確定要刪除此患者嗎？')) return;
+    if (!confirm('再次確認：刪除後資料無法復原，確定刪除？')) return;
     
     const result = await window.api.apiRequest(`${window.api.API_BASE}/patients/${patientId}`, {
         method: 'DELETE'

@@ -216,5 +216,86 @@ window.prescription = {
     startPreparingPrescription,
     completePreparingPrescription,
     dispensePrescription,
-    deletePrescription
+    deletePrescription,
+    openCreateModal
 };
+
+// 以彈窗方式開立新處方
+function openCreateModal() {
+    const content = `
+        <form id="prescriptionCreateForm" class="space-y-4" aria-label="開立新處方表單">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="newPrescriptionPatientId" class="block text-sm font-medium mb-1">選擇患者</label>
+                    <input id="newPrescriptionPatientId" type="text" list="newPrescriptionPatientList" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    <datalist id="newPrescriptionPatientList"></datalist>
+                </div>
+                <div>
+                    <label for="newPrescriptionDoctorId" class="block text-sm font-medium mb-1">醫生 ID</label>
+                    <input id="newPrescriptionDoctorId" type="text" value="doc-001" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-1">主要藥物</label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <input id="newMedicationName" type="text" placeholder="藥名" class="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                        <input id="newMedicationCode" type="text" placeholder="代碼" class="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                        <input id="newMedicationStrength" type="text" placeholder="強度" class="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    </div>
+                </div>
+                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <input id="newMedicationForm" type="text" placeholder="劑型" class="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    <input id="newMedicationDosage" type="text" placeholder="劑量" class="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    <input id="newMedicationFrequency" type="text" placeholder="頻率" class="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                </div>
+                <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <input id="newMedicationRoute" type="text" placeholder="途徑" class="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    <input id="newMedicationDuration" type="text" placeholder="療程" class="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    <input id="newPrescriptionNotes" type="text" placeholder="備註" class="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+            </div>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button type="button" class="px-4 py-2 rounded border" onclick="window.ui.hideModal()">取消</button>
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">開立</button>
+            </div>
+        </form>
+    `;
+    window.ui.showModal('開立新處方', content);
+    if (window.utils?.loadPatientOptions) window.utils.loadPatientOptions('newPrescriptionPatientList');
+
+    const form = document.getElementById('prescriptionCreateForm');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+            patientId: document.getElementById('newPrescriptionPatientId').value,
+            doctorId: document.getElementById('newPrescriptionDoctorId').value,
+            items: [
+                {
+                    medication: {
+                        id: `m-${Date.now()}`,
+                        name: document.getElementById('newMedicationName').value,
+                        code: document.getElementById('newMedicationCode').value,
+                        dosageForm: document.getElementById('newMedicationForm').value,
+                        strength: document.getElementById('newMedicationStrength').value
+                    },
+                    dosage: document.getElementById('newMedicationDosage').value,
+                    frequency: document.getElementById('newMedicationFrequency').value,
+                    route: document.getElementById('newMedicationRoute').value,
+                    duration: document.getElementById('newMedicationDuration').value,
+                    instructions: '依醫囑使用'
+                }
+            ],
+            notes: document.getElementById('newPrescriptionNotes').value
+        };
+        const result = await window.api.apiRequest(`${window.api.API_BASE}/prescriptions`, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+        if (result.success) {
+            window.ui.showMessage('處方開立成功', 'success');
+            window.ui.hideModal();
+            loadPrescriptions();
+        } else {
+            window.ui.showMessage(`開立失敗: ${result.error.message}`, 'error');
+        }
+    });
+}

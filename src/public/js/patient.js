@@ -206,5 +206,72 @@ window.patient = {
     displayPatients,
     showPatientDetail,
     editPatient,
-    deletePatient
+    deletePatient,
+    openCreateModal
 };
+
+// 以彈窗方式新增患者
+function openCreateModal() {
+    const content = `
+        <form id="patientCreateForm" class="space-y-4" aria-label="新增患者表單">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="newPatientName" class="block text-sm font-medium mb-1">姓名</label>
+                    <input id="newPatientName" type="text" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                </div>
+                <div>
+                    <label for="newPatientBirthDate" class="block text-sm font-medium mb-1">出生日期</label>
+                    <input id="newPatientBirthDate" type="date" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                </div>
+                <div>
+                    <span class="block text-sm font-medium mb-1">性別</span>
+                    <div class="flex items-center space-x-4" role="radiogroup" aria-label="性別">
+                        <label class="inline-flex items-center"><input type="radio" name="newGender" value="Male" class="mr-2">男</label>
+                        <label class="inline-flex items-center"><input type="radio" name="newGender" value="Female" class="mr-2">女</label>
+                    </div>
+                </div>
+                <div>
+                    <label for="newPatientPhone" class="block text-sm font-medium mb-1">聯絡電話</label>
+                    <input id="newPatientPhone" type="tel" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                </div>
+                <div class="md:col-span-2">
+                    <label for="newPatientAddress" class="block text-sm font-medium mb-1">地址</label>
+                    <input id="newPatientAddress" type="text" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                </div>
+            </div>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button type="button" class="px-4 py-2 rounded border" onclick="window.ui.hideModal()">取消</button>
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">新增</button>
+            </div>
+        </form>
+    `;
+    window.ui.showModal('新增患者', content);
+
+    const form = document.getElementById('patientCreateForm');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const patientInfo = {
+            id: `p-${Date.now()}`,
+            name: document.getElementById('newPatientName').value,
+            birthDate: document.getElementById('newPatientBirthDate').value,
+            gender: document.querySelector('input[name="newGender"]:checked')?.value || '',
+            contactNumber: document.getElementById('newPatientPhone').value,
+            address: {
+                street: document.getElementById('newPatientAddress').value,
+                city: '台北市',
+                zipCode: '100'
+            }
+        };
+        const result = await window.api.apiRequest(`${window.api.API_BASE}/patients`, {
+            method: 'POST',
+            body: JSON.stringify({ patientInfo })
+        });
+        if (result.success) {
+            window.ui.showMessage('患者建立成功', 'success');
+            window.ui.hideModal();
+            loadPatients();
+        } else {
+            window.ui.showMessage(`建立失敗: ${result.error.message}`, 'error');
+        }
+    });
+}

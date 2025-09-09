@@ -222,5 +222,83 @@ window.appointment = {
     checkinAppointment,
     startAppointment,
     completeAppointment,
-    deleteAppointment
+    deleteAppointment,
+    openCreateModal
 };
+
+// 以彈窗方式新增預約
+function openCreateModal() {
+    const startValue = new Date(Date.now() + 10 * 60 * 1000).toISOString().slice(0,16);
+    const content = `
+        <form id="appointmentCreateForm" class="space-y-4" aria-label="新增預約表單">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="newAppointmentPatientId" class="block text-sm font-medium mb-1">選擇患者</label>
+                    <input type="text" id="newAppointmentPatientId" list="newAppointmentPatientList" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    <datalist id="newAppointmentPatientList"></datalist>
+                </div>
+                <div>
+                    <label for="newAppointmentDoctorId" class="block text-sm font-medium mb-1">醫生 ID</label>
+                    <input id="newAppointmentDoctorId" type="text" value="doc-001" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                </div>
+                <div>
+                    <label for="newAppointmentDepartment" class="block text-sm font-medium mb-1">科別</label>
+                    <select id="newAppointmentDepartment" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="">請選擇</option>
+                        <option value="General">一般科</option>
+                        <option value="Cardiology">心臟科</option>
+                        <option value="Neurology">神經科</option>
+                        <option value="Orthopedics">骨科</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="newAppointmentTime" class="block text-sm font-medium mb-1">預約時間</label>
+                    <input id="newAppointmentTime" type="datetime-local" value="${startValue}" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                </div>
+                <div class="md:col-span-2">
+                    <label for="newAppointmentPurpose" class="block text-sm font-medium mb-1">目的</label>
+                    <input id="newAppointmentPurpose" type="text" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                </div>
+            </div>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button type="button" class="px-4 py-2 rounded border" onclick="window.ui.hideModal()">取消</button>
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">新增</button>
+            </div>
+        </form>
+    `;
+    window.ui.showModal('新增預約', content);
+    if (window.utils?.loadPatientOptions) window.utils.loadPatientOptions('newAppointmentPatientList');
+
+    const input = document.getElementById('newAppointmentPatientId');
+    const datalist = document.getElementById('newAppointmentPatientList');
+    if (input && datalist) {
+        input.addEventListener('change', () => {
+            const opt = datalist.querySelector(`option[value="${input.value}"]`);
+            if (opt) input.value = opt.getAttribute('data-id') || input.value;
+        });
+    }
+
+    document.getElementById('appointmentCreateForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const startISO = new Date(document.getElementById('newAppointmentTime').value).toISOString();
+        const endISO = new Date(new Date(document.getElementById('newAppointmentTime').value).getTime() + 30 * 60000).toISOString();
+        const payload = {
+            patientId: input.value,
+            doctorId: document.getElementById('newAppointmentDoctorId').value,
+            department: document.getElementById('newAppointmentDepartment').value,
+            timeSlot: { start: startISO, end: endISO },
+            purpose: document.getElementById('newAppointmentPurpose').value
+        };
+        const result = await window.api.apiRequest(`${window.api.API_BASE}/appointments`, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+        if (result.success) {
+            window.ui.showMessage('預約建立成功', 'success');
+            window.ui.hideModal();
+            loadAppointments();
+        } else {
+            window.ui.showMessage(`預約失敗: ${result.error.message}`, 'error');
+        }
+    });
+}

@@ -209,5 +209,89 @@ window.service = {
     startPreparingService,
     startService,
     completeService,
-    deleteService
+    deleteService,
+    openCreateModal
 };
+
+// 以彈窗方式新增服務
+function openCreateModal() {
+    const content = `
+        <form id="serviceCreateForm" class="space-y-4" aria-label="新增服務表單">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="newServicePatientId" class="block text-sm font-medium mb-1">選擇患者</label>
+                    <input id="newServicePatientId" type="text" list="newServicePatientList" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    <datalist id="newServicePatientList"></datalist>
+                </div>
+                <div>
+                    <label for="newServiceType" class="block text-sm font-medium mb-1">服務類型</label>
+                    <select id="newServiceType" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="">請選擇</option>
+                        <option value="Consultation">門診</option>
+                        <option value="Examination">檢查</option>
+                        <option value="Laboratory">檢驗</option>
+                        <option value="Surgery">手術</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="newServiceName" class="block text-sm font-medium mb-1">服務名稱</label>
+                    <input id="newServiceName" type="text" value="X光檢查" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                </div>
+                <div>
+                    <label for="newServicePriority" class="block text-sm font-medium mb-1">優先度</label>
+                    <select id="newServicePriority" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="">請選擇</option>
+                        <option value="Low">低</option>
+                        <option value="Normal">一般</option>
+                        <option value="High">高</option>
+                        <option value="Emergency">緊急</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="newServiceDuration" class="block text-sm font-medium mb-1">預估時間 (分鐘)</label>
+                    <input id="newServiceDuration" type="number" value="45" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                </div>
+                <div>
+                    <label for="newServiceRequestedBy" class="block text-sm font-medium mb-1">請求者 ID</label>
+                    <input id="newServiceRequestedBy" type="text" value="doc-001" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                </div>
+                <div class="md:col-span-2">
+                    <label for="newServiceNotes" class="block text-sm font-medium mb-1">備註</label>
+                    <textarea id="newServiceNotes" rows="3" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">檢查胸部</textarea>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button type="button" class="px-4 py-2 rounded border" onclick="window.ui.hideModal()">取消</button>
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">新增</button>
+            </div>
+        </form>
+    `;
+    window.ui.showModal('新增服務', content);
+    if (window.utils?.loadPatientOptions) window.utils.loadPatientOptions('newServicePatientList');
+
+    document.getElementById('serviceCreateForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+            patientId: document.getElementById('newServicePatientId').value,
+            serviceType: document.getElementById('newServiceType').value,
+            description: document.getElementById('newServiceName').value,
+            serviceName: document.getElementById('newServiceName').value,
+            priority: document.getElementById('newServicePriority').value,
+            estimatedDuration: parseInt(document.getElementById('newServiceDuration').value),
+            requestedBy: document.getElementById('newServiceRequestedBy').value,
+            requiredResources: ['X光機', '技術人員'],
+            notes: document.getElementById('newServiceNotes').value
+        };
+        const result = await window.api.apiRequest(`${window.api.API_BASE}/services`, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+        if (result.success) {
+            window.ui.showMessage('服務請求成功', 'success');
+            window.ui.hideModal();
+            loadServices();
+        } else {
+            window.ui.showMessage(`請求失敗: ${result.error.message}`, 'error');
+        }
+    });
+}

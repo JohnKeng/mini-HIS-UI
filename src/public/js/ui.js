@@ -45,6 +45,20 @@ function showPanel(panelName) {
             btn.classList.add('bg-blue-50');
         }
     });
+
+    // 控制右側操作按鈕顯示
+    const actionMap = {
+        appointment: '.panel-action-appointment',
+        patient: '.panel-action-patient',
+        prescription: '.panel-action-prescription',
+        service: '.panel-action-service'
+    };
+    document.querySelectorAll('.panel-action-appointment, .panel-action-patient, .panel-action-prescription, .panel-action-service')
+        .forEach(el => el.classList.add('hidden'));
+    const selector = actionMap[panelName];
+    if (selector) {
+        document.querySelectorAll(selector).forEach(el => el.classList.remove('hidden'));
+    }
 }
 
 // 顯示訊息提示
@@ -72,13 +86,49 @@ function showMessage(message, type = 'info') {
 
 // 彈窗管理
 function showModal(title, content) {
-    document.getElementById('modalTitle').textContent = title;
-    document.getElementById('modalContent').innerHTML = content;
-    document.getElementById('detailModal').classList.remove('hidden');
+    const overlay = document.getElementById('detailModal');
+    const card = overlay.querySelector('div');
+    const titleEl = document.getElementById('modalTitle');
+    const contentEl = document.getElementById('modalContent');
+
+    // A11y attributes
+    card.setAttribute('role', 'dialog');
+    card.setAttribute('aria-modal', 'true');
+    card.setAttribute('aria-labelledby', 'modalTitle');
+
+    titleEl.textContent = title;
+    contentEl.innerHTML = content;
+
+    // Initial animation state
+    overlay.classList.remove('hidden');
+    overlay.classList.add('opacity-0');
+    overlay.classList.add('transition-opacity', 'duration-200');
+    card.classList.add('transform', 'transition-all', 'duration-200', 'opacity-0', 'translate-y-4');
+
+    // Animate in
+    requestAnimationFrame(() => {
+        overlay.classList.remove('opacity-0');
+        card.classList.remove('opacity-0', 'translate-y-4');
+    });
+
+    // Focus first form control if available
+    setTimeout(() => {
+        const firstInput = contentEl.querySelector('input, select, textarea, button');
+        if (firstInput) firstInput.focus();
+    }, 150);
 }
 
 function hideModal() {
-    document.getElementById('detailModal').classList.add('hidden');
+    const overlay = document.getElementById('detailModal');
+    const card = overlay.querySelector('div');
+    // Animate out
+    overlay.classList.add('opacity-0');
+    card.classList.add('opacity-0', 'translate-y-4');
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+        overlay.classList.remove('opacity-0');
+        card.classList.remove('opacity-0', 'translate-y-4');
+    }, 180);
 }
 
 // 關閉彈窗事件

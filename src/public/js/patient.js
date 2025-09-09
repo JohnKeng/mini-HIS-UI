@@ -66,7 +66,7 @@ function getPatientActions(patient) {
 
 // 顯示患者詳細資訊
 async function showPatientDetail(patientId) {
-    const patient = window.utils.allPatients.find(p => p.info.id === patientId);
+    const patient = window.utils.allPatients.find(p => p.info && p.info.id === patientId);
     if (!patient) return;
 
     const admissionInfo = patient.tag === 'Admitted' ? `

@@ -30,7 +30,7 @@
             rel="stylesheet"
         />
     </head>
-    <body class="bg-gray-100 min-h-screen font-sans">
+    <body class="bg-gray-100 min-h-screen font-sans flex flex-col">
         <!-- 導航列 -->
         <nav class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-sm border-b border-blue-200">
             <div class="max-w-7xl mx-auto px-6">
@@ -43,7 +43,7 @@
         </nav>
 
         <!-- 主要內容 -->
-        <div class="max-w-7xl mx-auto px-6 py-12">
+        <div class="flex-grow max-w-7xl mx-auto px-6 py-12">
             <!-- 功能選單 -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
                 <button
@@ -853,7 +853,7 @@
         </div>
 
         <!-- 底部資訊 -->
-        <footer class="bg-gradient-to-r from-blue-50 to-blue-100 border-t border-blue-200 py-4 mt-8">
+        <footer class="bg-gradient-to-r from-blue-50 to-blue-100 border-t border-blue-200 py-4 mt-auto">
             <div class="container mx-auto px-4 text-center">
                 <div class="text-sm font-medium text-blue-600">
                     TypeScript + ADT 示範專案

@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             name: document.getElementById('patientName').value,
             birthDate: document.getElementById('patientBirthDate').value,
             gender: document.querySelector('input[name="gender"]:checked').value,
-            contactNumber: document.getElementById('patientContact').value,
+            contactNumber: document.getElementById('patientPhone').value,
             address: {
                 street: document.getElementById('patientAddress').value,
                 city: '台北市',
@@ -47,8 +47,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             doctorId: document.getElementById('appointmentDoctorId').value,
             department: document.getElementById('appointmentDepartment').value,
             timeSlot: {
-                start: new Date(document.getElementById('appointmentDateTime').value).toISOString(),
-                end: new Date(new Date(document.getElementById('appointmentDateTime').value).getTime() + 30 * 60000).toISOString()
+                start: new Date(document.getElementById('appointmentTime').value).toISOString(),
+                end: new Date(new Date(document.getElementById('appointmentTime').value).getTime() + 30 * 60000).toISOString()
             }
         };
         
@@ -138,10 +138,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // 導航按鈕事件處理
-const patientBtn = document.querySelector('button[onclick*="patient"]');
-const appointmentBtn = document.querySelector('button[onclick*="appointment"]');
-const prescriptionBtn = document.querySelector('button[onclick*="prescription"]');
-const serviceBtn = document.querySelector('button[onclick*="service"]');
+const patientBtn = document.getElementById('patientBtn');
+const appointmentBtn = document.getElementById('appointmentBtn');
+const prescriptionBtn = document.getElementById('prescriptionBtn');
+const serviceBtn = document.getElementById('serviceBtn');
 
 if (patientBtn) {
     patientBtn.addEventListener('click', async () => {

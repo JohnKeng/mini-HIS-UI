@@ -32,7 +32,7 @@
     </head>
     <body class="bg-white min-h-screen font-sans">
         <!-- 導航列 -->
-        <nav class="bg-black text-white shadow-sm border-b border-gray-200">
+        <nav class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-sm border-b border-blue-200">
             <div class="max-w-7xl mx-auto px-6">
                 <div class="flex justify-between items-center py-6">
                     <h1 class="text-2xl font-semibold tracking-tight">
@@ -51,25 +51,25 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
                 <button
                     id="appointmentBtn"
-                    class="bg-black border-2 border-black text-white px-8 py-6 rounded-lg hover:bg-gray-900 transition-all duration-200 flex items-center justify-center"
+                    class="bg-gradient-to-br from-blue-500 to-blue-700 border-2 border-blue-500 text-white px-8 py-6 rounded-lg hover:from-blue-600 hover:to-blue-800 transition-all duration-200 flex items-center justify-center"
                 >
                     <span class="font-medium text-lg">Dashboard</span>
                 </button>
                 <button
                     id="patientBtn"
-                    class="bg-white border-2 border-gray-200 text-gray-900 px-8 py-6 rounded-lg hover:border-black hover:shadow-lg transition-all duration-200 flex items-center justify-center"
+                    class="bg-white border-2 border-blue-200 text-blue-700 px-8 py-6 rounded-lg hover:border-blue-500 hover:shadow-lg transition-all duration-200 flex items-center justify-center"
                 >
                     <span class="font-medium text-lg">患者管理</span>
                 </button>
                 <button
                     id="prescriptionBtn"
-                    class="bg-white border-2 border-gray-200 text-gray-900 px-8 py-6 rounded-lg hover:border-black hover:shadow-lg transition-all duration-200 flex items-center justify-center"
+                    class="bg-white border-2 border-blue-200 text-blue-700 px-8 py-6 rounded-lg hover:border-blue-500 hover:shadow-lg transition-all duration-200 flex items-center justify-center"
                 >
                     <span class="font-medium text-lg">處方管理</span>
                 </button>
                 <button
                     id="serviceBtn"
-                    class="bg-white border-2 border-gray-200 text-gray-900 px-8 py-6 rounded-lg hover:border-black hover:shadow-lg transition-all duration-200 flex items-center justify-center"
+                    class="bg-white border-2 border-blue-200 text-blue-700 px-8 py-6 rounded-lg hover:border-blue-500 hover:shadow-lg transition-all duration-200 flex items-center justify-center"
                 >
                     <span class="font-medium text-lg">醫療服務</span>
                 </button>
@@ -82,7 +82,7 @@
             >
                 <!-- 病患管理面板 -->
                 <div id="patientPanel" class="panel">
-                    <h2 class="text-3xl font-semibold mb-8 text-black">
+                    <h2 class="text-3xl font-semibold mb-8 text-blue-800">
                         病患管理
                     </h2>
 
@@ -91,11 +91,11 @@
                         class="mb-12 bg-gray-50 border border-gray-200 rounded-lg"
                     >
                         <button
-                            class="w-full px-8 py-4 text-left text-xl font-medium text-gray-900 hover:bg-gray-100 transition-colors flex items-center justify-between"
+                            class="w-full px-8 py-4 text-left text-xl font-medium text-blue-800 hover:bg-blue-50 transition-colors flex items-center justify-between"
                             onclick="toggleForm('patientFormContainer', this)"
                         >
                             註冊新病患
-                            <span class="text-gray-500">▼</span>
+                            <span class="text-blue-500">▼</span>
                         </button>
                         <div id="patientFormContainer" class="p-8 pt-0" style="display: none;">
                         <form
@@ -110,7 +110,7 @@
                                 <input
                                     type="text"
                                     id="patientName"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                     required
                                 />
                             </div>
@@ -122,7 +122,7 @@
                                 <input
                                     type="date"
                                     id="patientBirthDate"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                     required
                                 />
                             </div>
@@ -166,7 +166,7 @@
                                 <input
                                     type="tel"
                                     id="patientPhone"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                     required
                                 />
                             </div>
@@ -178,14 +178,14 @@
                                 <input
                                     type="text"
                                     id="patientAddress"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                     required
                                 />
                             </div>
                             <div class="md:col-span-2">
                                 <button
                                     type="submit"
-                                    class="bg-black text-white px-8 py-3 rounded-md hover:bg-gray-900 transition-colors font-medium"
+                                    class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-md hover:from-blue-600 hover:to-blue-700 transition-colors font-medium"
                                 >
                                     註冊病患
                                 </button>
@@ -253,7 +253,7 @@
 
                 <!-- Dashboard 面板 -->
                 <div id="appointmentPanel" class="panel hidden">
-                    <h2 class="text-2xl font-bold mb-6 text-gray-800">
+                    <h2 class="text-2xl font-bold mb-6 text-blue-800">
                         Dashboard
                     </h2>
 
@@ -262,11 +262,11 @@
                         class="mb-12 bg-gray-50 border border-gray-200 rounded-lg"
                     >
                         <button
-                            class="w-full px-8 py-4 text-left text-xl font-medium text-gray-900 hover:bg-gray-100 transition-colors flex items-center justify-between"
+                            class="w-full px-8 py-4 text-left text-xl font-medium text-blue-800 hover:bg-blue-50 transition-colors flex items-center justify-between"
                             onclick="toggleForm('appointmentFormContainer', this)"
                         >
                             建立新預約
-                            <span class="text-gray-500">▼</span>
+                            <span class="text-blue-500">▼</span>
                         </button>
                         <div id="appointmentFormContainer" class="p-8 pt-0" style="display: none;">
                         <form
@@ -280,7 +280,7 @@
                                 >
                                 <select
                                     id="appointmentPatientId"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                     required
                                 >
                                     <option value="">請選擇病患</option>
@@ -296,7 +296,7 @@
                                     type="text"
                                     id="appointmentDoctorId"
                                     value="doc-001"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                     required
                                 />
                             </div>
@@ -307,7 +307,7 @@
                                 >
                                 <select
                                     id="appointmentDepartment"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                     required
                                 >
                                     <option value="">請選擇</option>
@@ -325,7 +325,7 @@
                                 <input
                                     type="datetime-local"
                                     id="appointmentTime"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                     required
                                 />
                             </div>
@@ -337,14 +337,14 @@
                                 <input
                                     type="text"
                                     id="appointmentPurpose"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                     required
                                 />
                             </div>
                             <div class="md:col-span-2">
                                 <button
                                     type="submit"
-                                    class="bg-black text-white px-8 py-3 rounded-md hover:bg-gray-900 transition-colors font-medium"
+                                    class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-md hover:from-blue-600 hover:to-blue-700 transition-colors font-medium"
                                 >
                                     建立預約
                                 </button>
@@ -412,7 +412,7 @@
 
                 <!-- 處方管理面板 -->
                 <div id="prescriptionPanel" class="panel hidden">
-                    <h2 class="text-3xl font-semibold mb-8 text-black">
+                    <h2 class="text-3xl font-semibold mb-8 text-blue-800">
                         處方管理
                     </h2>
 
@@ -421,11 +421,11 @@
                         class="mb-12 bg-gray-50 border border-gray-200 rounded-lg"
                     >
                         <button
-                            class="w-full px-8 py-4 text-left text-xl font-medium text-gray-900 hover:bg-gray-100 transition-colors flex items-center justify-between"
+                            class="w-full px-8 py-4 text-left text-xl font-medium text-blue-800 hover:bg-blue-50 transition-colors flex items-center justify-between"
                             onclick="toggleForm('prescriptionFormContainer', this)"
                         >
                             開立新處方
-                            <span class="text-gray-500">▼</span>
+                            <span class="text-blue-500">▼</span>
                         </button>
                         <div id="prescriptionFormContainer" class="p-8 pt-0" style="display: none;">
                         <form
@@ -440,7 +440,7 @@
                                     >
                                     <select
                                         id="prescriptionPatientId"
-                                        class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                        class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                         required
                                     >
                                         <option value="">請選擇病患</option>
@@ -456,7 +456,7 @@
                                         type="text"
                                         id="prescriptionDoctorId"
                                         value="doc-001"
-                                        class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                        class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                         required
                                     />
                                 </div>
@@ -470,7 +470,7 @@
                                     type="text"
                                     id="medicationName"
                                     value="阿斯匹靈"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                     required
                                 />
                             </div>
@@ -484,7 +484,7 @@
                                         type="text"
                                         id="medicationDosage"
                                         value="1 錠"
-                                        class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                        class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                         required
                                     />
                                 </div>
@@ -497,7 +497,7 @@
                                         type="text"
                                         id="medicationFrequency"
                                         value="每日三次"
-                                        class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                        class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                         required
                                     />
                                 </div>
@@ -510,7 +510,7 @@
                                         type="text"
                                         id="medicationDuration"
                                         value="7 天"
-                                        class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                        class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                         required
                                     />
                                 </div>
@@ -522,7 +522,7 @@
                                 >
                                 <textarea
                                     id="prescriptionNotes"
-                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-black transition-colors"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500 transition-colors"
                                     rows="3"
                                 >
 緩解疼痛和發炎</textarea
@@ -531,7 +531,7 @@
                             <div>
                                 <button
                                     type="submit"
-                                    class="bg-black text-white px-8 py-3 rounded-md hover:bg-gray-900 transition-colors font-medium"
+                                    class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-md hover:from-blue-600 hover:to-blue-700 transition-colors font-medium"
                                 >
                                     開立處方
                                 </button>
@@ -599,18 +599,18 @@
 
                 <!-- 醫療服務面板 -->
                 <div id="servicePanel" class="panel hidden">
-                    <h2 class="text-3xl font-semibold mb-8 text-black">
+                    <h2 class="text-3xl font-semibold mb-8 text-blue-800">
                         醫療服務
                     </h2>
 
                     <!-- 新增服務表單 -->
                     <div class="mb-8 bg-gray-50 rounded-lg">
                         <button
-                            class="w-full px-8 py-4 text-left text-xl font-medium text-gray-900 hover:bg-gray-100 transition-colors flex items-center justify-between"
+                            class="w-full px-8 py-4 text-left text-xl font-medium text-blue-800 hover:bg-blue-50 transition-colors flex items-center justify-between"
                             onclick="toggleForm('serviceFormContainer', this)"
                         >
                             請求新服務
-                            <span class="text-gray-500">▼</span>
+                            <span class="text-blue-500">▼</span>
                         </button>
                         <div id="serviceFormContainer" class="p-8 pt-0" style="display: none;">
                         <form

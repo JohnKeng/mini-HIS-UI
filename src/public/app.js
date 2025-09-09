@@ -42,8 +42,8 @@ function showPanel(panelName) {
     
     // 更新按鈕狀態 - 移除所有按鈕的啟用狀態
     document.querySelectorAll('.grid button').forEach(btn => {
-        btn.classList.remove('bg-black', 'border-black', 'text-white');
-        btn.classList.add('bg-white', 'border-gray-200', 'text-gray-900');
+        btn.classList.remove('bg-gradient-to-br', 'from-blue-500', 'to-blue-700', 'border-blue-500', 'text-white');
+        btn.classList.add('bg-white', 'border-blue-200', 'text-blue-700');
     });
     
     // 為當前面板的按鈕添加啟用狀態
@@ -57,8 +57,8 @@ function showPanel(panelName) {
     if (buttonMap[panelName]) {
         const activeBtn = document.getElementById(buttonMap[panelName]);
         if (activeBtn) {
-            activeBtn.classList.remove('bg-white', 'border-gray-200', 'text-gray-900');
-            activeBtn.classList.add('bg-black', 'border-black', 'text-white');
+            activeBtn.classList.remove('bg-white', 'border-blue-200', 'text-blue-700');
+            activeBtn.classList.add('bg-gradient-to-br', 'from-blue-500', 'to-blue-700', 'border-blue-500', 'text-white');
         }
     }
 }
@@ -390,10 +390,10 @@ function displayPatients(patients) {
         row.className = 'border-b hover:bg-gray-50';
         
         const statusColor = {
-            'Registered': 'bg-gray-100 text-gray-800 border border-gray-300',
-            'Admitted': 'bg-gray-800 text-white border border-gray-800',
-            'Discharged': 'bg-gray-300 text-gray-700 border border-gray-400'
-        }[patient.tag] || 'bg-gray-100 text-gray-800 border border-gray-300';
+            'Registered': 'bg-blue-100 text-blue-800 border border-blue-300',
+            'Admitted': 'bg-blue-600 text-white border border-blue-600',
+            'Discharged': 'bg-blue-200 text-blue-700 border border-blue-300'
+        }[patient.tag] || 'bg-blue-100 text-blue-800 border border-blue-300';
         
         row.innerHTML = `
             <td class="px-4 py-2 font-mono text-sm cursor-pointer hover:text-blue-600" onclick="showPatientDetail('${patient.info.id}')">${patient.info.id}</td>
@@ -492,12 +492,12 @@ function displayAppointments(appointments) {
         row.className = 'border-b hover:bg-gray-50';
         
         const statusColor = {
-            'Requested': 'bg-gray-100 text-gray-700 border border-gray-300',
-            'Confirmed': 'bg-gray-200 text-gray-800 border border-gray-400',
-            'CheckedIn': 'bg-gray-600 text-white border border-gray-600',
-            'InProgress': 'bg-gray-800 text-white border border-gray-800',
-            'Completed': 'bg-black text-white border border-black'
-        }[appointment.tag] || 'bg-gray-100 text-gray-800 border border-gray-300';
+            'Requested': 'bg-blue-100 text-blue-700 border border-blue-300',
+            'Confirmed': 'bg-blue-200 text-blue-800 border border-blue-400',
+            'CheckedIn': 'bg-blue-500 text-white border border-blue-500',
+            'InProgress': 'bg-blue-700 text-white border border-blue-700',
+            'Completed': 'bg-blue-900 text-white border border-blue-900'
+        }[appointment.tag] || 'bg-blue-100 text-blue-800 border border-blue-300';
         
         const patientName = getPatientName(appointment.info.patientId);
         const appointmentTime = appointment.info.timeSlot ? 
@@ -624,12 +624,12 @@ function displayPrescriptions(prescriptions) {
         row.className = 'border-b hover:bg-gray-50';
         
         const statusColor = {
-            'Created': 'bg-gray-100 text-gray-700 border border-gray-300',
-            'Submitted': 'bg-gray-200 text-gray-800 border border-gray-400',
-            'InPreparation': 'bg-gray-500 text-white border border-gray-500',
-            'Prepared': 'bg-gray-700 text-white border border-gray-700',
-            'Dispensed': 'bg-black text-white border border-black'
-        }[prescription.tag] || 'bg-gray-100 text-gray-800 border border-gray-300';
+            'Created': 'bg-blue-100 text-blue-700 border border-blue-300',
+            'Submitted': 'bg-blue-200 text-blue-800 border border-blue-400',
+            'InPreparation': 'bg-blue-500 text-white border border-blue-500',
+            'Prepared': 'bg-blue-700 text-white border border-blue-700',
+            'Dispensed': 'bg-blue-900 text-white border border-blue-900'
+        }[prescription.tag] || 'bg-blue-100 text-blue-800 border border-blue-300';
         
         const patientName = getPatientName(prescription.info.patientId);
         const mainMedication = prescription.info.items && prescription.info.items.length > 0 ? 
@@ -835,12 +835,12 @@ function displayServices(services) {
         row.className = 'border-b hover:bg-gray-50';
         
         const statusColor = {
-            'Requested': 'bg-gray-100 text-gray-700 border border-gray-300',
-            'Scheduled': 'bg-gray-200 text-gray-800 border border-gray-400',
-            'InPreparation': 'bg-gray-500 text-white border border-gray-500',
-            'InProgress': 'bg-gray-700 text-white border border-gray-700',
-            'Completed': 'bg-black text-white border border-black'
-        }[service.tag] || 'bg-gray-100 text-gray-800 border border-gray-300';
+            'Requested': 'bg-blue-100 text-blue-700 border border-blue-300',
+            'Scheduled': 'bg-blue-200 text-blue-800 border border-blue-400',
+            'InPreparation': 'bg-blue-500 text-white border border-blue-500',
+            'InProgress': 'bg-blue-700 text-white border border-blue-700',
+            'Completed': 'bg-blue-900 text-white border border-blue-900'
+        }[service.tag] || 'bg-blue-100 text-blue-800 border border-blue-300';
         
         const patientName = getPatientName(service.info.patientId);
         const serviceName = service.info.description || '未設定';

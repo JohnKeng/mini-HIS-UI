@@ -66,6 +66,11 @@
       "tag": "Registered",
       "patientId": "pt-1757388450559",
       "registeredAt": "2025-09-09T03:27:30.559Z"
+    },
+    {
+      "tag": "Registered",
+      "patientId": "pt-1757388758023",
+      "registeredAt": "2025-09-09T03:32:38.023Z"
     }
   ],
   "appointments": [
@@ -89,7 +94,7 @@
       "startedAt": "2025-09-09T02:43:03.934Z"
     },
     {
-      "tag": "Confirmed",
+      "tag": "CheckedIn",
       "info": {
         "id": "appt-1757339865903",
         "patientId": "pt-1757339824164",
@@ -103,7 +108,8 @@
       },
       "requestedAt": "2025-09-08T13:57:45.903Z",
       "confirmedAt": "2025-09-09T02:43:08.312Z",
-      "confirmationNumber": "CONF-1757385788209"
+      "confirmationNumber": "CONF-1757385788209",
+      "checkedInAt": "2025-09-09T03:30:22.325Z"
     },
     {
       "tag": "Confirmed",

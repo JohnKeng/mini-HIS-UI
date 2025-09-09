@@ -22,6 +22,12 @@ async function loadPatientOptions(datalistId) {
         
         // 添加病患選項
         result.data.forEach(patient => {
+            // 確保患者資料結構完整
+            if (!patient || !patient.info || !patient.info.id) {
+                console.warn('跳過無效的患者資料:', patient);
+                return;
+            }
+            
             const option = document.createElement('option');
             option.value = patient.info.id;
             option.textContent = `${patient.info.id} + ${patient.info.name}`;

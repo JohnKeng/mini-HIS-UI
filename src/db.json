@@ -118,7 +118,7 @@
   ],
   "prescriptions": [
     {
-      "tag": "Created",
+      "tag": "Submitted",
       "info": {
         "id": "rx-1757340631888",
         "patientId": "pt-1757339824164",
@@ -142,7 +142,8 @@
         ],
         "notes": "緩解疼痛和發炎"
       },
-      "createdAt": "2025-09-08T14:10:31.888Z"
+      "createdAt": "2025-09-08T14:10:31.888Z",
+      "submittedAt": "2025-09-09T04:20:33.518Z"
     },
     {
       "tag": "Created",
@@ -172,7 +173,7 @@
       "createdAt": "2025-09-09T03:34:01.886Z"
     },
     {
-      "tag": "Created",
+      "tag": "Submitted",
       "info": {
         "id": "rx-1757388850242",
         "patientId": "pt-web-001",
@@ -196,13 +197,14 @@
         ],
         "notes": "緩解疼痛和發炎"
       },
-      "createdAt": "2025-09-09T03:34:10.242Z"
+      "createdAt": "2025-09-09T03:34:10.242Z",
+      "submittedAt": "2025-09-09T04:20:41.323Z"
     },
     {
       "tag": "Created",
       "info": {
         "id": "rx-1757391518339",
-        "patientId": "p-1757391410002 + 大頭",
+        "patientId": "p-1757391410002",
         "doctorId": "doc-001",
         "items": [
           {
@@ -224,11 +226,38 @@
         "notes": "緩解疼痛和發炎"
       },
       "createdAt": "2025-09-09T04:18:38.339Z"
+    },
+    {
+      "tag": "Created",
+      "info": {
+        "id": "rx-1757391601125",
+        "patientId": "p-1757389083975 + 呱呱",
+        "doctorId": "doc-001",
+        "items": [
+          {
+            "medicationId": "med-001",
+            "medication": {
+              "id": "med-001",
+              "name": "阿斯匹靈",
+              "code": "ASPIRIN",
+              "dosageForm": "錠劑",
+              "strength": "100mg"
+            },
+            "dosage": "1 錠",
+            "frequency": "每日三次",
+            "route": "口服",
+            "duration": "7 天",
+            "instructions": "飯後服用"
+          }
+        ],
+        "notes": "緩解疼痛和發炎"
+      },
+      "createdAt": "2025-09-09T04:20:01.125Z"
     }
   ],
   "services": [
     {
-      "tag": "Requested",
+      "tag": "Scheduled",
       "info": {
         "id": "svc-1757340385702",
         "patientId": "pt-1757339824164",
@@ -242,7 +271,8 @@
         "notes": "大力切"
       },
       "requestedAt": "2025-09-08T14:06:25.702Z",
-      "requestedBy": "doc-001"
+      "requestedBy": "doc-001",
+      "scheduledAt": "2025-09-09T04:21:15.966Z"
     }
   ]
 }

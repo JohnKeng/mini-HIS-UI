@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         const appointmentData = {
             id: `a-${Date.now()}`,
-            patientId: document.getElementById('appointmentPatientId').value,
+            patientId: document.getElementById('appointmentPatientId').getAttribute('data-patient-id') || document.getElementById('appointmentPatientId').value,
             doctorId: document.getElementById('appointmentDoctorId').value,
             department: document.getElementById('appointmentDepartment').value,
             timeSlot: {
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         
         const prescriptionData = {
-            patientId: document.getElementById('prescriptionPatientId').value,
+            patientId: document.getElementById('prescriptionPatientId').getAttribute('data-patient-id') || document.getElementById('prescriptionPatientId').value,
             doctorId: document.getElementById('prescriptionDoctorId').value,
             items: [
                 {
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.preventDefault();
         
         const serviceData = {
-            patientId: document.getElementById('servicePatientId').value,
+            patientId: document.getElementById('servicePatientId').getAttribute('data-patient-id') || document.getElementById('servicePatientId').value,
             serviceType: document.getElementById('serviceType').value,
             description: document.getElementById('serviceName').value,
             priority: document.getElementById('servicePriority').value,

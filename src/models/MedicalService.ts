@@ -11,24 +11,24 @@ import { success, failure, ErrorCode } from '../types/results.ts';
 
 // 醫療服務類型（以常數物件 + 字面量聯合取代 TS enum）
 export const ServiceType = {
-  Consultation: 'Consultation',      // 諮詢
-  Examination: 'Examination',        // 檢查
-  Treatment: 'Treatment',            // 治療
-  Surgery: 'Surgery',                // 手術
-  Rehabilitation: 'Rehabilitation',  // 復健
-  Vaccination: 'Vaccination',        // 疫苗接種
-  LabTest: 'LabTest',                // 實驗室檢測
-  Imaging: 'Imaging',                // 影像檢查
+  Consultation: '諮詢',
+  Examination: '檢查',
+  Treatment: '治療',
+  Surgery: '手術',
+  Rehabilitation: '復健',
+  Vaccination: '疫苗接種',
+  LabTest: '實驗室檢測',
+  Imaging: '影像檢查',
 } as const;
 export type ServiceType = typeof ServiceType[keyof typeof ServiceType];
 
 // 服務優先級
 export const Priority = {
-  Low: 'Low',
-  Normal: 'Normal',
-  High: 'High',
-  Urgent: 'Urgent',
-  Emergency: 'Emergency',
+  Low: '低',
+  Normal: '一般',
+  High: '高',
+  Urgent: '緊急',
+  Emergency: '急診',
 } as const;
 export type Priority = typeof Priority[keyof typeof Priority];
 

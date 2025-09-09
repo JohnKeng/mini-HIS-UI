@@ -3,11 +3,7 @@ import path from 'path';
 
 // Import hospital system modules
 import {
-  registerPatient,
-  admitPatient,
-  dischargePatient,
-  isRegistered,
-  isAdmitted
+  registerPatient
 } from './models/Patient.ts';
 import type { PatientState } from './models/Patient.ts';
 
@@ -102,63 +98,9 @@ app.get('/api/patients', async (_req, res) => {
   }
 });
 
-app.post('/api/patients/:id/admit', async (req, res) => {
-  try {
-    const patient = await database.readPatient(req.params.id);
-    if (!patient) {
-      return res.status(404).json({ success: false, error: { message: 'Patient not found' } });
-    }
-    
-    if (!isRegistered(patient)) {
-      return res.status(400).json({ success: false, error: { message: 'Patient must be registered first' } });
-    }
-    
-    const { wardNumber, bedNumber, attendingDoctorId } = req.body;
-    const result = admitPatient(patient, wardNumber, bedNumber, attendingDoctorId);
-    
-    if (isSuccess(result)) {
-      const saved = await database.updatePatient(req.params.id, result.data);
-      if (saved) {
-        return res.json({ success: true, data: result.data });
-      } else {
-        return res.status(500).json({ success: false, error: { message: 'Failed to update patient' } });
-      }
-    } else {
-      return res.status(400).json({ success: false, error: result.error });
-    }
-  } catch (error) {
-    return res.status(500).json({ success: false, error: { message: 'Failed to admit patient' } });
-  }
-});
+// 移除患者入院API端點
 
-app.post('/api/patients/:id/discharge', async (req, res) => {
-  try {
-    const patient = await database.readPatient(req.params.id);
-    if (!patient) {
-      return res.status(404).json({ success: false, error: { message: 'Patient not found' } });
-    }
-    
-    if (!isAdmitted(patient)) {
-      return res.status(400).json({ success: false, error: { message: 'Patient must be admitted first' } });
-    }
-    
-    const { summary, followUpDate } = req.body;
-    const result = dischargePatient(patient, summary, followUpDate);
-    
-    if (isSuccess(result)) {
-      const saved = await database.updatePatient(req.params.id, result.data);
-      if (saved) {
-        return res.json({ success: true, data: result.data });
-      } else {
-        return res.status(500).json({ success: false, error: { message: 'Failed to update patient' } });
-      }
-    } else {
-      return res.status(400).json({ success: false, error: result.error });
-    }
-  } catch (error) {
-    return res.status(500).json({ success: false, error: { message: 'Failed to discharge patient' } });
-  }
-});
+// 移除患者出院API端點
 
 // Appointment API 端點
 app.post('/api/appointments', async (req, res) => {

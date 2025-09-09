@@ -48,21 +48,6 @@
       "followUpDate": "2025-09-16T03:38:56.221Z"
     },
     {
-      "tag": "Registered",
-      "patientId": "pt-1757388450559",
-      "registeredAt": "2025-09-09T03:27:30.559Z"
-    },
-    {
-      "tag": "Registered",
-      "patientId": "pt-1757388758023",
-      "registeredAt": "2025-09-09T03:32:38.023Z"
-    },
-    {
-      "tag": "Registered",
-      "patientId": "pt-1757388967307",
-      "registeredAt": "2025-09-09T03:36:07.307Z"
-    },
-    {
       "tag": "Discharged",
       "patientId": "pt-1757389084146",
       "registeredAt": "2025-09-09T03:38:04.146Z",

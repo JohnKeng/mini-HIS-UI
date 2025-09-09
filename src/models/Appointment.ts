@@ -172,16 +172,16 @@ export function checkInAppointment(
     );
   }
   
-  // 檢查是否在預約時間前後 30 分鐘內報到
+  // 檢查是否在預約時間前後 24 小時內報到 (示範用途，放寬時間限制)
   const now = new Date();
   const appointmentTime = new Date(appointment.info.timeSlot.start);
   const timeDiff = Math.abs(now.getTime() - appointmentTime.getTime());
-  const minutesDiff = Math.floor(timeDiff / (1000 * 60));
+  const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
   
-  if (minutesDiff > 30) {
+  if (hoursDiff > 24) {
     return failure(
       ErrorCode.ValidationFailed,
-      `Check-in time is outside the allowed window (30 minutes before or after the appointment time).`
+      `Check-in time is outside the allowed window (24 hours before or after the appointment time).`
     );
   }
   

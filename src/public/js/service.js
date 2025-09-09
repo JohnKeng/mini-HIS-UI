@@ -27,7 +27,8 @@ function displayServices(services) {
         }[service.tag] || 'bg-blue-100 text-blue-800 border border-blue-300';
         
         const patientName = window.utils.getPatientName(service.info.patientId);
-        const serviceName = service.info.description || '未設定';
+        // 名稱優先取用 description；為相容舊資料，也嘗試 serviceName
+        const serviceName = service.info.description || service.info.serviceName || '未設定';
         const serviceType = service.info.serviceType || '未設定';
         const priority = service.info.priority || '未設定';
         
@@ -94,7 +95,7 @@ async function showServiceDetail(serviceId) {
                     <div><span class="font-medium">患者 ID:</span> ${service.info.patientId}</div>
                     <div><span class="font-medium">患者姓名:</span> ${patientName}</div>
                     <div><span class="font-medium">服務類型:</span> ${service.info.serviceType}</div>
-                    <div><span class="font-medium">服務名稱:</span> ${service.info.description}</div>
+                    <div><span class="font-medium">服務名稱:</span> ${service.info.description || service.info.serviceName || '未設定'}</div>
                     <div><span class="font-medium">優先級:</span> ${service.info.priority}</div>
                     <div><span class="font-medium">預計時長:</span> ${service.info.estimatedDuration} 分鐘</div>
                     <div><span class="font-medium">申請人:</span> ${service.info.requestedBy}</div>

@@ -2,9 +2,39 @@
 
 // 表單處理
 document.addEventListener('DOMContentLoaded', async () => {
-    // 初始化應用
-    await window.patient.loadPatients();
-    window.ui.showPanel('patient');
+    // 小工具：等待指定全域模組可用
+    async function waitFor(conditionFn, timeout = 3000, interval = 50) {
+        const start = Date.now();
+        return new Promise(resolve => {
+            const timer = setInterval(() => {
+                try {
+                    if (conditionFn()) {
+                        clearInterval(timer);
+                        resolve(true);
+                    } else if (Date.now() - start >= timeout) {
+                        clearInterval(timer);
+                        resolve(false);
+                    }
+                } catch {
+                    // ignore
+                }
+            }, interval);
+        });
+    }
+
+    // 初始化資料（先載入患者以便選單/名稱解析）
+    await waitFor(() => window.patient && typeof window.patient.loadPatients === 'function');
+    if (window.patient?.loadPatients) {
+        await window.patient.loadPatients();
+    } else {
+        console.warn('[init] patient module not ready, skipping initial load');
+    }
+
+    // 預設顯示 Dashboard（appointment 面板）並載入資料
+    window.ui.showPanel('appointment');
+    if (window.patient?.loadPatients) await window.patient.loadPatients();
+    if (window.appointment?.loadAppointments) window.appointment.loadAppointments();
+    if (window.utils?.loadPatientOptions) window.utils.loadPatientOptions('appointmentPatientList');
     
     // 患者表單處理
     document.getElementById('patientForm').addEventListener('submit', async (e) => {
@@ -31,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (result.success) {
             window.ui.showMessage('患者建立成功', 'success');
             document.getElementById('patientForm').reset();
-            window.patient.loadPatients();
+            if (window.patient?.loadPatients) window.patient.loadPatients();
         } else {
             window.ui.showMessage(`建立失敗: ${result.error.message}`, 'error');
         }
@@ -114,7 +144,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const serviceData = {
             patientId: document.getElementById('servicePatientId').getAttribute('data-patient-id') || document.getElementById('servicePatientId').value,
             serviceType: document.getElementById('serviceType').value,
+            // 同時送出 description 與 serviceName 以相容後端
             description: document.getElementById('serviceName').value,
+            serviceName: document.getElementById('serviceName').value,
             priority: document.getElementById('servicePriority').value,
             estimatedDuration: parseInt(document.getElementById('serviceDuration').value),
             requestedBy: document.getElementById('serviceRequestedBy').value,
@@ -136,7 +168,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
     
-    // 患者選擇監聽器 - 顯示 ID + 姓名
+    // 患者選擇監聽器 - 僅保留欄位中的患者ID，避免提交混入姓名
     function setupPatientSelectionDisplay(inputId, datalistId) {
         const input = document.getElementById(inputId);
         const datalist = document.getElementById(datalistId);
@@ -145,21 +177,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             input.addEventListener('input', () => {
                 const selectedOption = datalist.querySelector(`option[value="${input.value}"]`);
                 if (selectedOption) {
-                    const patientName = selectedOption.getAttribute('data-name');
                     const patientId = selectedOption.getAttribute('data-id');
-                    if (patientName && patientId) {
-                        input.value = `${patientId} + ${patientName}`;
+                    if (patientId) {
+                        // 僅記錄患者ID，不改寫輸入框為「ID + 姓名」
+                        input.value = patientId;
+                        input.setAttribute('data-patient-id', patientId);
                     }
+                } else {
+                    // 非有效選項時，移除已選患者ID
+                    input.removeAttribute('data-patient-id');
                 }
             });
             
             input.addEventListener('change', () => {
                 const selectedOption = datalist.querySelector(`option[value="${input.value}"]`);
                 if (selectedOption) {
-                    const patientName = selectedOption.getAttribute('data-name');
                     const patientId = selectedOption.getAttribute('data-id');
-                    if (patientName && patientId) {
-                        input.value = `${patientId} + ${patientName}`;
+                    if (patientId) {
+                        // 維持輸入框只顯示純ID
+                        input.value = patientId;
                         input.setAttribute('data-patient-id', patientId);
                     }
                 } else {
@@ -176,42 +212,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupPatientSelectionDisplay('servicePatientId', 'servicePatientList');
 });
 
-// 導航按鈕事件處理
-const patientBtn = document.getElementById('patientBtn');
-const appointmentBtn = document.getElementById('appointmentBtn');
-const prescriptionBtn = document.getElementById('prescriptionBtn');
-const serviceBtn = document.getElementById('serviceBtn');
-
-if (patientBtn) {
-    patientBtn.addEventListener('click', async () => {
-        window.ui.showPanel('patient');
-        await window.patient.loadPatients();
+// Segmented 導覽按鈕事件處理
+document.querySelectorAll('#topNav .nav-tab').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const panel = btn.getAttribute('data-panel');
+        if (!panel) return;
+        window.ui.showPanel(panel);
+        // 載入對應面板資料
+        if (panel === 'appointment') {
+            if (window.patient?.loadPatients) await window.patient.loadPatients();
+            if (window.appointment?.loadAppointments) window.appointment.loadAppointments();
+            if (window.utils?.loadPatientOptions) window.utils.loadPatientOptions('appointmentPatientList');
+        } else if (panel === 'patient') {
+            if (window.patient?.loadPatients) await window.patient.loadPatients();
+        } else if (panel === 'prescription') {
+            if (window.patient?.loadPatients) await window.patient.loadPatients();
+            if (window.prescription?.loadPrescriptions) window.prescription.loadPrescriptions();
+            if (window.utils?.loadPatientOptions) window.utils.loadPatientOptions('prescriptionPatientList');
+        } else if (panel === 'service') {
+            if (window.patient?.loadPatients) await window.patient.loadPatients();
+            if (window.service?.loadServices) window.service.loadServices();
+            if (window.utils?.loadPatientOptions) window.utils.loadPatientOptions('servicePatientList');
+        }
     });
-}
-
-if (appointmentBtn) {
-    appointmentBtn.addEventListener('click', async () => {
-        window.ui.showPanel('appointment');
-        await window.patient.loadPatients();
-        window.appointment.loadAppointments();
-        window.utils.loadPatientOptions('appointmentPatientList');
-    });
-}
-
-if (prescriptionBtn) {
-    prescriptionBtn.addEventListener('click', async () => {
-        window.ui.showPanel('prescription');
-        await window.patient.loadPatients();
-        window.prescription.loadPrescriptions();
-        window.utils.loadPatientOptions('prescriptionPatientList');
-    });
-}
-
-if (serviceBtn) {
-    serviceBtn.addEventListener('click', async () => {
-        window.ui.showPanel('service');
-        await window.patient.loadPatients();
-        window.service.loadServices();
-        window.utils.loadPatientOptions('servicePatientList');
-    });
-}
+});

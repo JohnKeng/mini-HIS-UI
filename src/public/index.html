@@ -30,7 +30,7 @@
             rel="stylesheet"
         />
     </head>
-    <body class="bg-gray-100 min-h-screen font-sans flex flex-col">
+    <body class="bg-gray-100 min-h-screen font-sans flex flex-col min-w-[820px]">
         <!-- 導航列 -->
         <nav class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-sm border-b border-blue-200">
             <div class="max-w-7xl mx-auto px-6">
@@ -44,32 +44,14 @@
 
         <!-- 主要內容 -->
         <div class="flex-grow max-w-7xl mx-auto px-6 py-12">
-            <!-- 功能選單 -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-                <button
-                    id="appointmentBtn"
-                    class="bg-gradient-to-br from-blue-500 to-blue-700 border-2 border-blue-500 text-white px-8 py-6 rounded-lg hover:from-blue-600 hover:to-blue-800 transition-all duration-200 flex items-center justify-center"
-                >
-                    <span class="font-medium text-lg">Dashboard</span>
-                </button>
-                <button
-                    id="patientBtn"
-                    class="bg-white border-2 border-blue-200 text-blue-700 px-8 py-6 rounded-lg hover:border-blue-500 hover:shadow-lg transition-all duration-200 flex items-center justify-center"
-                >
-                    <span class="font-medium text-lg">患者管理</span>
-                </button>
-                <button
-                    id="prescriptionBtn"
-                    class="bg-white border-2 border-blue-200 text-blue-700 px-8 py-6 rounded-lg hover:border-blue-500 hover:shadow-lg transition-all duration-200 flex items-center justify-center"
-                >
-                    <span class="font-medium text-lg">處方管理</span>
-                </button>
-                <button
-                    id="serviceBtn"
-                    class="bg-white border-2 border-blue-200 text-blue-700 px-8 py-6 rounded-lg hover:border-blue-500 hover:shadow-lg transition-all duration-200 flex items-center justify-center"
-                >
-                    <span class="font-medium text-lg">醫療服務</span>
-                </button>
+            <!-- Segmented 導覽按鈕 -->
+            <div class="mb-6">
+                <div id="topNav" class="inline-flex rounded-md overflow-hidden border border-blue-300 shadow-sm">
+                    <button id="appointmentBtn" data-panel="appointment" class="nav-tab px-5 py-3 text-sm font-medium bg-white text-blue-700 border-r border-blue-300">Dashboard</button>
+                    <button id="patientBtn" data-panel="patient" class="nav-tab px-5 py-3 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-white border-r border-blue-300">患者</button>
+                    <button id="prescriptionBtn" data-panel="prescription" class="nav-tab px-5 py-3 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-white border-r border-blue-300">處方</button>
+                    <button id="serviceBtn" data-panel="service" class="nav-tab px-5 py-3 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-white">服務</button>
+                </div>
             </div>
 
             <!-- 內容區域 -->

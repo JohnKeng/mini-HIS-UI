@@ -51,8 +51,10 @@ function displayPatients(patients) {
 
 // 獲取患者操作按鈕
 function getPatientActions(patient) {
-    // 患者不需要入院出院操作，移除相關按鈕
-    return '';
+    return `
+        <button onclick="window.patient.editPatient('${patient.info.id}')" class="bg-yellow-500 text-white px-3 py-1 rounded text-xs hover:bg-yellow-600 mr-2">編輯</button>
+        <button onclick="window.patient.deletePatient('${patient.info.id}')" class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600">刪除</button>
+    `;
 }
 
 // 顯示患者詳細資訊
@@ -97,6 +99,88 @@ async function showPatientDetail(patientId) {
     window.ui.showModal('患者詳細資訊', content);
 }
 
+// 編輯患者
+async function editPatient(patientId) {
+    const patient = window.utils.allPatients.find(p => p.info && p.info.id === patientId);
+    if (!patient) return;
+
+    const p = patient.info;
+
+    const content = `
+        <form id="editPatientForm" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div><span class="font-medium">患者 ID:</span> ${p.id}</div>
+                <div></div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">姓名</label>
+                    <input type="text" id="editName" class="w-full px-3 py-2 border rounded" value="${p.name || ''}" required />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">生日</label>
+                    <input type="date" id="editBirthDate" class="w-full px-3 py-2 border rounded" value="${p.birthDate || ''}" required />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">性別</label>
+                    <select id="editGender" class="w-full px-3 py-2 border rounded">
+                        <option value="Male" ${p.gender === 'Male' ? 'selected' : ''}>男</option>
+                        <option value="Female" ${p.gender === 'Female' ? 'selected' : ''}>女</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">電話</label>
+                    <input type="text" id="editPhone" class="w-full px-3 py-2 border rounded" value="${p.contactNumber || ''}" />
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium mb-1">地址</label>
+                    <input type="text" id="editAddressStreet" class="w-full px-3 py-2 border rounded mb-2" placeholder="街道" value="${p.address?.street || ''}" />
+                    <div class="grid grid-cols-3 gap-2">
+                        <input type="text" id="editAddressCity" class="px-3 py-2 border rounded" placeholder="城市" value="${p.address?.city || ''}" />
+                        <input type="text" id="editAddressState" class="px-3 py-2 border rounded" placeholder="州/區" value="${p.address?.state || ''}" />
+                        <input type="text" id="editAddressPostal" class="px-3 py-2 border rounded" placeholder="郵遞區號" value="${p.address?.postalCode || p.address?.zipCode || ''}" />
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end space-x-3">
+                <button type="button" id="cancelEdit" class="px-4 py-2 rounded border">取消</button>
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">儲存</button>
+            </div>
+        </form>
+    `;
+
+    window.ui.showModal('編輯患者', content);
+
+    document.getElementById('cancelEdit').addEventListener('click', window.ui.hideModal);
+    document.getElementById('editPatientForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+            name: document.getElementById('editName').value,
+            birthDate: document.getElementById('editBirthDate').value,
+            gender: document.getElementById('editGender').value,
+            contactNumber: document.getElementById('editPhone').value,
+            address: {
+                street: document.getElementById('editAddressStreet').value,
+                city: document.getElementById('editAddressCity').value,
+                state: document.getElementById('editAddressState').value,
+                postalCode: document.getElementById('editAddressPostal').value,
+                country: (patient.info.address && patient.info.address.country) || '台灣'
+            }
+        };
+
+        const result = await window.api.apiRequest(`${window.api.API_BASE}/patients/${patientId}`, {
+            method: 'PUT',
+            body: JSON.stringify(payload)
+        });
+
+        if (result.success) {
+            window.ui.showMessage('患者更新成功', 'success');
+            window.ui.hideModal();
+            await loadPatients();
+        } else {
+            window.ui.showMessage(`更新失敗: ${result.error.message}`, 'error');
+        }
+    });
+}
+
 // 移除入院出院相關函數
 
 // 刪除患者
@@ -120,5 +204,6 @@ window.patient = {
     loadPatients,
     displayPatients,
     showPatientDetail,
+    editPatient,
     deletePatient
 };

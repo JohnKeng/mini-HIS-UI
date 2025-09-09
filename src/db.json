@@ -8,7 +8,7 @@
       "dischargedAt": "2025-09-09T03:38:56.367Z",
       "info": {
         "id": "pt-1757339824164",
-        "name": "阿明",
+        "name": "明肉羹麵",
         "birthDate": "1974-09-08",
         "gender": "Male",
         "contactNumber": "888888888",
@@ -81,7 +81,7 @@
   ],
   "appointments": [
     {
-      "tag": "CheckedIn",
+      "tag": "Completed",
       "info": {
         "id": "appt-1757339865903",
         "patientId": "pt-1757339824164",
@@ -96,58 +96,45 @@
       "requestedAt": "2025-09-08T13:57:45.903Z",
       "confirmedAt": "2025-09-09T02:43:08.312Z",
       "confirmationNumber": "CONF-1757385788209",
-      "checkedInAt": "2025-09-09T03:30:22.325Z"
+      "checkedInAt": "2025-09-09T03:30:22.325Z",
+      "startedAt": "2025-09-09T05:22:26.144Z",
+      "completedAt": "2025-09-09T05:22:27.532Z"
     },
     {
-      "tag": "Requested",
+      "tag": "CheckedIn",
       "info": {
-        "id": "appt-1757392042416",
-        "patientId": "p-1757389083975 + 呱呱",
+        "id": "appt-1757394806962",
+        "patientId": "p-1757389083975",
         "doctorId": "doc-001",
         "department": "Cardiology",
         "timeSlot": {
-          "start": "2025-09-09T04:27:00.000Z",
-          "end": "2025-09-09T04:57:00.000Z"
+          "start": "2025-09-09T05:13:00.000Z",
+          "end": "2025-09-09T05:43:00.000Z"
         }
       },
-      "requestedAt": "2025-09-09T04:27:22.416Z"
+      "requestedAt": "2025-09-09T05:13:26.962Z",
+      "confirmedAt": "2025-09-09T05:22:23.112Z",
+      "checkedInAt": "2025-09-09T05:22:24.756Z"
+    },
+    {
+      "tag": "Confirmed",
+      "info": {
+        "id": "appt-1757395365563",
+        "patientId": "p-1757391410002",
+        "doctorId": "doc-001",
+        "department": "Cardiology",
+        "timeSlot": {
+          "start": "2025-09-09T07:22:00.000Z",
+          "end": "2025-09-09T07:52:00.000Z"
+        }
+      },
+      "requestedAt": "2025-09-09T05:22:45.563Z",
+      "confirmedAt": "2025-09-09T05:22:48.847Z"
     }
   ],
   "prescriptions": [
     {
       "tag": "Dispensed",
-      "info": {
-        "id": "rx-1757340631888",
-        "patientId": "pt-1757339824164",
-        "doctorId": "doc-001",
-        "items": [
-          {
-            "medicationId": "med-001",
-            "medication": {
-              "id": "med-001",
-              "name": "阿斯匹靈",
-              "code": "ASPIRIN",
-              "dosageForm": "錠劑",
-              "strength": "100mg"
-            },
-            "dosage": "1 錠",
-            "frequency": "每日三次",
-            "route": "口服",
-            "duration": "7 天",
-            "instructions": "飯後服用"
-          }
-        ],
-        "notes": "緩解疼痛和發炎"
-      },
-      "createdAt": "2025-09-08T14:10:31.888Z",
-      "submittedAt": "2025-09-09T04:20:33.518Z",
-      "preparationStartedAt": "2025-09-09T04:28:25.073Z",
-      "preparedAt": "2025-09-09T04:28:27.795Z",
-      "dispensedAt": "2025-09-09T04:28:29.793Z",
-      "pharmacistId": "prep-001"
-    },
-    {
-      "tag": "Prepared",
       "info": {
         "id": "rx-1757391518339",
         "patientId": "p-1757391410002",
@@ -175,13 +162,14 @@
       "submittedAt": "2025-09-09T04:28:32.928Z",
       "preparationStartedAt": "2025-09-09T04:28:34.121Z",
       "preparedAt": "2025-09-09T04:28:36.081Z",
+      "dispensedAt": "2025-09-09T05:21:58.078Z",
       "pharmacistId": "prep-001"
     },
     {
-      "tag": "Created",
+      "tag": "Prepared",
       "info": {
-        "id": "rx-1757392121523",
-        "patientId": "p-1757392090939 + 摩堤",
+        "id": "rx-1757392676767",
+        "patientId": "p-1757389083975",
         "doctorId": "doc-001",
         "items": [
           {
@@ -202,40 +190,50 @@
         ],
         "notes": "緩解疼痛和發炎"
       },
-      "createdAt": "2025-09-09T04:28:41.523Z"
+      "createdAt": "2025-09-09T04:37:56.767Z",
+      "submittedAt": "2025-09-09T05:21:59.417Z",
+      "preparationStartedAt": "2025-09-09T05:22:00.341Z",
+      "preparedAt": "2025-09-09T05:22:01.148Z",
+      "pharmacistId": "prep-001"
+    },
+    {
+      "tag": "Submitted",
+      "info": {
+        "id": "rx-1757395332350",
+        "patientId": "pt-1757339824164",
+        "doctorId": "doc-001",
+        "items": [
+          {
+            "medicationId": "med-001",
+            "medication": {
+              "id": "med-001",
+              "name": "阿斯匹靈",
+              "code": "ASPIRIN",
+              "dosageForm": "錠劑",
+              "strength": "100mg"
+            },
+            "dosage": "1 錠",
+            "frequency": "每日三次",
+            "route": "口服",
+            "duration": "7 天",
+            "instructions": "飯後服用"
+          }
+        ],
+        "notes": "緩解疼痛和發炎"
+      },
+      "createdAt": "2025-09-09T05:22:12.350Z",
+      "submittedAt": "2025-09-09T05:22:16.053Z"
     }
   ],
   "services": [
     {
-      "tag": "InPreparation",
-      "info": {
-        "id": "svc-1757340385702",
-        "patientId": "pt-1757339824164",
-        "serviceType": "手術",
-        "priority": "急診",
-        "estimatedDuration": 45,
-        "requiredResources": [
-          "X光機",
-          "技術人員"
-        ],
-        "notes": "大力切"
-      },
-      "requestedAt": "2025-09-08T14:06:25.702Z",
-      "requestedBy": "doc-001",
-      "scheduledAt": "2025-09-09T04:21:15.966Z",
-      "preparationStartedAt": "2025-09-09T04:28:52.893Z",
-      "assignedStaff": [
-        "準備器材"
-      ],
-      "location": "staff-001"
-    },
-    {
       "tag": "Requested",
       "info": {
-        "id": "svc-1757392144473",
-        "patientId": "p-1757392090939 + 摩堤",
+        "id": "svc-1757394312881",
+        "patientId": "p-1757389083975",
         "serviceType": "Laboratory",
-        "priority": "Normal",
+        "description": "X光檢查",
+        "priority": "Low",
         "estimatedDuration": 45,
         "requiredResources": [
           "X光機",
@@ -243,7 +241,7 @@
         ],
         "notes": "檢查胸部"
       },
-      "requestedAt": "2025-09-09T04:29:04.473Z",
+      "requestedAt": "2025-09-09T05:05:12.881Z",
       "requestedBy": "doc-001"
     }
   ]

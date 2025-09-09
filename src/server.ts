@@ -98,6 +98,42 @@ app.get('/api/patients', async (_req, res) => {
   }
 });
 
+// 更新患者資訊（不允許修改患者 ID 與狀態）
+app.put('/api/patients/:id', async (req, res) => {
+  try {
+    const patient = await database.readPatient(req.params.id);
+    if (!patient) {
+      return res.status(404).json({ success: false, error: { message: 'Patient not found' } });
+    }
+
+    const { name, birthDate, gender, contactNumber, address } = req.body;
+
+    // 僅更新 info 內的可編輯欄位
+    const updated = {
+      ...patient,
+      info: {
+        ...patient.info,
+        name: name ?? patient.info.name,
+        birthDate: birthDate ?? patient.info.birthDate,
+        gender: gender ?? patient.info.gender,
+        contactNumber: contactNumber ?? patient.info.contactNumber,
+        address: {
+          ...patient.info.address,
+          ...(address || {})
+        }
+      }
+    } as PatientState;
+
+    const ok = await database.updatePatient(req.params.id, updated);
+    if (!ok) {
+      return res.status(500).json({ success: false, error: { message: 'Failed to update patient' } });
+    }
+    return res.json({ success: true, data: updated });
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: 'Failed to update patient' } });
+  }
+});
+
 // 開始準備處方
 app.post('/api/prescriptions/:id/start-preparing', async (req, res) => {
   try {
@@ -376,8 +412,10 @@ app.post('/api/prescriptions/:id/dispense', async (req, res) => {
 
 // Medical Service API 端點
 app.post('/api/services', async (req, res) => {
-  const { patientId, serviceType, serviceName, priority, estimatedDuration, requestedBy, requiredResources, notes } = req.body;
-  const result = requestService(patientId, serviceType, serviceName, priority, estimatedDuration, requestedBy, requiredResources, notes);
+  // 前端目前傳遞的是 description；為相容也接受 serviceName
+  const { patientId, serviceType, serviceName, description, priority, estimatedDuration, requestedBy, requiredResources, notes } = req.body;
+  const serviceDescription = description ?? serviceName; // 後端模型使用 description 欄位
+  const result = requestService(patientId, serviceType, serviceDescription, priority, estimatedDuration, requestedBy, requiredResources, notes);
   
   if (isSuccess(result)) {
     await database.createService(getEntityId(result.data), result.data);

@@ -22,7 +22,7 @@ function toggleForm(containerId, button) {
     }
 }
 
-// 顯示指定面板
+// 顯示指定面板 + 更新導航樣式
 function showPanel(panelName) {
     // 隱藏所有面板
     Object.values(panels).forEach(panel => {
@@ -34,19 +34,17 @@ function showPanel(panelName) {
         panels[panelName].classList.remove('hidden');
     }
     
-    // 更新導航按鈕狀態
-    const buttons = document.querySelectorAll('.nav-btn');
-    buttons.forEach(btn => {
-        btn.classList.remove('bg-white', 'text-blue-700', 'shadow-md');
-        btn.classList.add('text-blue-100', 'hover:text-blue-50');
+    // 更新 segmented 導覽按鈕的 active 樣式
+    const tabs = document.querySelectorAll('#topNav .nav-tab');
+    tabs.forEach(btn => {
+        if (btn.getAttribute('data-panel') === panelName) {
+            btn.classList.add('bg-white', 'text-blue-700');
+            btn.classList.remove('bg-blue-50');
+        } else {
+            btn.classList.remove('bg-white', 'text-blue-700');
+            btn.classList.add('bg-blue-50');
+        }
     });
-    
-    // 高亮當前選中的按鈕
-    const currentBtn = document.querySelector(`[onclick*="${panelName}"]`);
-    if (currentBtn) {
-        currentBtn.classList.remove('text-blue-100', 'hover:text-blue-50');
-        currentBtn.classList.add('bg-white', 'text-blue-700', 'shadow-md');
-    }
 }
 
 // 顯示訊息提示

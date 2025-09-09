@@ -135,6 +135,45 @@ document.addEventListener('DOMContentLoaded', async () => {
             window.ui.showMessage(`請求失敗: ${result.error.message}`, 'error');
         }
     });
+    
+    // 患者選擇監聽器 - 顯示 ID + 姓名
+    function setupPatientSelectionDisplay(inputId, datalistId) {
+        const input = document.getElementById(inputId);
+        const datalist = document.getElementById(datalistId);
+        
+        if (input && datalist) {
+            input.addEventListener('input', () => {
+                const selectedOption = datalist.querySelector(`option[value="${input.value}"]`);
+                if (selectedOption) {
+                    const patientName = selectedOption.getAttribute('data-name');
+                    const patientId = selectedOption.getAttribute('data-id');
+                    if (patientName && patientId) {
+                        input.value = `${patientId} + ${patientName}`;
+                    }
+                }
+            });
+            
+            input.addEventListener('change', () => {
+                const selectedOption = datalist.querySelector(`option[value="${input.value}"]`);
+                if (selectedOption) {
+                    const patientName = selectedOption.getAttribute('data-name');
+                    const patientId = selectedOption.getAttribute('data-id');
+                    if (patientName && patientId) {
+                        input.value = `${patientId} + ${patientName}`;
+                        input.setAttribute('data-patient-id', patientId);
+                    }
+                } else {
+                    // 如果輸入的不是有效選項，清除 data-patient-id
+                    input.removeAttribute('data-patient-id');
+                }
+            });
+        }
+    }
+    
+    // 設置所有患者選擇器
+    setupPatientSelectionDisplay('appointmentPatientId', 'appointmentPatientList');
+    setupPatientSelectionDisplay('prescriptionPatientId', 'prescriptionPatientList');
+    setupPatientSelectionDisplay('servicePatientId', 'servicePatientList');
 });
 
 // 導航按鈕事件處理

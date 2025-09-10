@@ -71,28 +71,48 @@ export interface Database {
 
 ```txt
 mini-HIS/
-├── README.md         # 專案說明文件
+├── README.md                   # 專案說明文件
 ├── src/
-│   ├── public/       # 前端靜態檔案
-│   │   ├── index.html # 主頁面 (使用 TailwindCSS CDN)
-│   │   └── app.js     # 前端 JavaScript 邏輯
-│   ├── database/     # 資料庫抽象層
-│   │   ├── interface.ts     # 資料庫介面定義 (CQRS)
-│   │   ├── json-database.ts # JSON 資料庫實作
-│   │   └── index.ts         # 資料庫實例匯出
-│   ├── types/        # 類型定義
-│   │   ├── common.ts # 通用類型
-│   │   └── results.ts # 結果類型 (ADT)
-│   ├── models/       # 模型定義
-│   │   ├── Patient.ts       # 病患管理模組
-│   │   ├── Appointment.ts   # 預約系統模組
-│   │   ├── Prescription.ts  # 藥物處方模組
-│   │   └── MedicalService.ts # 醫療服務模組
-│   ├── db.json       # JSON 資料庫檔案
-│   ├── server.ts     # Express 後端服務器
-│   └── index.ts      # 控制台示範程式
-├── package.json      # Node.js 專案配置
-└── tsconfig.json     # TypeScript 配置
+│   ├── public/                 # 前端靜態檔案
+│   │   ├── index.html
+│   │   ├── medical-record.html
+│   │   └── js/
+│   │       ├── api.js
+│   │       ├── appointment.js
+│   │       ├── main.js
+│   │       ├── medical_record.js
+│   │       ├── patient.js
+│   │       ├── prescription.js
+│   │       ├── service.js
+│   │       ├── settings.js
+│   │       └── utils.js
+│   ├── database/               # 資料庫抽象層 + JSON 實作
+│   │   ├── collection.ts       # 泛型集合 API（list/getById/upsert/remove）
+│   │   ├── index.ts            # 資料庫實例匯出
+│   │   ├── interface.ts        # Database 介面 (CQRS)
+│   │   ├── json-database.ts    # JSON 資料庫實作
+│   │   ├── migrations.ts       # 開機遷移與集合補齊
+│   │   ├── schema.ts           # 檔案結構 schema 定義
+│   │   └── storage-engine.ts   # 原子寫入引擎（tmp → fsync → rename）
+│   ├── models/                 # 業務模型（ADT 狀態機）
+│   │   ├── Appointment.ts
+│   │   ├── MedicalRecord.ts
+│   │   ├── MedicalService.ts
+│   │   ├── Patient.ts
+│   │   └── Prescription.ts
+│   ├── types/                  # 類型定義
+│   │   ├── common.ts
+│   │   └── results.ts
+│   ├── utils/
+│   │   └── id.ts               # 單調遞增 ID 產生器
+│   ├── db.json                 # JSON 資料庫檔案
+│   ├── server.ts               # Express 後端服務
+│   └── index.ts                # 控制台示範程式（npm run demo）
+├── package.json                # Node.js 專案配置（Node 22 strip types）
+├── tsconfig.json               # TypeScript 設定（型別檢查用）
+├── Dockerfile
+├── package-lock.json | pnpm-lock.yaml
+└── test.md
 ```
 
 ## 如何運行
@@ -134,6 +154,13 @@ npm run demo
 - `PUT /api/patients/:id` - 更新病患資訊
 - `DELETE /api/patients/:id` - 刪除病患
 
+### 醫療病歷（Medical Records）
+- `GET /api/medical-records?patientId=:id` - 依病患查詢病歷
+- `GET /api/medical-records/:id` - 取得病歷
+- `POST /api/medical-records` - 新增病歷
+- `PUT /api/medical-records/:id` - 更新病歷
+- `DELETE /api/medical-records/:id` - 刪除病歷（若實作）
+
 ### 預約系統
 - `POST /api/appointments` - 建立新預約
 - `GET /api/appointments` - 獲取所有預約
@@ -141,6 +168,7 @@ npm run demo
 - `POST /api/appointments/:id/checkin` - 預約報到
 - `POST /api/appointments/:id/start` - 開始預約
 - `POST /api/appointments/:id/complete` - 完成預約
+- `DELETE /api/appointments/:id` - 刪除預約
 
 ### 處方管理
 - `POST /api/prescriptions` - 開立新處方
@@ -149,6 +177,7 @@ npm run demo
 - `POST /api/prescriptions/:id/start-preparing` - 開始調劑
 - `POST /api/prescriptions/:id/complete-preparing` - 完成調劑
 - `POST /api/prescriptions/:id/dispense` - 發放藥物
+- `DELETE /api/prescriptions/:id` - 刪除處方
 
 ### 醫療服務
 - `POST /api/services` - 請求新服務
@@ -157,6 +186,7 @@ npm run demo
 - `POST /api/services/:id/start-preparing` - 開始準備
 - `POST /api/services/:id/start` - 開始服務
 - `POST /api/services/:id/complete` - 完成服務
+- `DELETE /api/services/:id` - 刪除服務
 
 ### 醫師（設定）
 - `GET /api/doctors` - 取得所有醫師

@@ -112,7 +112,8 @@ mini-HIS/
 ├── tsconfig.json               # TypeScript 設定（型別檢查用）
 ├── Dockerfile
 ├── package-lock.json | pnpm-lock.yaml
-└── test.md
+└── docs/
+    └── api-tests.md           # API 測試與驗證（由原 test.md 整合而來）
 ```
 
 ## 如何運行
@@ -144,6 +145,11 @@ npm run demo
 ```
 
 運行控制台版本的完整醫院工作流程示範。
+
+## 測試與驗證
+
+- API 實測指引與 curl 範例請見：`docs/api-tests.md`
+- 端點完整列表仍以本文件的「API 端點」章節為準
 
 ## API 端點
 

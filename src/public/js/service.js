@@ -145,8 +145,11 @@ async function showServiceDetail(serviceId) {
 
 // 安排醫療服務
 async function scheduleService(serviceId) {
+    const scheduledTime = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString();
+    const payload = { scheduledTime, scheduledBy: 'staff-001', location: 'Room 305' };
     const result = await window.api.apiRequest(`${window.api.API_BASE}/services/${serviceId}/schedule`, {
-        method: 'POST'
+        method: 'POST',
+        body: JSON.stringify(payload)
     });
     
     if (result.success) {
@@ -159,8 +162,19 @@ async function scheduleService(serviceId) {
 
 // 開始準備醫療服務
 async function startPreparingService(serviceId) {
+    const staff = [{
+        id: 'staff-001',
+        name: '系統預設',
+        birthDate: new Date().toISOString(),
+        gender: 'other',
+        staffType: 'labTechnician',
+        department: 'Lab',
+        licenseNumber: 'LIC-UI-0001'
+    }];
+    const payload = { staff, location: '準備室', preparationNotes: '自動準備' };
     const result = await window.api.apiRequest(`${window.api.API_BASE}/services/${serviceId}/start-preparing`, {
-        method: 'POST'
+        method: 'POST',
+        body: JSON.stringify(payload)
     });
     
     if (result.success) {
@@ -187,8 +201,10 @@ async function startService(serviceId) {
 
 // 完成醫療服務
 async function completeService(serviceId) {
+    const payload = { results: '完成', actualDuration: 30, followUpInstructions: '' };
     const result = await window.api.apiRequest(`${window.api.API_BASE}/services/${serviceId}/complete`, {
-        method: 'POST'
+        method: 'POST',
+        body: JSON.stringify(payload)
     });
     
     if (result.success) {

@@ -8,6 +8,7 @@
 import type { ID, DateTime, MedicalStaff } from '../types/common.ts';
 import type { Result } from '../types/results.ts';
 import { success, failure, ErrorCode } from '../types/results.ts';
+import { createId } from '../utils/id.ts';
 
 // 醫療服務類型（以常數物件 + 字面量聯合取代 TS enum）
 export const ServiceType = {
@@ -182,7 +183,7 @@ export function requestService(
   }
   
   const now = new Date().toISOString();
-  const serviceId = `svc-${Date.now()}`; // 簡單的 ID 生成方式
+  const serviceId = createId('svc');
   
   return success({
     tag: 'Requested',

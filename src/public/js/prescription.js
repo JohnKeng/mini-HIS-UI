@@ -167,7 +167,8 @@ async function submitPrescription(prescriptionId) {
 // 開始準備處方
 async function startPreparingPrescription(prescriptionId) {
     const result = await window.api.apiRequest(`${window.api.API_BASE}/prescriptions/${prescriptionId}/start-preparing`, {
-        method: 'POST'
+        method: 'POST',
+        body: JSON.stringify({ pharmacistId: 'pharm-001' })
     });
     
     if (result.success) {
@@ -195,7 +196,8 @@ async function completePreparingPrescription(prescriptionId) {
 // 配發處方
 async function dispensePrescription(prescriptionId) {
     const result = await window.api.apiRequest(`${window.api.API_BASE}/prescriptions/${prescriptionId}/dispense`, {
-        method: 'POST'
+        method: 'POST',
+        body: JSON.stringify({ dispensedBy: 'pharm-001', instructions: '請按時服用' })
     });
     
     if (result.success) {

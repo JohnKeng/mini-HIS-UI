@@ -36,6 +36,7 @@ import type { ServiceState } from './models/MedicalService.ts';
 import type { MedicalStaff, Doctor } from './types/common.ts';
 import { isSuccess } from './types/results.ts';
 import { database } from './database/index.ts';
+import { createId } from './utils/id.ts';
 import type { MedicalRecordState } from './models/MedicalRecord.ts';
 import { createMedicalRecord, updateMedicalRecord } from './models/MedicalRecord.ts';
 
@@ -63,7 +64,7 @@ function getEntityId(entity: PatientState | AppointmentState | PrescriptionState
 // Patient API 端點
 app.post('/api/patients', async (req, res) => {
   const { patientInfo } = req.body;
-  const patientId = `pt-${Date.now()}`;
+  const patientId = createId('pt');
   
   const result = registerPatient(patientInfo, patientId);
   if (isSuccess(result)) {
@@ -136,71 +137,32 @@ app.put('/api/patients/:id', async (req, res) => {
   }
 });
 
-// 開始準備處方
+// 開始準備處方（統一／相容：可帶 pharmacistId；未提供則使用預設）
 app.post('/api/prescriptions/:id/start-preparing', async (req, res) => {
-  try {
-    const prescription = await database.readPrescription(req.params.id);
-    if (!prescription) {
-      return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
-    }
-    
-    if (prescription.tag !== 'Submitted') {
-      return res.status(400).json({ success: false, error: { message: 'Prescription must be submitted first' } });
-    }
-    
-    const result = startPrescriptionPreparation(prescription, 'prep-001');
-    
-    if (isSuccess(result)) {
-      const saved = await database.updatePrescription(req.params.id, result.data);
-      if (saved) {
-        return res.json({ success: true, data: result.data });
-      } else {
-        return res.status(500).json({ success: false, error: { message: 'Failed to update prescription' } });
-      }
-    } else {
-      return res.status(400).json({ success: false, error: result.error });
-    }
-  } catch (error) {
-    return res.status(500).json({ success: false, error: { message: 'Failed to start preparing prescription' } });
+  const prescription = await database.readPrescription(req.params.id);
+  if (!prescription) return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
+  const pharmacistId = (req.body && req.body.pharmacistId) || 'pharm-001';
+  const result = startPrescriptionPreparation(prescription as any, pharmacistId);
+  if (isSuccess(result)) {
+    const saved = await database.updatePrescription(req.params.id, result.data);
+    if (!saved) return res.status(500).json({ success: false, error: { message: 'Failed to update prescription' } });
+    return res.json({ success: true, data: result.data });
   }
+  return res.status(400).json({ success: false, error: result.error });
 });
 
-// 開始準備醫療服務
+// 開始準備醫療服務（統一：讀取 body 參數，無樣本注入）
 app.post('/api/services/:id/start-preparing', async (req, res) => {
-  try {
-    const service = await database.readService(req.params.id);
-    if (!service) {
-      return res.status(404).json({ success: false, error: { message: 'Service not found' } });
-    }
-    
-    if (service.tag !== 'Scheduled') {
-      return res.status(400).json({ success: false, error: { message: 'Service must be scheduled first' } });
-    }
-    
-    const sampleStaff: MedicalStaff[] = [{
-      id: 'staff-001',
-      name: '醫護人員',
-      birthDate: new Date().toISOString(),
-      gender: 'other',
-      staffType: 'labTechnician',
-      department: '檢驗科',
-      licenseNumber: 'LIC-0001'
-    }];
-    const result = startServicePreparation(service, sampleStaff, '檢驗室', '準備器材');
-    
-    if (isSuccess(result)) {
-      const saved = await database.updateService(req.params.id, result.data);
-      if (saved) {
-        return res.json({ success: true, data: result.data });
-      } else {
-        return res.status(500).json({ success: false, error: { message: 'Failed to update service' } });
-      }
-    } else {
-      return res.status(400).json({ success: false, error: result.error });
-    }
-  } catch (error) {
-    return res.status(500).json({ success: false, error: { message: 'Failed to start preparing service' } });
+  const service = await database.readService(req.params.id);
+  if (!service) return res.status(404).json({ success: false, error: { message: 'Service not found' } });
+  const { staff, location, preparationNotes } = req.body || {};
+  const result = startServicePreparation(service as any, staff || service.assignedStaff || [], location || service.location || '', preparationNotes);
+  if (isSuccess(result)) {
+    const saved = await database.updateService(req.params.id, result.data);
+    if (!saved) return res.status(500).json({ success: false, error: { message: 'Failed to update service' } });
+    return res.json({ success: true, data: result.data });
   }
+  return res.status(400).json({ success: false, error: result.error });
 });
 
 // 移除患者入院API端點
@@ -274,15 +236,7 @@ app.post('/api/doctors', async (req, res) => {
   try {
     const { name } = req.body as Partial<Doctor>;
     if (!name) return res.status(400).json({ success: false, error: { message: 'Missing name' } });
-    // 產生 dr-XX 流水號
-    const list = await database.findAllDoctors();
-    const maxNum = list
-      .map(d => (d.id || '').match(/^dr-(\d{2,})$/))
-      .filter(Boolean)
-      .map(m => parseInt((m as RegExpMatchArray)[1], 10))
-      .reduce((a, b) => Math.max(a, b), 0);
-    const nextNum = (maxNum + 1).toString().padStart(2, '0');
-    const newId = `dr-${nextNum}`;
+    const newId = createId('dr');
     const ok = await database.createDoctor(newId, { id: newId, name });
     if (!ok) return res.status(400).json({ success: false, error: { message: 'Doctor save failed' } });
     return res.json({ success: true, data: { id: newId, name } });
@@ -368,84 +322,36 @@ app.get('/api/appointments', async (_req, res) => {
 
 app.post('/api/appointments/:id/confirm', async (req, res) => {
   const appointment = await database.readAppointment(req.params.id);
-  if (!appointment) {
-    return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
-  }
-  
-  if (appointment.tag !== 'Requested') {
-    return res.status(400).json({ success: false, error: { message: 'Appointment must be in Requested state' } });
-  }
-  
-  const { confirmationNumber } = req.body;
-  const result = confirmAppointment(appointment, confirmationNumber);
-  
-  if (isSuccess(result)) {
-    await database.updateAppointment(req.params.id, result.data);
-    return res.json({ success: true, data: result.data });
-  } else {
-    return res.status(400).json({ success: false, error: result.error });
-  }
+  if (!appointment) return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
+  const { confirmationNumber } = req.body || {};
+  const result = confirmAppointment(appointment as any, confirmationNumber);
+  if (isSuccess(result)) { await database.updateAppointment(req.params.id, result.data); return res.json({ success: true, data: result.data }); }
+  return res.status(400).json({ success: false, error: result.error });
 });
 
 app.post('/api/appointments/:id/checkin', async (req, res) => {
   const appointment = await database.readAppointment(req.params.id);
-  if (!appointment) {
-    return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
-  }
-  
-  if (appointment.tag !== 'Confirmed') {
-    return res.status(400).json({ success: false, error: { message: 'Appointment must be in Confirmed state' } });
-  }
-  
-  const result = checkInAppointment(appointment);
-  
-  if (isSuccess(result)) {
-    await database.updateAppointment(req.params.id, result.data);
-    return res.json({ success: true, data: result.data });
-  } else {
-    return res.status(400).json({ success: false, error: result.error });
-  }
+  if (!appointment) return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
+  const result = checkInAppointment(appointment as any);
+  if (isSuccess(result)) { await database.updateAppointment(req.params.id, result.data); return res.json({ success: true, data: result.data }); }
+  return res.status(400).json({ success: false, error: result.error });
 });
 
 app.post('/api/appointments/:id/start', async (req, res) => {
   const appointment = await database.readAppointment(req.params.id);
-  if (!appointment) {
-    return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
-  }
-  
-  if (appointment.tag !== 'CheckedIn') {
-    return res.status(400).json({ success: false, error: { message: 'Appointment must be in CheckedIn state' } });
-  }
-  
-  const result = startAppointment(appointment);
-  
-  if (isSuccess(result)) {
-    await database.updateAppointment(req.params.id, result.data);
-    return res.json({ success: true, data: result.data });
-  } else {
-    return res.status(400).json({ success: false, error: result.error });
-  }
+  if (!appointment) return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
+  const result = startAppointment(appointment as any);
+  if (isSuccess(result)) { await database.updateAppointment(req.params.id, result.data); return res.json({ success: true, data: result.data }); }
+  return res.status(400).json({ success: false, error: result.error });
 });
 
 app.post('/api/appointments/:id/complete', async (req, res) => {
   const appointment = await database.readAppointment(req.params.id);
-  if (!appointment) {
-    return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
-  }
-  
-  if (appointment.tag !== 'InProgress') {
-    return res.status(400).json({ success: false, error: { message: 'Appointment must be in InProgress state' } });
-  }
-  
-  const { followUpNeeded, notes } = req.body;
-  const result = completeAppointment(appointment, followUpNeeded, notes);
-  
-  if (isSuccess(result)) {
-    await database.updateAppointment(req.params.id, result.data);
-    return res.json({ success: true, data: result.data });
-  } else {
-    return res.status(400).json({ success: false, error: result.error });
-  }
+  if (!appointment) return res.status(404).json({ success: false, error: { message: 'Appointment not found' } });
+  const { followUpNeeded, notes } = req.body || {};
+  const result = completeAppointment(appointment as any, !!followUpNeeded, notes);
+  if (isSuccess(result)) { await database.updateAppointment(req.params.id, result.data); return res.json({ success: true, data: result.data }); }
+  return res.status(400).json({ success: false, error: result.error });
 });
 
 // Prescription API 端點
@@ -472,85 +378,30 @@ app.get('/api/prescriptions', async (_req, res) => {
 
 app.post('/api/prescriptions/:id/submit', async (req, res) => {
   const prescription = await database.readPrescription(req.params.id);
-  if (!prescription) {
-    return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
-  }
-  
-  if (prescription.tag !== 'Created') {
-    return res.status(400).json({ success: false, error: { message: 'Prescription must be in Created state' } });
-  }
-  
-  const result = submitPrescription(prescription);
-  
-  if (isSuccess(result)) {
-    await database.updatePrescription(req.params.id, result.data);
-    return res.json({ success: true, data: result.data });
-  } else {
-    return res.status(400).json({ success: false, error: result.error });
-  }
+  if (!prescription) return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
+  const result = submitPrescription(prescription as any);
+  if (isSuccess(result)) { await database.updatePrescription(req.params.id, result.data); return res.json({ success: true, data: result.data }); }
+  return res.status(400).json({ success: false, error: result.error });
 });
 
-app.post('/api/prescriptions/:id/start-preparation', async (req, res) => {
-  const prescription = await database.readPrescription(req.params.id);
-  if (!prescription) {
-    return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
-  }
-  
-  if (prescription.tag !== 'Submitted') {
-    return res.status(400).json({ success: false, error: { message: 'Prescription must be in Submitted state' } });
-  }
-  
-  const { pharmacistId } = req.body;
-  const result = startPrescriptionPreparation(prescription, pharmacistId);
-  
-  if (isSuccess(result)) {
-    await database.updatePrescription(req.params.id, result.data);
-    return res.json({ success: true, data: result.data });
-  } else {
-    return res.status(400).json({ success: false, error: result.error });
-  }
-});
+// 移除重複端點：/api/prescriptions/:id/start-preparation 由 /start-preparing 取代
 
 app.post('/api/prescriptions/:id/complete-preparing', async (req, res) => {
   const prescription = await database.readPrescription(req.params.id);
-  if (!prescription) {
-    return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
-  }
-  
-  if (prescription.tag !== 'InPreparation') {
-    return res.status(400).json({ success: false, error: { message: 'Prescription must be in InPreparation state' } });
-  }
-  
-  const { preparationNotes } = req.body;
-  const result = completePreparing(prescription, preparationNotes);
-  
-  if (isSuccess(result)) {
-    await database.updatePrescription(req.params.id, result.data);
-    return res.json({ success: true, data: result.data });
-  } else {
-    return res.status(400).json({ success: false, error: result.error });
-  }
+  if (!prescription) return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
+  const { preparationNotes } = req.body || {};
+  const result = completePreparing(prescription as any, preparationNotes);
+  if (isSuccess(result)) { await database.updatePrescription(req.params.id, result.data); return res.json({ success: true, data: result.data }); }
+  return res.status(400).json({ success: false, error: result.error });
 });
 
 app.post('/api/prescriptions/:id/dispense', async (req, res) => {
   const prescription = await database.readPrescription(req.params.id);
-  if (!prescription) {
-    return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
-  }
-  
-  if (prescription.tag !== 'Prepared') {
-    return res.status(400).json({ success: false, error: { message: 'Prescription must be in Prepared state' } });
-  }
-  
-  const { dispensedBy, instructions } = req.body;
-  const result = dispensePrescription(prescription, dispensedBy, instructions);
-  
-  if (isSuccess(result)) {
-    await database.updatePrescription(req.params.id, result.data);
-    return res.json({ success: true, data: result.data });
-  } else {
-    return res.status(400).json({ success: false, error: result.error });
-  }
+  if (!prescription) return res.status(404).json({ success: false, error: { message: 'Prescription not found' } });
+  const { dispensedBy, instructions } = req.body || {};
+  const result = dispensePrescription(prescription as any, dispensedBy, instructions);
+  if (isSuccess(result)) { await database.updatePrescription(req.params.id, result.data); return res.json({ success: true, data: result.data }); }
+  return res.status(400).json({ success: false, error: result.error });
 });
 
 // Medical Service API 端點
@@ -579,91 +430,33 @@ app.get('/api/services', async (_req, res) => {
 
 app.post('/api/services/:id/schedule', async (req, res) => {
   const service = await database.readService(req.params.id);
-  if (!service) {
-    return res.status(404).json({ success: false, error: { message: 'Service not found' } });
-  }
-  
-  if (service.tag !== 'Requested') {
-    return res.status(400).json({ success: false, error: { message: 'Service must be in Requested state' } });
-  }
-  
-  const { scheduledTime, scheduledBy, staff, location } = req.body;
-  const result = scheduleService(service, scheduledTime, scheduledBy, staff, location);
-  
-  if (isSuccess(result)) {
-    await database.updateService(req.params.id, result.data);
-    return res.json({ success: true, data: result.data });
-  } else {
-    return res.status(400).json({ success: false, error: result.error });
-  }
+  if (!service) return res.status(404).json({ success: false, error: { message: 'Service not found' } });
+  const { scheduledTime, scheduledBy, staff, location } = req.body || {};
+  const result = scheduleService(service as any, scheduledTime, scheduledBy, staff, location);
+  if (isSuccess(result)) { await database.updateService(req.params.id, result.data); return res.json({ success: true, data: result.data }); }
+  return res.status(400).json({ success: false, error: result.error });
 });
 
-app.post('/api/services/:id/start-preparation', async (req, res) => {
-  const service = await database.readService(req.params.id);
-  if (!service) {
-    return res.status(404).json({ success: false, error: { message: 'Service not found' } });
-  }
-  
-  if (service.tag !== 'Scheduled') {
-    return res.status(400).json({ success: false, error: { message: 'Service must be in Scheduled state' } });
-  }
-  
-  const { staff, location, preparationNotes } = req.body;
-  const result = startServicePreparation(service, staff, location, preparationNotes);
-  
-  if (isSuccess(result)) {
-    await database.updateService(req.params.id, result.data);
-    return res.json({ success: true, data: result.data });
-  } else {
-    return res.status(400).json({ success: false, error: result.error });
-  }
-});
+// 移除重複端點：/api/services/:id/start-preparation 由 /start-preparing 取代
 
 app.post('/api/services/:id/start', async (req, res) => {
   const service = await database.readService(req.params.id);
-  if (!service) {
-    return res.status(404).json({ success: false, error: { message: 'Service not found' } });
-  }
-  
-  if (service.tag !== 'InPreparation') {
-    return res.status(400).json({ success: false, error: { message: 'Service must be in InPreparation state' } });
-  }
-  
+  if (!service) return res.status(404).json({ success: false, error: { message: 'Service not found' } });
   const body = req.body || {};
-  const performingStaff = Array.isArray(body.performingStaff) && body.performingStaff.length > 0
-    ? body.performingStaff
-    : service.assignedStaff; // 預設使用已指派的人員
+  const performingStaff = Array.isArray(body.performingStaff) && body.performingStaff.length > 0 ? body.performingStaff : service.assignedStaff;
   const serviceNotes = Array.isArray(body.serviceNotes) ? body.serviceNotes : [];
-
-  const result = startService(service, performingStaff, serviceNotes);
-  
-  if (isSuccess(result)) {
-    await database.updateService(req.params.id, result.data);
-    return res.json({ success: true, data: result.data });
-  } else {
-    return res.status(400).json({ success: false, error: result.error });
-  }
+  const result = startService(service as any, performingStaff, serviceNotes);
+  if (isSuccess(result)) { await database.updateService(req.params.id, result.data); return res.json({ success: true, data: result.data }); }
+  return res.status(400).json({ success: false, error: result.error });
 });
 
 app.post('/api/services/:id/complete', async (req, res) => {
   const service = await database.readService(req.params.id);
-  if (!service) {
-    return res.status(404).json({ success: false, error: { message: 'Service not found' } });
-  }
-  
-  if (service.tag !== 'InProgress') {
-    return res.status(400).json({ success: false, error: { message: 'Service must be in InProgress state' } });
-  }
-  
-  const { results, actualDuration, followUpInstructions } = req.body;
-  const result = completeService(service, results, actualDuration, followUpInstructions);
-  
-  if (isSuccess(result)) {
-    await database.updateService(req.params.id, result.data);
-    return res.json({ success: true, data: result.data });
-  } else {
-    return res.status(400).json({ success: false, error: result.error });
-  }
+  if (!service) return res.status(404).json({ success: false, error: { message: 'Service not found' } });
+  const { results, actualDuration, followUpInstructions } = req.body || {};
+  const result = completeService(service as any, results, actualDuration, followUpInstructions);
+  if (isSuccess(result)) { await database.updateService(req.params.id, result.data); return res.json({ success: true, data: result.data }); }
+  return res.status(400).json({ success: false, error: result.error });
 });
 
 // ========== 刪除端點 ==========

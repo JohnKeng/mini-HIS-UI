@@ -1,4 +1,5 @@
 import type { ID, DateTime } from '../types/common.ts';
+import { createId } from '../utils/id.ts';
 
 export interface MedicalRecordInfo {
   id: ID;
@@ -32,7 +33,7 @@ export function createMedicalRecord(
   const now = new Date().toISOString();
   return {
     info: {
-      id: `mr-${Date.now()}`,
+      id: createId('mr'),
       patientId,
       appointmentId,
       doctorId,
@@ -59,4 +60,3 @@ export function updateMedicalRecord(
     },
   };
 }
-

@@ -8,6 +8,7 @@
 import type { ID, DateTime, TimeSlot } from '../types/common.ts';
 import type { Result } from '../types/results.ts';
 import { success, failure, ErrorCode } from '../types/results.ts';
+import { createId } from '../utils/id.ts';
 
 // 預約基本資訊
 export interface AppointmentInfo {
@@ -119,7 +120,7 @@ export function requestAppointment(
 ): Result<Requested> {
   // 在實際應用中，這裡可能會有驗證邏輯，例如檢查時間段是否可用
   const now = new Date().toISOString();
-  const appointmentId = `appt-${Date.now()}`; // 簡單的 ID 生成方式，實際應用中可能會更複雜
+  const appointmentId = createId('appt');
   
   return success({
     tag: 'Requested',

@@ -131,8 +131,8 @@ npm run demo
 - `POST /api/patients` - 註冊新病患
 - `GET /api/patients` - 獲取所有病患
 - `GET /api/patients/:id` - 獲取指定病患
-- `POST /api/patients/:id/admit` - 病患入院
-- `POST /api/patients/:id/discharge` - 病患出院
+- `PUT /api/patients/:id` - 更新病患資訊
+- `DELETE /api/patients/:id` - 刪除病患
 
 ### 預約系統
 - `POST /api/appointments` - 建立新預約
@@ -146,7 +146,7 @@ npm run demo
 - `POST /api/prescriptions` - 開立新處方
 - `GET /api/prescriptions` - 獲取所有處方
 - `POST /api/prescriptions/:id/submit` - 送出處方
-- `POST /api/prescriptions/:id/start-preparation` - 開始調劑
+- `POST /api/prescriptions/:id/start-preparing` - 開始調劑
 - `POST /api/prescriptions/:id/complete-preparing` - 完成調劑
 - `POST /api/prescriptions/:id/dispense` - 發放藥物
 
@@ -154,14 +154,14 @@ npm run demo
 - `POST /api/services` - 請求新服務
 - `GET /api/services` - 獲取所有服務
 - `POST /api/services/:id/schedule` - 排程服務
-- `POST /api/services/:id/start-preparation` - 開始準備
+- `POST /api/services/:id/start-preparing` - 開始準備
 - `POST /api/services/:id/start` - 開始服務
 - `POST /api/services/:id/complete` - 完成服務
 
 ### 醫師（設定）
 - `GET /api/doctors` - 取得所有醫師
 - `GET /api/doctors/:id` - 取得單一醫師
-- `POST /api/doctors` - 新增醫師（body: `{ name }`；ID 由伺服器自動產生 `dr-XX`）
+- `POST /api/doctors` - 新增醫師（body: `{ name }`；ID 由伺服器以單調時間產生 `dr-...`）
 - `PUT /api/doctors/:id` - 更新醫師姓名（ID 不可修改）
 - `DELETE /api/doctors/:id` - 刪除醫師
 
@@ -287,6 +287,33 @@ export function isSuccess<T>(r: Result<T>): r is Success<T> {
 ✅ **模組化設計**：清晰的模組分工和職責分離  
 ✅ **現代化前端**：使用 TailwindCSS 實現響應式設計  
 ✅ **RESTful API**：標準的 REST API 設計，易於擴展和維護
+
+## 近期改動與優化（mini-HIS-UI 重構）
+
+- 資料層
+  - 新增 `StorageEngine`（`src/database/storage-engine.ts`）：提供原子寫入（tmp → fsync → rename → fsync 目錄），提升資料可靠性。
+  - 新增 `migrations`（`src/database/migrations.ts`）：啟動時自動補齊缺漏集合（如 `medicalRecords`、`doctors`），替代以往讀取時的硬編碼補丁。
+  - 新增泛型 `Collection` API（`src/database/collection.ts`）：統一 `list/getById/upsert/remove`，消除 JsonDatabase 內大量重複 CRUD 模板。
+  - 重構 `JsonDatabase`（`src/database/json-database.ts`）：委派至 Collection/StorageEngine，保留既有 `Database` 介面，無痛相容。
+
+- API / 路由
+  - 移除重複端點：統一使用 `/start-preparing`（處方、服務），移除舊 `/start-preparation`。
+  - Server 層不再重複檢查 `tag`，統一交由 model 轉換函式驗證（Result ADT），減少樣板與分散邏輯。
+  - 新增通用 ID 產生器 `createId(prefix)`（`src/utils/id.ts`）：取代 `Date.now()`，避免同毫秒碰撞（單調序列）。
+
+- 前端對齊
+  - `src/public/js/prescription.js`：
+    - `startPreparingPrescription` 攜帶 `{ pharmacistId }`
+    - `dispensePrescription` 攜帶 `{ dispensedBy, instructions }`
+  - `src/public/js/service.js`：
+    - `scheduleService` 攜帶 `{ scheduledTime, scheduledBy, location }`
+    - `startPreparingService` 攜帶 `{ staff, location, preparationNotes }`
+    - `completeService` 攜帶 `{ results, actualDuration, followUpInstructions }`
+
+效益
+- 消除重複代碼與分散檢查，降低維護成本。
+- I/O 原子性與遷移機制，強化資料安全與向後相容。
+- API/前端契約清晰一致，降低錯誤率，提升可測性。
 
 ## 專案亮點
 

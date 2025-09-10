@@ -250,51 +250,6 @@
     {
       "tag": "Completed",
       "info": {
-        "id": "svc-1757394312881",
-        "patientId": "p-1757389083975",
-        "serviceType": "Laboratory",
-        "description": "X光檢查",
-        "priority": "Low",
-        "estimatedDuration": 45,
-        "requiredResources": [
-          "X光機",
-          "技術人員"
-        ],
-        "notes": "檢查胸部"
-      },
-      "requestedAt": "2025-09-09T05:05:12.881Z",
-      "requestedBy": "dr-02",
-      "scheduledAt": "2025-09-09T10:01:46.898Z",
-      "preparationStartedAt": "2025-09-09T10:01:47.548Z",
-      "startedAt": "2025-09-09T10:04:24.768Z",
-      "completedAt": "2025-09-09T10:04:25.413Z",
-      "assignedStaff": [
-        {
-          "id": "staff-001",
-          "name": "醫護人員",
-          "birthDate": "2025-09-09T10:01:47.548Z",
-          "gender": "other",
-          "staffType": "labTechnician",
-          "department": "檢驗科",
-          "licenseNumber": "LIC-0001"
-        }
-      ],
-      "location": "檢驗室",
-      "actualStaff": [
-        {
-          "id": "staff-001",
-          "name": "醫護人員",
-          "birthDate": "2025-09-09T10:01:47.548Z",
-          "gender": "other",
-          "staffType": "labTechnician",
-          "department": "檢驗科",
-          "licenseNumber": "LIC-0001"
-        }
-      ]
-    },
-    {
-      "tag": "Requested",
-      "info": {
         "id": "svc-1757434477989",
         "patientId": "p-1757391410002",
         "serviceType": "Examination",
@@ -308,7 +263,57 @@
         "notes": "怕痛"
       },
       "requestedAt": "2025-09-09T16:14:37.989Z",
-      "requestedBy": "dr-02"
+      "requestedBy": "dr-02",
+      "scheduledAt": "2025-09-10T05:53:15.940Z",
+      "scheduledBy": "staff-001",
+      "scheduledTime": "2025-09-12T05:53:15.936Z",
+      "preparationStartedAt": "2025-09-10T05:53:16.215Z",
+      "startedAt": "2025-09-10T05:53:16.768Z",
+      "completedAt": "2025-09-10T05:53:17.783Z",
+      "assignedStaff": [
+        {
+          "id": "staff-001",
+          "name": "系統預設",
+          "birthDate": "2025-09-10T05:53:16.211Z",
+          "gender": "other",
+          "staffType": "labTechnician",
+          "department": "Lab",
+          "licenseNumber": "LIC-UI-0001"
+        }
+      ],
+      "location": "準備室",
+      "actualStaff": [
+        {
+          "id": "staff-001",
+          "name": "系統預設",
+          "birthDate": "2025-09-10T05:53:16.211Z",
+          "gender": "other",
+          "staffType": "labTechnician",
+          "department": "Lab",
+          "licenseNumber": "LIC-UI-0001"
+        }
+      ],
+      "outcome": "完成",
+      "followUpRecommendations": "",
+      "actualDuration": 30
+    },
+    {
+      "tag": "Requested",
+      "info": {
+        "id": "svc-1757483569646",
+        "patientId": "pt-1757339824164",
+        "serviceType": "Consultation",
+        "description": "X光檢查",
+        "priority": "Low",
+        "estimatedDuration": 45,
+        "requiredResources": [
+          "X光機",
+          "技術人員"
+        ],
+        "notes": "檢查胸部"
+      },
+      "requestedAt": "2025-09-10T05:52:49.646Z",
+      "requestedBy": "dr-01"
     }
   ],
   "medicalRecords": [
@@ -352,15 +357,15 @@
         "patientId": "p-1757389083975",
         "appointmentId": "appt-1757394806962",
         "createdAt": "2025-09-09T09:50:01.776Z",
-        "updatedAt": "2025-09-09T09:50:01.776Z"
+        "updatedAt": "2025-09-10T05:51:20.379Z"
       },
       "data": {
-        "chiefComplaint": "大腦病變",
-        "historyOfPresentIllness": "憂鬱",
-        "pastMedicalHistory": "嗜睡",
-        "physicalExam": "缺陷",
-        "diagnosis": "弱智",
-        "treatmentPlan": "回家"
+        "chiefComplaint": "ㄅ",
+        "historyOfPresentIllness": "ㄉ",
+        "pastMedicalHistory": "ˇ",
+        "physicalExam": "ˋ",
+        "diagnosis": "sg",
+        "treatmentPlan": "seg"
       }
     },
     {
